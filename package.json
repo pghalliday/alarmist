@@ -1,0 +1,41 @@
+{
+  "name": "alarmist",
+  "version": "1.0.0",
+  "description": "Monitor parallel jobs",
+  "main": "lib/index.js",
+  "scripts": {
+    "cmd:lint": "eslint .",
+    "cmd:test": "cross-env NODE_ENV=test nyc mocha",
+    "cmd:build": "babel src --out-dir lib",
+    "cmd:coveralls": "cat ./coverage/lcov.info | coveralls",
+    "test": "run-s cmd:lint cmd:test",
+    "build": "run-s test cmd:build",
+    "ci": "run-s build cmd:coveralls",
+    "watch": "chokidar '+(src|test)/**/*' -c 'npm run -s build'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pghalliday/alarmist.git"
+  },
+  "keywords": [],
+  "author": "Peter Halliday <pghalliday@gmail.com> (http://pghalliday.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pghalliday/alarmist/issues"
+  },
+  "homepage": "https://github.com/pghalliday/alarmist#readme",
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-plugin-istanbul": "^3.1.2",
+    "babel-preset-env": "^1.1.8",
+    "chai": "^3.5.0",
+    "chokidar-cli": "^1.2.0",
+    "coveralls": "^2.11.15",
+    "cross-env": "^3.1.4",
+    "eslint": "^3.14.1",
+    "eslint-config-google": "^0.7.1",
+    "mocha": "^3.2.0",
+    "npm-run-all": "^4.0.1",
+    "nyc": "^10.1.2"
+  }
+}

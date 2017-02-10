@@ -1,0 +1,16 @@
+{
+  "check-coverage": true,
+  "lines": 100,
+  "statements": 100,
+  "functions": 100,
+  "branches": 100,
+  "reporter": [
+    "lcov",
+    "text"
+  ],
+  "require": [
+    "babel-register"
+  ],
+  "sourceMap": false,
+  "instrument": false
+}
