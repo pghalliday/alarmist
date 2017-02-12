@@ -9,6 +9,7 @@ module.exports = {
     'require-jsdoc': 0
   },
   parserOptions: {
+    ecmaVersion: 8,
     sourceType: 'module'
   }
 };

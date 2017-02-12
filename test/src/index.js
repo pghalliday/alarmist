@@ -1,10 +1,12 @@
-import test from '../../src/index.js';
-import chai from 'chai';
-
-chai.should();
-
-describe('test', () => {
-  it('should pass', () => {
-    test().should.eql('hello world');
+import * as alarmist from '../../src';
+describe('alarmist', () => {
+  it('should export createJob', () => {
+    alarmist.createJob.should.be.ok;
+  });
+  it('should export createMonitor', () => {
+    alarmist.createMonitor.should.be.ok;
+  });
+  it('should export exec', () => {
+    alarmist.exec.should.be.ok;
   });
 });

@@ -1,1 +1,4 @@
+test/src
 --recursive
+--require babel-polyfill
+--require test/helpers/common

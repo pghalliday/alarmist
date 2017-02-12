@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
+  "bin": "bin/index.js",
   "scripts": {
     "cmd:lint": "eslint .",
     "cmd:test": "cross-env NODE_ENV=test nyc mocha",
@@ -29,13 +30,24 @@
     "babel-plugin-istanbul": "^3.1.2",
     "babel-preset-env": "^1.1.8",
     "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "chokidar-cli": "^1.2.0",
     "coveralls": "^2.11.15",
     "cross-env": "^3.1.4",
     "eslint": "^3.14.1",
     "eslint-config-google": "^0.7.1",
+    "minimist": "^1.2.0",
     "mocha": "^3.2.0",
     "npm-run-all": "^4.0.1",
-    "nyc": "^10.1.2"
+    "nyc": "^10.1.2",
+    "sinon": "^1.17.7",
+    "sinon-chai": "^2.8.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.22.0",
+    "chokidar": "^1.6.1",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.4",
+    "uuid": "^3.0.1"
   }
 }
