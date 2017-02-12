@@ -4,13 +4,15 @@ import {
 } from './constants';
 import minimist from 'minimist';
 import alarmist from '.';
+import ui from './cli/ui';
 
 const commands = {
   [EXEC_CMD]: (args) => {
     return alarmist.exec(args);
   },
   [MONITOR_CMD]: (args) => {
-    return alarmist.createMonitor(args);
+    return alarmist.createMonitor(args)
+    .then(ui.createUi);
   },
 };
 

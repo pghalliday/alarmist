@@ -1,5 +1,6 @@
 import cli from '../../src/cli';
 import alarmist from '../../src';
+import ui from '../../src/cli/ui';
 import {
   EXEC_CMD,
   MONITOR_CMD,
@@ -31,15 +32,32 @@ describe('cli', () => {
   });
 
   describe(MONITOR_CMD, () => {
-    it('should create a monitor', async () => {
+    let createUi;
+    let createMonitor;
+    let monitor;
+
+    before(async () => {
+      const fnCreateUi = ui.createUi;
       const fnCreateMonitor = alarmist.createMonitor;
-      alarmist.createMonitor = sinon.spy();
+      createUi = sinon.spy();
+      ui.createUi = createUi;
+      monitor = 'monitor';
+      createMonitor = sinon.spy(() => Promise.resolve(monitor));
+      alarmist.createMonitor = createMonitor;
       await rimraf(WORKING_DIR);
       await cli([MONITOR_CMD, '-g', group]);
-      alarmist.createMonitor.should.have.been.calledWithMatch({
+      alarmist.createUi = fnCreateUi;
+      alarmist.createMonitor = fnCreateMonitor;
+    });
+
+    it('should create a monitor', async () => {
+      createMonitor.should.have.been.calledWithMatch({
         group,
       });
-      alarmist.createMonitor = fnCreateMonitor;
+    });
+
+    it('should create a ui', async () => {
+      createUi.should.have.been.calledWith(monitor);
     });
   });
 });
