@@ -38,14 +38,6 @@ export async function createJob({name}) {
   const stdoutStream = createWriteStream(path.join(reportDir, STDOUT_LOG));
   const stderrStream = createWriteStream(path.join(reportDir, STDERR_LOG));
   const allStream = createWriteStream(path.join(reportDir, ALL_LOG));
-  const stdoutStreamEmit = stdoutStream.emit.bind(stdoutStream);
-  stdoutStream.emit = (...args) => {
-    stdoutStreamEmit(...args);
-  };
-  const stdoutEmit = stdout.emit.bind(stdout);
-  stdout.emit = (...args) => {
-    stdoutEmit(...args);
-  };
   stdout.pipe(stdoutStream);
   stdout.pipe(allStream);
   stderr.pipe(stderrStream);
@@ -58,7 +50,7 @@ export async function createJob({name}) {
   return {
     stdout,
     stderr,
-    complete: async ({exitCode}) => {
+    exit: async (exitCode) => {
       stdout.end();
       stderr.end();
       await Promise.all(streamEndPromises);

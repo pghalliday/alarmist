@@ -1,7 +1,7 @@
 import * as Job from '../../../src/alarmist/job';
 import {
   exec,
-} from '../../../src/alarmist/exec.js';
+} from '../../../src/alarmist/job-exec.js';
 import {Writable} from 'stream';
 
 const name = 'name';
@@ -23,14 +23,14 @@ class TestWritable extends Writable {
 }
 
 describe('alarmist', () => {
-  describe('exec', () => {
+  describe('execJob', () => {
     let job;
     let createJob;
     before(async () => {
       job = {
         stdout: new TestWritable(),
         stderr: new TestWritable(),
-        complete: sinon.spy(() => Promise.resolve()),
+        exit: sinon.spy(() => Promise.resolve()),
       };
       createJob = sinon.spy(() => Promise.resolve(job));
       const fnCreateJob = Job.createJob;
@@ -57,7 +57,7 @@ describe('alarmist', () => {
     });
 
     it('should complete the job', () => {
-      job.complete.should.have.been.calledWith({exitCode});
+      job.exit.should.have.been.calledWith(exitCode);
     });
   });
 });

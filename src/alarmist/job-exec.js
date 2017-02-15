@@ -5,7 +5,7 @@ export async function exec({name, command}) {
   const job = await Job.createJob({name});
   await new Promise((resolve) => {
     const proc = cpExec(command).on('exit', async (exitCode) => {
-      await job.complete({exitCode});
+      await job.exit(exitCode);
       resolve();
     });
     proc.stdout.pipe(job.stdout);

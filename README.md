@@ -18,13 +18,13 @@ npm install --save-dev alarmist
 Execute a job
 
 ```
-alarmist exec -n name -c my-command
+alarmist-job -n name -c my-command
 ```
 
 Monitor jobs
 
 ```
-alarmist monitor
+alarmist-monitor -c my-watch-command
 ```
 
 ## API
@@ -65,7 +65,7 @@ job.complete({
 ### Execute a job
 
 ```javascript
-alarmist.exec({
+alarmist.execJob({
   name: 'name',
   command: 'my-command'
 }).then(function() {
@@ -73,12 +73,14 @@ alarmist.exec({
 });
 ```
 
-### Monitor jobs
+## Monitor jobs and excute a watcher
 
-Start a monitor
+Start a monitor and watcher process
 
 ```javascript
-alarmist.createMonitor()
+alarmist.execMonitor({
+  command: 'my-watcher-command'
+})
 .then(function(monitor) {
   ...
 });
@@ -109,11 +111,49 @@ monitor.on('complete', function(job) {
 });
 ```
 
+Listen for an `exit` event that signifies an error as the watcher process should not exit
+
+```javascript
+monitor.on('exit', function(code) {
+  console.log(code);
+});
+```
+
 Stop a monitor
 
 ```javascript
 monitor.close();
 ```
+
+### Monitor jobs with your own watcher
+
+Start a monitor
+
+```javascript
+alarmist.createMonitor()
+.then(function(monitor) {
+  // create and manage your watcher
+  ...
+});
+```
+
+Listen for job events as above
+
+Log stdout and stderr for your watcher process
+
+```javascript
+monitor.stdout.write('output');
+monitor.stderr.write('error');
+```
+
+Signal the exit of the watcher process (watcher processes aren't meant to exit so this is really signalling an error)
+
+```javascript
+// provide an exit code
+monitor.exit(1);
+```
+
+Listen for exit events and close the monitor as above
 
 ## Contributing
 

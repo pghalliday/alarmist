@@ -11,12 +11,13 @@ import {
 import path from 'path';
 import _rimraf from 'rimraf';
 import _mkdirp from 'mkdirp';
-import {writeFile as _writeFile} from 'fs';
+import {readFile as _readFile, writeFile as _writeFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 
 const rimraf = promisify(_rimraf);
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
+const readFile = promisify(_readFile);
 
 const name = 'name';
 const startTime = 1000000;
@@ -37,13 +38,18 @@ const stderrLog = path.join(reportDir, STDERR_LOG);
 const allLog = path.join(reportDir, ALL_LOG);
 const statusFile = path.join(reportDir, STATUS_FILE);
 
+const monitorStdoutLog = path.join(WORKING_DIR, STDOUT_LOG);
+const monitorStderrLog = path.join(WORKING_DIR, STDERR_LOG);
+const monitorAllLog = path.join(WORKING_DIR, ALL_LOG);
+
 describe('alarmist', () => {
   describe('createMonitor', () => {
+    let monitor;
     let startEvent;
     let completeEvent;
-    before(async () => {
+    beforeEach(async () => {
       await rimraf(WORKING_DIR);
-      const monitor = await createMonitor();
+      monitor = await createMonitor();
       await mkdirp(reportDir);
       await new Promise((resolve) => {
         monitor.on('start', async (event) => {
@@ -58,9 +64,8 @@ describe('alarmist', () => {
             endTime,
           }));
         });
-        monitor.on('complete', (event) => {
+        monitor.on('complete', async (event) => {
           completeEvent = event;
-          monitor.close();
           resolve();
         });
         writeFile(statusFile, JSON.stringify({
@@ -68,6 +73,14 @@ describe('alarmist', () => {
           startTime,
         }));
       });
+    });
+
+    it('should open a stdout stream', () => {
+      monitor.stdout.should.be.ok;
+    });
+
+    it('should open a stderr stream', () => {
+      monitor.stderr.should.be.ok;
     });
 
     it('should emit an event when a command is started', async () => {
@@ -88,6 +101,61 @@ describe('alarmist', () => {
         stdout,
         stderr,
         all,
+      });
+    });
+
+    describe('#exit', () => {
+      let exitEvent;
+      beforeEach(async () => {
+        await new Promise((resolve) => {
+          monitor.on('exit', (event) => {
+            exitEvent = event;
+            monitor.cleanup = sinon.spy(() => Promise.resolve());
+            monitor.close();
+            resolve();
+          });
+          monitor.stdout.write(stdout);
+          monitor.stderr.write(stderr);
+          monitor.exit(exitCode);
+        });
+      });
+
+      it('should write the stdout log', async () => {
+        const _stdout = await readFile(monitorStdoutLog);
+        _stdout[0].should.eql(stdout);
+      });
+
+      it('should write the stderr log', async () => {
+        const _stderr = await readFile(monitorStderrLog);
+        _stderr[0].should.eql(stderr);
+      });
+
+      it('should write the all log', async () => {
+        const _all = await readFile(monitorAllLog);
+        _all[0].should.eql(all);
+      });
+
+      it('should emit an exit event', async () => {
+        exitEvent.should.eql(exitCode);
+      });
+    });
+
+    describe('#close', () => {
+      describe('without a cleanup method', () => {
+        it('should be ok', async () => {
+          await monitor.close();
+        });
+      });
+
+      describe('with a cleanup method', () => {
+        beforeEach(async () => {
+          monitor.cleanup = sinon.spy(() => Promise.resolve());
+          await monitor.close();
+        });
+
+        it('should call the cleanup method', async () => {
+          monitor.cleanup.should.have.been.calledOnce;
+        });
       });
     });
   });

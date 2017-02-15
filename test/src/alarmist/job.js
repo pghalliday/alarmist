@@ -12,7 +12,7 @@ import {
 } from '../../../src/constants.js';
 import path from 'path';
 import _rimraf from 'rimraf';
-import {readFile as _readFile, writeFile as _writeFile} from 'fs';
+import {readFile as _readFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 import _id from '../../../src/utils/id';
 
@@ -70,15 +70,13 @@ describe('alarmist', () => {
       });
     });
 
-    describe('#complete', () => {
+    describe('#exit', () => {
       before(async () => {
         const fnNow = Date.now;
         Date.now = () => endTime;
         job.stdout.write(stdout);
         job.stderr.write(stderr);
-        await job.complete({
-          exitCode,
-        });
+        await job.exit(exitCode);
         Date.now = fnNow;
       });
 

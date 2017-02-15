@@ -6,7 +6,10 @@ describe('alarmist', () => {
   it('should export createMonitor', () => {
     alarmist.createMonitor.should.be.ok;
   });
-  it('should export exec', () => {
-    alarmist.exec.should.be.ok;
+  it('should export execJob', () => {
+    alarmist.execJob.should.be.ok;
+  });
+  it('should export execMonitor', () => {
+    alarmist.execMonitor.should.be.ok;
   });
 });

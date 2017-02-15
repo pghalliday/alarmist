@@ -1,9 +1,11 @@
 import {createJob} from './alarmist/job';
 import {createMonitor} from './alarmist/monitor';
-import {exec} from './alarmist/exec';
+import {exec as execJob} from './alarmist/job-exec';
+import {exec as execMonitor} from './alarmist/monitor-exec';
 
 module.exports = {
   createJob,
   createMonitor,
-  exec,
+  execJob,
+  execMonitor,
 };
