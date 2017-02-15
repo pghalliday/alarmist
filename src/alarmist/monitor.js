@@ -24,16 +24,15 @@ const readFile = promisify(_readFile);
 const workingDirRegExp = WORKING_DIR.replace('.', '\\.');
 const statusFileRegExp = STATUS_FILE.replace('.', '\\.');
 const statusPathRegExp = new RegExp(
-  `${workingDirRegExp}/.*/(.*)/(.*)/${statusFileRegExp}`
+  `${workingDirRegExp}/(.*)/(.*)/${statusFileRegExp}`
 );
 
-export async function createMonitor({group}) {
+export async function createMonitor() {
   const monitor = new EventEmitter();
-  const groupDir = path.join(WORKING_DIR, group);
-  await rimraf(groupDir);
-  await mkdirp(groupDir);
+  await rimraf(WORKING_DIR);
+  await mkdirp(WORKING_DIR);
   return new Promise((resolve) => {
-    const watcher = chokidar.watch(`${groupDir}/**`)
+    const watcher = chokidar.watch(`${WORKING_DIR}/**`)
     .on('ready', resolve.bind(null, monitor))
     .on('all', async (event, filePath) => {
       if (event === 'add' || event === 'change') {
@@ -52,7 +51,7 @@ export async function createMonitor({group}) {
               });
               break;
             case STATUS_COMPLETE:
-              const reportDir = path.join(groupDir, name, id);
+              const reportDir = path.join(WORKING_DIR, name, id);
               const stdout = await readFile(path.join(reportDir, STDOUT_LOG));
               const stderr = await readFile(path.join(reportDir, STDERR_LOG));
               const all = await readFile(path.join(reportDir, ALL_LOG));
@@ -66,7 +65,6 @@ export async function createMonitor({group}) {
                 stderr: stderr[0],
                 all: all[0],
               });
-              await rimraf(reportDir);
               break;
           }
         }

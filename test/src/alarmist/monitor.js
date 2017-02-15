@@ -18,7 +18,6 @@ const rimraf = promisify(_rimraf);
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-const group = 'group';
 const name = 'name';
 const startTime = 1000000;
 const endTime = 2000000;
@@ -30,7 +29,6 @@ const all = Buffer.concat([stdout, stderr]);
 
 const reportDir = path.join(
   WORKING_DIR,
-  group,
   name,
   id,
 );
@@ -45,9 +43,7 @@ describe('alarmist', () => {
     let completeEvent;
     before(async () => {
       await rimraf(WORKING_DIR);
-      const monitor = await createMonitor({
-        group,
-      });
+      const monitor = await createMonitor();
       await mkdirp(reportDir);
       await new Promise((resolve) => {
         monitor.on('start', async (event) => {

@@ -4,7 +4,6 @@ import {
 } from '../../../src/alarmist/exec.js';
 import {Writable} from 'stream';
 
-const group = 'group';
 const name = 'name';
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
@@ -37,7 +36,6 @@ describe('alarmist', () => {
       const fnCreateJob = Job.createJob;
       Job.createJob = createJob;
       await exec({
-        group,
         name,
         command,
       });
@@ -46,7 +44,6 @@ describe('alarmist', () => {
 
     it('should create a job', () => {
       createJob.should.have.been.calledWith({
-        group,
         name,
       });
     });

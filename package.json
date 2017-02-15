@@ -45,9 +45,14 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.22.0",
+    "blessed": "^0.1.81",
     "chokidar": "^1.6.1",
+    "lockfile": "^1.0.3",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
-    "rimraf": "^2.5.4",
-    "uuid": "^3.0.1"
+    "redux": "^3.6.0",
+    "redux-actions": "^1.2.1",
+    "redux-logger": "^2.8.1",
+    "rimraf": "^2.5.4"
   }
 }

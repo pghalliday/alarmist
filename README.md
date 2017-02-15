@@ -18,13 +18,13 @@ npm install --save-dev alarmist
 Execute a job
 
 ```
-alarmist exec -g group -n name -c my-command
+alarmist exec -n name -c my-command
 ```
 
-Monitor a group
+Monitor jobs
 
 ```
-alarmist monitor -g group
+alarmist monitor
 ```
 
 ## API
@@ -39,7 +39,6 @@ Create a job.
 
 ```javascript
 alarmist.createJob({
-  group: 'group',
   name: 'name'
 }).then(function(job) {
   ...
@@ -67,7 +66,6 @@ job.complete({
 
 ```javascript
 alarmist.exec({
-  group: 'group',
   name: 'name',
   command: 'my-command'
 }).then(function() {
@@ -75,14 +73,13 @@ alarmist.exec({
 });
 ```
 
-### Monitor a group
+### Monitor jobs
 
 Start a monitor
 
 ```javascript
-alarmist.createMonitor({
-  group: 'group'
-}).then(function(monitor) {
+alarmist.createMonitor()
+.then(function(monitor) {
   ...
 });
 ```

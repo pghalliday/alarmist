@@ -5,5 +5,6 @@ export const STDOUT_LOG = 'stdout.log';
 export const STDERR_LOG = 'stderr.log';
 export const ALL_LOG = 'all.log';
 export const STATUS_FILE = 'status.json';
+export const ID_FILE = 'id';
 export const STATUS_PENDING = 'pending';
 export const STATUS_COMPLETE = 'complete';

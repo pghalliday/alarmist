@@ -14,16 +14,15 @@ import path from 'path';
 import _rimraf from 'rimraf';
 import {readFile as _readFile, writeFile as _writeFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
-import uuid from 'uuid';
+import _id from '../../../src/utils/id';
 
 const rimraf = promisify(_rimraf);
 const readFile = promisify(_readFile);
 
-const group = 'group';
 const name = 'name';
 const startTime = 1000000;
 const endTime = 2000000;
-const id = 'jobId';
+const id = 'id';
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
@@ -31,7 +30,6 @@ const all = Buffer.concat([stdout, stderr]);
 
 const reportDir = path.join(
   WORKING_DIR,
-  group,
   name,
   id,
 );
@@ -46,15 +44,14 @@ describe('alarmist', () => {
     before(async () => {
       const fnNow = Date.now;
       Date.now = () => startTime;
-      const fnUuid = uuid.v1;
-      uuid.v1 = () => id;
+      const fnGetId = _id.getId;
+      _id.getId = sinon.spy(() => id);
       await rimraf(WORKING_DIR);
       job = await createJob({
-        group,
         name,
       });
-      uuid.v1 = fnUuid;
       Date.now = fnNow;
+      _id.getId = fnGetId;
     });
 
     it('should open a stdout stream', () => {

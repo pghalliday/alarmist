@@ -1,5 +1,6 @@
 import {
   WORKING_DIR,
+  ID_FILE,
   STATUS_FILE,
   STDOUT_LOG,
   STDERR_LOG,
@@ -14,15 +15,17 @@ import {
 } from 'fs';
 import path from 'path';
 import promisify from '../utils/promisify';
-import uuid from 'uuid';
 import {PassThrough} from 'stream';
+import _id from '../utils/id';
 
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-export async function createJob({group, name}) {
-  const id = uuid.v1();
-  const reportDir = path.join(WORKING_DIR, group, name, id);
+export async function createJob({name}) {
+  const jobDir = path.join(WORKING_DIR, name);
+  const idFile = path.join(jobDir, ID_FILE);
+  const id = await _id.getId(idFile);
+  const reportDir = path.join(jobDir, id);
   const statusFile = path.join(reportDir, STATUS_FILE);
   const startTime = Date.now();
   await mkdirp(reportDir);
