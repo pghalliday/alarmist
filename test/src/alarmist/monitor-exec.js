@@ -3,6 +3,17 @@ import {
   exec,
 } from '../../../src/alarmist/monitor-exec.js';
 import {Writable} from 'stream';
+import chokidar from 'chokidar';
+import path from 'path';
+import {
+  WORKING_DIR,
+} from '../../../src/constants';
+import promisify from '../../../src/utils/promisify';
+import _rimraf from 'rimraf';
+import _mkdirp from 'mkdirp';
+
+const rimraf = promisify(_rimraf);
+const mkdirp = promisify(_mkdirp);
 
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
@@ -23,13 +34,17 @@ class TestWritable extends Writable {
   }
 }
 
-function sleep(ms) {
+function waitForFile(file) {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms);
+    chokidar.watch(WORKING_DIR).on('add', (newFile) => {
+      if (newFile === file) {
+        resolve();
+      }
+    });
   });
 };
 
-describe('alarmist', () => {
+describe('alarmist', function() {
   describe('execMonitor', () => {
     describe('with a process that exits', () => {
       let monitor;
@@ -79,6 +94,8 @@ describe('alarmist', () => {
       let monitor;
       let createMonitor;
       before(async () => {
+        await rimraf(WORKING_DIR);
+        await mkdirp(WORKING_DIR);
         let execMonitor;
         const fnCreateMonitor = Monitor.createMonitor;
         monitor = {
@@ -90,10 +107,11 @@ describe('alarmist', () => {
         };
         createMonitor = sinon.spy(() => Promise.resolve(monitor));
         Monitor.createMonitor = createMonitor;
+        const waitPromise = waitForFile(path.join(WORKING_DIR, 'done'));
         execMonitor = await exec({
           command: livingCommand,
         });
-        await sleep(1000);
+        await waitPromise;
         await execMonitor.close();
         Monitor.createMonitor = fnCreateMonitor;
       });

@@ -28,9 +28,12 @@ const jobField1 = 'job field 1';
 const jobField2 = 'job field 2';
 const jobField3 = 'job field 3';
 
-const reportDir = path.join(
+const jobDir = path.join(
   WORKING_DIR,
   name,
+);
+const reportDir = path.join(
+  jobDir,
   id,
 );
 const statusFile = path.join(reportDir, STATUS_FILE);
@@ -44,20 +47,28 @@ describe('alarmist', () => {
     let monitor;
     let jobEvent;
     beforeEach(async () => {
+      console.log('1');
       await rimraf(WORKING_DIR);
+      console.log('2');
       monitor = await createMonitor();
+      console.log('3');
+      await mkdirp(jobDir);
+      console.log('3.5');
       await mkdirp(reportDir);
+      console.log('4');
       await new Promise((resolve) => {
         monitor.on('job', (event) => {
           jobEvent = event;
           resolve();
         });
+        console.log(statusFile);
         writeFile(statusFile, JSON.stringify({
           jobField1,
           jobField2,
           jobField3,
         }));
       });
+      console.log('5');
     });
 
     it('should open a stdout stream', async () => {
@@ -120,8 +131,25 @@ describe('alarmist', () => {
 
     describe('#close', () => {
       describe('without a cleanup method', () => {
-        it('should be ok', async () => {
+        beforeEach(async () => {
+          monitor.stdout.write(stdout);
+          monitor.stderr.write(stderr);
           await monitor.close();
+        });
+
+        it('should write the stdout log', async () => {
+          const _stdout = await readFile(monitorStdoutLog);
+          _stdout[0].should.eql(stdout);
+        });
+
+        it('should write the stderr log', async () => {
+          const _stderr = await readFile(monitorStderrLog);
+          _stderr[0].should.eql(stderr);
+        });
+
+        it('should write the all log', async () => {
+          const _all = await readFile(monitorAllLog);
+          _all[0].should.eql(all);
         });
       });
 
