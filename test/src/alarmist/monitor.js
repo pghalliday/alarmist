@@ -5,14 +5,13 @@ import {
   STDERR_LOG,
   ALL_LOG,
   STATUS_FILE,
-  STATUS_PENDING,
-  STATUS_COMPLETE,
 } from '../../../src/constants.js';
 import path from 'path';
 import _rimraf from 'rimraf';
 import _mkdirp from 'mkdirp';
 import {readFile as _readFile, writeFile as _writeFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
+import _ from 'lodash';
 
 const rimraf = promisify(_rimraf);
 const mkdirp = promisify(_mkdirp);
@@ -20,22 +19,20 @@ const writeFile = promisify(_writeFile);
 const readFile = promisify(_readFile);
 
 const name = 'name';
-const startTime = 1000000;
-const endTime = 2000000;
 const id = 'jobId';
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
 const all = Buffer.concat([stdout, stderr]);
+const jobField1 = 'job field 1';
+const jobField2 = 'job field 2';
+const jobField3 = 'job field 3';
 
 const reportDir = path.join(
   WORKING_DIR,
   name,
   id,
 );
-const stdoutLog = path.join(reportDir, STDOUT_LOG);
-const stderrLog = path.join(reportDir, STDERR_LOG);
-const allLog = path.join(reportDir, ALL_LOG);
 const statusFile = path.join(reportDir, STATUS_FILE);
 
 const monitorStdoutLog = path.join(WORKING_DIR, STDOUT_LOG);
@@ -45,63 +42,43 @@ const monitorAllLog = path.join(WORKING_DIR, ALL_LOG);
 describe('alarmist', () => {
   describe('createMonitor', () => {
     let monitor;
-    let startEvent;
-    let completeEvent;
+    let jobEvent;
     beforeEach(async () => {
       await rimraf(WORKING_DIR);
       monitor = await createMonitor();
       await mkdirp(reportDir);
       await new Promise((resolve) => {
-        monitor.on('start', async (event) => {
-          startEvent = event;
-          await writeFile(stdoutLog, stdout);
-          await writeFile(stderrLog, stderr);
-          await writeFile(allLog, stdout + stderr);
-          writeFile(statusFile, JSON.stringify({
-            status: STATUS_COMPLETE,
-            exitCode,
-            startTime,
-            endTime,
-          }));
-        });
-        monitor.on('complete', async (event) => {
-          completeEvent = event;
+        monitor.on('job', (event) => {
+          jobEvent = event;
           resolve();
         });
         writeFile(statusFile, JSON.stringify({
-          status: STATUS_PENDING,
-          startTime,
+          jobField1,
+          jobField2,
+          jobField3,
         }));
       });
     });
 
-    it('should open a stdout stream', () => {
+    it('should open a stdout stream', async () => {
       monitor.stdout.should.be.ok;
+      await monitor.close();
     });
 
-    it('should open a stderr stream', () => {
+    it('should open a stderr stream', async () => {
       monitor.stderr.should.be.ok;
+      await monitor.close();
     });
 
-    it('should emit an event when a command is started', async () => {
-      startEvent.should.eql({
+    it('should emit events when jobs are updated', async () => {
+      jobEvent.should.eql({
         name,
         id,
-        startTime,
+        jobField1,
+        jobField2,
+        jobField3,
       });
-    });
-
-    it('should emit an event when a command completes', async () => {
-      completeEvent.should.eql({
-        name,
-        id,
-        exitCode,
-        startTime,
-        endTime,
-        stdout,
-        stderr,
-        all,
-      });
+      await monitor.close();
     });
 
     describe('#exit', () => {
@@ -118,6 +95,7 @@ describe('alarmist', () => {
           monitor.stderr.write(stderr);
           monitor.exit(exitCode);
         });
+        await monitor.close();
       });
 
       it('should write the stdout log', async () => {

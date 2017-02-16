@@ -6,76 +6,48 @@ import {
 let jobs;
 
 const name = 'job name';
-const id = 'job id';
-const startTime = 2;
-const earlierStartTime = 1;
-const laterStartTime = 3;
+const id = 2;
+const earlierId = 1;
+const laterId = 3;
 
 const otherName = 'other job name';
-const otherId = 'other job id';
-const otherStartTime = 4;
+const otherId = 1;
 
 const job = {
   name,
   id,
-  startTime,
 };
 
 const earlierJob = {
   name,
-  id: otherId,
-  startTime: earlierStartTime,
+  id: earlierId,
 };
 
 const laterJob = {
   name,
-  id: otherId,
-  startTime: laterStartTime,
+  id: laterId,
 };
 
 const otherJob = {
   name: otherName,
   id: otherId,
-  startTime: otherStartTime,
-};
-
-const firstJob = {
-  name,
-  id,
-  startTime,
-  selected: true,
-  expanded: false,
-};
-
-const laterFirstJob = {
-  name,
-  id: otherId,
-  startTime: laterStartTime,
-  selected: true,
-  expanded: false,
-};
-
-const secondJob = {
-  name: otherName,
-  id: otherId,
-  startTime: otherStartTime,
-  selected: false,
-  expanded: false,
 };
 
 describe('cli', () => {
   describe('state', () => {
     describe('actions', () => {
-      describe('startJob', () => {
+      describe('updateJob', () => {
         describe('with an empty state', () => {
           before(() => {
             store.dispatch(actions.reset());
-            store.dispatch(actions.startJob(job));
+            store.dispatch(actions.updateJob(job));
             jobs = store.getState();
           });
 
           it('should add the first job', () => {
-            jobs.should.eql([firstJob]);
+            jobs.should.eql([
+              job,
+            ]);
           });
         });
 
@@ -83,46 +55,46 @@ describe('cli', () => {
           describe('and a new job name', () => {
             before(() => {
               store.dispatch(actions.reset());
-              store.dispatch(actions.startJob(job));
-              store.dispatch(actions.startJob(otherJob));
+              store.dispatch(actions.updateJob(job));
+              store.dispatch(actions.updateJob(otherJob));
               jobs = store.getState();
             });
 
             it('should add a second job', () => {
               jobs.should.eql([
-                firstJob,
-                secondJob,
+                job,
+                otherJob,
               ]);
             });
           });
 
           describe('and an existing job name', () => {
-            describe('and an earlier start time', () => {
+            describe('and an earlier id', () => {
               before(() => {
                 store.dispatch(actions.reset());
-                store.dispatch(actions.startJob(job));
-                store.dispatch(actions.startJob(earlierJob));
+                store.dispatch(actions.updateJob(job));
+                store.dispatch(actions.updateJob(earlierJob));
                 jobs = store.getState();
               });
 
               it('should not change anything', () => {
                 jobs.should.eql([
-                  firstJob,
+                  job,
                 ]);
               });
             });
 
-            describe('and a later start time', () => {
+            describe('and a later id', () => {
               before(() => {
                 store.dispatch(actions.reset());
-                store.dispatch(actions.startJob(job));
-                store.dispatch(actions.startJob(laterJob));
+                store.dispatch(actions.updateJob(job));
+                store.dispatch(actions.updateJob(laterJob));
                 jobs = store.getState();
               });
 
               it('should replace the job', () => {
                 jobs.should.eql([
-                  laterFirstJob,
+                  laterJob,
                 ]);
               });
             });

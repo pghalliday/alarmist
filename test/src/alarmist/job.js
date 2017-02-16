@@ -7,8 +7,6 @@ import {
   STDERR_LOG,
   ALL_LOG,
   STATUS_FILE,
-  STATUS_PENDING,
-  STATUS_COMPLETE,
 } from '../../../src/constants.js';
 import path from 'path';
 import _rimraf from 'rimraf';
@@ -65,7 +63,6 @@ describe('alarmist', () => {
     it('should report pending', async () => {
       const status = await readFile(statusFile);
       JSON.parse(status[0]).should.eql({
-        status: STATUS_PENDING,
         startTime,
       });
     });
@@ -98,7 +95,6 @@ describe('alarmist', () => {
       it('should report complete', async () => {
         const status = await readFile(statusFile);
         JSON.parse(status[0]).should.eql({
-          status: STATUS_COMPLETE,
           exitCode,
           endTime,
           startTime,

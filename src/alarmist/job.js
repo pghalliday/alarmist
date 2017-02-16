@@ -5,8 +5,6 @@ import {
   STDOUT_LOG,
   STDERR_LOG,
   ALL_LOG,
-  STATUS_PENDING,
-  STATUS_COMPLETE,
 } from '../constants';
 import _mkdirp from 'mkdirp';
 import {
@@ -30,7 +28,6 @@ export async function createJob({name}) {
   const startTime = Date.now();
   await mkdirp(reportDir);
   await writeFile(statusFile, JSON.stringify({
-    status: STATUS_PENDING,
     startTime,
   }));
   const stdout = new PassThrough();
@@ -55,7 +52,6 @@ export async function createJob({name}) {
       stderr.end();
       await Promise.all(streamEndPromises);
       await writeFile(statusFile, JSON.stringify({
-        status: STATUS_COMPLETE,
         exitCode,
         startTime,
         endTime: Date.now(),

@@ -73,7 +73,7 @@ alarmist.execJob({
 });
 ```
 
-## Monitor jobs and excute a watcher
+## Monitor jobs and execute a watcher
 
 Start a monitor and watcher process
 
