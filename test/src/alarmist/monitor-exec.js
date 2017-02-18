@@ -36,8 +36,9 @@ class TestWritable extends Writable {
 
 function waitForFile(file) {
   return new Promise((resolve) => {
-    chokidar.watch(WORKING_DIR).on('add', (newFile) => {
+    const watcher = chokidar.watch(WORKING_DIR).on('add', (newFile) => {
       if (newFile === file) {
+        watcher.close();
         resolve();
       }
     });

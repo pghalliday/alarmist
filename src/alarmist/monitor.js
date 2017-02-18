@@ -79,5 +79,6 @@ export async function createMonitor() {
     await endStreams();
     monitor.emit('exit', code);
   };
+  await new Promise((resolve) => watcher.on('ready', resolve));
   return monitor;
 }
