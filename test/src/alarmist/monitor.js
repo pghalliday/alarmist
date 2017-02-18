@@ -47,28 +47,20 @@ describe('alarmist', () => {
     let monitor;
     let jobEvent;
     beforeEach(async () => {
-      console.log('1');
       await rimraf(WORKING_DIR);
-      console.log('2');
       monitor = await createMonitor();
-      console.log('3');
-      await mkdirp(jobDir);
-      console.log('3.5');
       await mkdirp(reportDir);
-      console.log('4');
       await new Promise((resolve) => {
         monitor.on('job', (event) => {
           jobEvent = event;
           resolve();
         });
-        console.log(statusFile);
         writeFile(statusFile, JSON.stringify({
           jobField1,
           jobField2,
           jobField3,
         }));
       });
-      console.log('5');
     });
 
     it('should open a stdout stream', async () => {

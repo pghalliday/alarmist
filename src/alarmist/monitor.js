@@ -33,7 +33,6 @@ export async function createMonitor() {
   await rimraf(WORKING_DIR);
   await mkdirp(WORKING_DIR);
   const emitJob = async (filePath) => {
-    console.log(filePath);
     const match = statusPathRegExp.exec(filePath);
     const name = match[1];
     const id = match[2];
@@ -80,6 +79,5 @@ export async function createMonitor() {
     await endStreams();
     monitor.emit('exit', code);
   };
-  await new Promise((resolve) => watcher.on('ready', resolve));
   return monitor;
 }
