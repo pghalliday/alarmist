@@ -13,6 +13,11 @@ import _rimraf from 'rimraf';
 import {readFile as _readFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 import _id from '../../../src/utils/id';
+import {
+  capture,
+  flush,
+  restore,
+} from '../../helpers/std-streams';
 
 const rimraf = promisify(_rimraf);
 const readFile = promisify(_readFile);
@@ -68,18 +73,36 @@ describe('alarmist', () => {
     });
 
     describe('#exit', () => {
+      let processStdout;
+      let processStderr;
       before(async () => {
         const fnNow = Date.now;
         Date.now = () => endTime;
-        job.stdout.write(stdout);
-        job.stderr.write(stderr);
-        await job.exit(exitCode);
-        Date.now = fnNow;
+        capture();
+        try {
+          job.stdout.write(stdout);
+          job.stderr.write(stderr);
+          await job.exit(exitCode);
+          [processStdout, processStderr] = flush();
+        } catch (error) {
+          throw(error);
+        } finally {
+          Date.now = fnNow;
+          restore();
+        }
+      });
+
+      it('should write stdout to the console', async () => {
+        processStdout.should.eql(stdout);
       });
 
       it('should write the stdout log', async () => {
         const _stdout = await readFile(stdoutLog);
         _stdout[0].should.eql(stdout);
+      });
+
+      it('should write stderr to the console', async () => {
+        processStderr.should.eql(stderr);
       });
 
       it('should write the stderr log', async () => {

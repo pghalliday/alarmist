@@ -86,28 +86,25 @@ alarmist.execMonitor({
 });
 ```
 
-Listen for start events
+Listen for update events when jobs start
 
 ```javascript
-monitor.on('start', function(job) {
+monitor.on('update', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
 });
 ```
 
-Listen for complete events
+Listen for update events when jobs end
 
 ```javascript
-monitor.on('complete', function(job) {
+monitor.on('update', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
   console.log(job.endTime);
   console.log(job.exitCode);
-  console.log(job.stdout);
-  console.log(job.stderr);
-  console.log(job.all);
 });
 ```
 

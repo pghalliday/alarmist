@@ -4,9 +4,9 @@ import {
 import EventEmitter from 'events';
 import {
   capture,
-  restore,
   flush,
-} from '../../helpers/stdout';
+  restore,
+} from '../../helpers/std-streams';
 
 const monitor = new EventEmitter();
 const id = 'id';
@@ -39,7 +39,7 @@ describe('cli', () => {
           name,
           startTime,
         });
-        flush().should.eql(
+        flush()[0].should.eql(
           Buffer.from(`${name}: ${id}: started: ${startTime}\n`)
         );
       });
@@ -55,7 +55,7 @@ describe('cli', () => {
           stderr,
           all,
         });
-        flush().should.eql(
+        flush()[0].should.eql(
           Buffer.from(
             `${all}\n${name}: ${id}: completed: ${endTime}: ${exitCode}\n`
           )

@@ -37,8 +37,10 @@ export async function createJob({name}) {
   const allStream = createWriteStream(path.join(reportDir, ALL_LOG));
   stdout.pipe(stdoutStream);
   stdout.pipe(allStream);
+  stdout.pipe(process.stdout);
   stderr.pipe(stderrStream);
   stderr.pipe(allStream);
+  stderr.pipe(process.stderr);
   const streamEndPromises = [
     new Promise((resolve) => stdoutStream.on('close', resolve)),
     new Promise((resolve) => stderrStream.on('close', resolve)),
