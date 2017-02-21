@@ -3,7 +3,10 @@
   "version": "1.0.1",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
-  "bin": "bin/index.js",
+  "bin": {
+    "alarmist-job": "bin/job.js",
+    "alarmist-monitor": "bin/monitor.js"
+  },
   "scripts": {
     "cmd:lint": "eslint .",
     "cmd:test": "cross-env NODE_ENV=test nyc mocha",

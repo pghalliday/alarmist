@@ -51,7 +51,7 @@ describe('alarmist', () => {
       monitor = await createMonitor();
       await mkdirp(reportDir);
       await new Promise((resolve) => {
-        monitor.on('job', (event) => {
+        monitor.on('update', (event) => {
           jobEvent = event;
           resolve();
         });

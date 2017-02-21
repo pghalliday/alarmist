@@ -14,9 +14,6 @@ const name = 'name';
 const startTime = 1000000;
 const endTime = 2000000;
 const exitCode = 0;
-const stdout = 'stdout';
-const stderr = 'stderr';
-const all = stdout + stderr;
 
 describe('cli', () => {
   describe('ui', () => {
@@ -33,8 +30,15 @@ describe('cli', () => {
         restore();
       });
 
+      it('should report the monitor process exit', () => {
+        monitor.emit('exit', exitCode);
+        flush()[0].should.eql(
+          Buffer.from(`exit: ${exitCode}\n`)
+        );
+      });
+
       it('should report job starts', () => {
-        monitor.emit('start', {
+        monitor.emit('update', {
           id,
           name,
           startTime,
@@ -45,19 +49,16 @@ describe('cli', () => {
       });
 
       it('should report job completes', () => {
-        monitor.emit('complete', {
+        monitor.emit('update', {
           id,
           name,
           startTime,
           endTime,
           exitCode,
-          stdout,
-          stderr,
-          all,
         });
         flush()[0].should.eql(
           Buffer.from(
-            `${all}\n${name}: ${id}: completed: ${endTime}: ${exitCode}\n`
+            `${name}: ${id}: completed: ${endTime}: ${exitCode}\n`
           )
         );
       });

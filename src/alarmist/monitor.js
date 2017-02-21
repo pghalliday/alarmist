@@ -42,7 +42,7 @@ export async function createMonitor() {
       name,
       id,
     });
-    monitor.emit('job', event);
+    monitor.emit('update', event);
   };
   const watcher = chokidar.watch(`${WORKING_DIR}/*/*/${STATUS_FILE}`)
   .on('add', emitJob)

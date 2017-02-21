@@ -25,7 +25,7 @@ const readFile = promisify(_readFile);
 const name = 'name';
 const startTime = 1000000;
 const endTime = 2000000;
-const id = 'id';
+const id = 1;
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
@@ -34,7 +34,7 @@ const all = Buffer.concat([stdout, stderr]);
 const reportDir = path.join(
   WORKING_DIR,
   name,
-  id,
+  '' + id,
 );
 const stdoutLog = path.join(reportDir, STDOUT_LOG);
 const stderrLog = path.join(reportDir, STDERR_LOG);

@@ -23,7 +23,7 @@ export async function createJob({name}) {
   const jobDir = path.join(WORKING_DIR, name);
   const idFile = path.join(jobDir, ID_FILE);
   const id = await _id.getId(idFile);
-  const reportDir = path.join(jobDir, id);
+  const reportDir = path.join(jobDir, '' + id);
   const statusFile = path.join(reportDir, STATUS_FILE);
   const startTime = Date.now();
   await mkdirp(reportDir);

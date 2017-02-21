@@ -1,10 +1,14 @@
 function createUi(monitor) {
   monitor
-  .on('start', ({id, name, startTime}) => {
-    console.log(`${name}: ${id}: started: ${startTime}`);
+  .on('exit', (code) => {
+    console.log(`exit: ${code}`);
   })
-  .on('complete', ({id, name, endTime, exitCode, all}) => {
-    console.log(`${all}\n${name}: ${id}: completed: ${endTime}: ${exitCode}`);
+  .on('update', ({id, name, startTime, endTime, exitCode}) => {
+    if (endTime) {
+      console.log(`${name}: ${id}: completed: ${endTime}: ${exitCode}`);
+    } else {
+      console.log(`${name}: ${id}: started: ${startTime}`);
+    }
   });
 };
 
