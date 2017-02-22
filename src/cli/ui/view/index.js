@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import blessed from 'blessed';
 import {createLayout} from './layout';
+import {createMonitor} from './monitor';
 
 // istanbul ignore next
 function createView(store) {
@@ -10,24 +11,8 @@ function createView(store) {
   screen.title = 'alarmist';
   screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
   const layout = createLayout(screen);
+  const monitor = createMonitor(layout);
   const jobs = {};
-  const monitor = blessed.text({
-    left: 2,
-    content: ' monitor: ok',
-    width: '100%',
-    height: 1,
-    style: {
-      fg: 'black',
-      bg: 'green',
-    },
-  });
-  layout.append(monitor);
-  function updateMonitor(state) {
-    if (state.exitCode) {
-      monitor.content = ` monitor: exited: ${state.exitCode}`;
-      monitor.style.bg = 'red';
-    }
-  }
   function updateJobs(state) {
     // eslint-disable-next-line max-len
     const jobContent = (status) => ` ${status.name}: ${status.id}: ${_.isUndefined(status.exitCode) ? 'pending' : status.exitCode}`;
@@ -62,7 +47,7 @@ function createView(store) {
   }
   const update = () => {
     const state = store.getState();
-    updateMonitor(state.monitor);
+    monitor.update(state.monitor);
     updateJobs(state.jobs);
     layout.apply();
     screen.render();
