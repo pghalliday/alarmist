@@ -1,15 +1,24 @@
 import _ from 'lodash';
+import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {
   reset,
-  updateJob,
+  exit,
+  update,
 } from './actions';
+
+const initialMonitor = {};
+
+const monitor= handleActions({
+  [reset]: () => initialMonitor,
+  [exit]: (monitor, {payload}) => ({exitCode: payload}),
+}, initialMonitor);
 
 const initialJobs = [];
 
-export default handleActions({
+const jobs = handleActions({
   [reset]: () => initialJobs,
-  [updateJob]: (jobs, {payload}) => {
+  [update]: (jobs, {payload}) => {
     const index = _.findIndex(jobs, {name: payload.name});
     if (index !== -1) {
       const existingJob = jobs[index];
@@ -28,3 +37,8 @@ export default handleActions({
     );
   },
 }, initialJobs);
+
+export default combineReducers({
+  monitor,
+  jobs,
+});

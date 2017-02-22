@@ -1,15 +1,11 @@
+import store from './redux/store';
+import {createService} from './service';
+import {createView} from './view';
+
+// istanbul ignore next
 function createUi(monitor) {
-  monitor
-  .on('exit', (code) => {
-    console.log(`exit: ${code}`);
-  })
-  .on('update', ({id, name, startTime, endTime, exitCode}) => {
-    if (endTime) {
-      console.log(`${name}: ${id}: completed: ${endTime}: ${exitCode}`);
-    } else {
-      console.log(`${name}: ${id}: started: ${startTime}`);
-    }
-  });
+  createService(monitor, store);
+  createView(store);
 };
 
 module.exports = {
