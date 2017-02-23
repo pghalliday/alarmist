@@ -34,6 +34,19 @@ const otherJob = {
   id: otherId,
 };
 
+const oneJob = {
+  [name]: job,
+};
+
+const oneLaterJob = {
+  [name]: laterJob,
+};
+
+const twoJobs = {
+  [name]: job,
+  [otherName]: otherJob,
+};
+
 describe('cli', () => {
   describe('ui', () => {
     describe('redux', () => {
@@ -46,9 +59,7 @@ describe('cli', () => {
           });
 
           it('should add the first job', () => {
-            jobs.should.eql([
-              job,
-            ]);
+            jobs.should.eql(oneJob);
           });
         });
 
@@ -62,10 +73,7 @@ describe('cli', () => {
             });
 
             it('should add a second job', () => {
-              jobs.should.eql([
-                job,
-                otherJob,
-              ]);
+              jobs.should.eql(twoJobs);
             });
           });
 
@@ -79,9 +87,7 @@ describe('cli', () => {
               });
 
               it('should not change anything', () => {
-                jobs.should.eql([
-                  job,
-                ]);
+                jobs.should.eql(oneJob);
               });
             });
 
@@ -94,9 +100,7 @@ describe('cli', () => {
               });
 
               it('should replace the job', () => {
-                jobs.should.eql([
-                  laterJob,
-                ]);
+                jobs.should.eql(oneLaterJob);
               });
             });
           });

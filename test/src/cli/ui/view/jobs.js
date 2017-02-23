@@ -17,6 +17,20 @@ const updatedStatus = {
   name: 'name',
 };
 
+const newJob = {
+  name: status,
+};
+
+const anotherNewJob = {
+  name: status,
+  anothername: anotherStatus,
+};
+
+const updatedJob = {
+  name: updatedStatus,
+  anothername: anotherStatus,
+};
+
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
@@ -32,9 +46,7 @@ describe('cli', () => {
               job.update.reset();
               const fnCreateJob = Job.createJob;
               Job.createJob = createJob;
-              jobs.update([
-                status,
-              ]);
+              jobs.update(newJob);
               Job.createJob = fnCreateJob;
             });
 
@@ -58,10 +70,7 @@ describe('cli', () => {
                 job.update.reset();
                 const fnCreateJob = Job.createJob;
                 Job.createJob = createJob;
-                jobs.update([
-                  status,
-                  anotherStatus,
-                ]);
+                jobs.update(anotherNewJob);
                 Job.createJob = fnCreateJob;
               });
 
@@ -85,10 +94,7 @@ describe('cli', () => {
                   job.update.reset();
                   const fnCreateJob = Job.createJob;
                   Job.createJob = createJob;
-                  jobs.update([
-                    updatedStatus,
-                    anotherStatus,
-                  ]);
+                  jobs.update(updatedJob);
                   Job.createJob = fnCreateJob;
                 });
 

@@ -14,27 +14,19 @@ const monitor= handleActions({
   [exit]: (monitor, {payload}) => ({exitCode: payload}),
 }, initialMonitor);
 
-const initialJobs = [];
+const initialJobs = {};
 
 const jobs = handleActions({
   [reset]: () => initialJobs,
   [update]: (jobs, {payload}) => {
-    const index = _.findIndex(jobs, {name: payload.name});
-    if (index !== -1) {
-      const existingJob = jobs[index];
-      if (existingJob.id > payload.id) {
-        return jobs;
-      }
-      return _.concat(
-        jobs.slice(0, index),
-        Object.assign({}, payload),
-        jobs.slice(index + 1),
-      );
+    const name = payload.name;
+    const existing = jobs[name];
+    if (!_.isUndefined(existing) && existing.id > payload.id) {
+      return jobs;
     }
-    return _.concat(
-      jobs,
-      Object.assign({}, payload),
-    );
+    return Object.assign({}, jobs, {
+      [name]: payload,
+    });
   },
 }, initialJobs);
 

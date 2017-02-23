@@ -5,11 +5,11 @@ export function createJobs(layout) {
   const jobs = {};
   return {
     update: (state) => {
-      for (let status of state) {
-        const existing = jobs[status.name];
+      _.forOwn(state, (status, name) => {
+        const existing = jobs[name];
         if (_.isUndefined(existing)) {
           const job = createJob(layout);
-          jobs[status.name] = {
+          jobs[name] = {
             job: job,
             status: status,
           };
@@ -19,7 +19,7 @@ export function createJobs(layout) {
             existing.job.update(status);
           }
         }
-      }
+      });
     },
   };
 }
