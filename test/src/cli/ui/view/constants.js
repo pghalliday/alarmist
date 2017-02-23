@@ -16,6 +16,16 @@ describe('cli', () => {
             });
           });
         });
+
+        describe('SELECTED_INDICATOR_PROPERTIES', () => {
+          it('should define the selected indicator properties', () => {
+            constants.SELECTED_INDICATOR_PROPERTIES.should.eql({
+              left: 0,
+              height: 1,
+              content: '\u25ba',
+            });
+          });
+        });
       });
     });
   });

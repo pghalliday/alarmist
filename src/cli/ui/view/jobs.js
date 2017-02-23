@@ -8,7 +8,7 @@ export function createJobs(layout) {
       _.forOwn(state, (status, name) => {
         const existing = jobs[name];
         if (_.isUndefined(existing)) {
-          const job = createJob(layout);
+          const job = createJob(name, layout);
           jobs[name] = {
             job: job,
             status: status,

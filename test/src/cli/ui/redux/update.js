@@ -3,8 +3,15 @@ import {
   reset,
   update,
 } from '../../../../../src/cli/ui/redux/actions';
+import {
+  MONITOR_LABEL,
+} from '../../../../../src/cli/ui/constants';
+import {
+  jobLabel,
+} from '../../../../../src/cli/ui/helpers';
 
 let jobs;
+let lines;
 
 const name = 'job name';
 const id = 2;
@@ -55,11 +62,20 @@ describe('cli', () => {
           before(() => {
             store.dispatch(reset());
             store.dispatch(update(job));
-            jobs = store.getState().jobs;
+            const state = store.getState();
+            jobs = state.jobs;
+            lines = state.layout.lines;
           });
 
           it('should add the first job', () => {
             jobs.should.eql(oneJob);
+          });
+
+          it('should add to the layout lines', () => {
+            lines.should.eql([
+              MONITOR_LABEL,
+              jobLabel(name),
+            ]);
           });
         });
 
@@ -69,11 +85,21 @@ describe('cli', () => {
               store.dispatch(reset());
               store.dispatch(update(job));
               store.dispatch(update(otherJob));
-              jobs = store.getState().jobs;
+              const state = store.getState();
+              jobs = state.jobs;
+              lines = state.layout.lines;
             });
 
             it('should add a second job', () => {
               jobs.should.eql(twoJobs);
+            });
+
+            it('should add another job to the layout lines', () => {
+              lines.should.eql([
+                MONITOR_LABEL,
+                jobLabel(name),
+                jobLabel(otherName),
+              ]);
             });
           });
 
@@ -83,11 +109,20 @@ describe('cli', () => {
                 store.dispatch(reset());
                 store.dispatch(update(job));
                 store.dispatch(update(earlierJob));
-                jobs = store.getState().jobs;
+                const state = store.getState();
+                jobs = state.jobs;
+                lines = state.layout.lines;
               });
 
-              it('should not change anything', () => {
+              it('should not change the jobs', () => {
                 jobs.should.eql(oneJob);
+              });
+
+              it('should not change the layout lines', () => {
+                lines.should.eql([
+                  MONITOR_LABEL,
+                  jobLabel(name),
+                ]);
               });
             });
 
@@ -96,11 +131,20 @@ describe('cli', () => {
                 store.dispatch(reset());
                 store.dispatch(update(job));
                 store.dispatch(update(laterJob));
-                jobs = store.getState().jobs;
+                const state = store.getState();
+                jobs = state.jobs;
+                lines = state.layout.lines;
               });
 
               it('should replace the job', () => {
                 jobs.should.eql(oneLaterJob);
+              });
+
+              it('should not change the layout lines', () => {
+                lines.should.eql([
+                  MONITOR_LABEL,
+                  jobLabel(name),
+                ]);
               });
             });
           });

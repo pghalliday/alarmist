@@ -3,6 +3,9 @@ import {createMonitor} from '../../../../../src/cli/ui/view/monitor';
 import {
   TEXT_PROPERTIES,
 } from '../../../../../src/cli/ui/view/constants';
+import {
+  MONITOR_LABEL,
+} from '../../../../../src/cli/ui/constants';
 
 let monitor;
 
@@ -30,6 +33,7 @@ describe('cli', () => {
 
         it('should append the element to the layout', () => {
           layout.append.should.have.been.calledWith(
+            MONITOR_LABEL,
             sinon.match.same(element)
           );
         });

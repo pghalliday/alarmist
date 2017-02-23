@@ -3,6 +3,9 @@ import {createJob} from '../../../../../src/cli/ui/view/job';
 import {
   TEXT_PROPERTIES,
 } from '../../../../../src/cli/ui/view/constants';
+import {
+  jobLabel,
+} from '../../../../../src/cli/ui/helpers';
 
 let job;
 
@@ -11,6 +14,8 @@ const text = sinon.spy(() => element);
 const layout = {
   append: sinon.spy(),
 };
+const name = 'name';
+const id = 0;
 
 describe('cli', () => {
   describe('ui', () => {
@@ -20,7 +25,7 @@ describe('cli', () => {
           const fnText = blessed.text;
           text.reset();
           blessed.text = text;
-          job = createJob(layout);
+          job = createJob(name, layout);
           blessed.text = fnText;
         });
 
@@ -30,6 +35,7 @@ describe('cli', () => {
 
         it('should append the element to the layout', () => {
           layout.append.should.have.been.calledWith(
+            jobLabel(name),
             sinon.match.same(element)
           );
         });
@@ -38,8 +44,8 @@ describe('cli', () => {
           describe('without an exit code', () => {
             before(() => {
               job.update({
-                name: 'name',
-                id: 'id',
+                name,
+                id,
               });
             });
 
@@ -48,15 +54,15 @@ describe('cli', () => {
             });
 
             it('should display the name, id and pending', () => {
-              element.content.should.eql(' name: id: pending');
+              element.content.should.eql(` ${name}: ${id}: pending`);
             });
           });
 
           describe('without a zero exit code', () => {
             before(() => {
               job.update({
-                name: 'name',
-                id: 'id',
+                name,
+                id,
                 exitCode: 0,
               });
             });
@@ -66,15 +72,15 @@ describe('cli', () => {
             });
 
             it('should display the name, id and exit code', () => {
-              element.content.should.eql(' name: id: 0');
+              element.content.should.eql(` ${name}: ${id}: 0`);
             });
           });
 
           describe('with a non-zero exit code', () => {
             before(() => {
               job.update({
-                name: 'name',
-                id: 'id',
+                name,
+                id,
                 exitCode: 1,
               });
             });
@@ -84,7 +90,7 @@ describe('cli', () => {
             });
 
             it('should display the name, id and exit code', () => {
-              element.content.should.eql(' name: id: 1');
+              element.content.should.eql(` ${name}: ${id}: 1`);
             });
           });
         });

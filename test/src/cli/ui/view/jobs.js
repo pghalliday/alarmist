@@ -7,28 +7,30 @@ const job = {
   update: sinon.spy(),
 };
 const createJob = sinon.spy(() => job);
+
+const name = 'name';
+const anotherName = 'anotherName';
+
 const status = {
-  name: 'name',
+  name,
 };
 const anotherStatus = {
-  name: 'anotherName',
+  name: anotherName,
 };
 const updatedStatus = {
-  name: 'name',
+  name,
 };
 
 const newJob = {
-  name: status,
+  [name]: status,
 };
-
 const anotherNewJob = {
-  name: status,
-  anothername: anotherStatus,
+  [name]: status,
+  [anotherName]: anotherStatus,
 };
-
 const updatedJob = {
-  name: updatedStatus,
-  anothername: anotherStatus,
+  [name]: updatedStatus,
+  [anotherName]: anotherStatus,
 };
 
 describe('cli', () => {
@@ -53,6 +55,7 @@ describe('cli', () => {
             it('should create a new job', () => {
               createJob.should.have.been.calledOnce;
               createJob.should.have.been.calledWith(
+                name,
                 sinon.match.same(layout)
               );
             });
@@ -77,6 +80,7 @@ describe('cli', () => {
               it('should create a new job', () => {
                 createJob.should.have.been.calledOnce;
                 createJob.should.have.been.calledWith(
+                  anotherName,
                   sinon.match.same(layout)
                 );
               });
