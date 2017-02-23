@@ -13,6 +13,7 @@ function createEntry(label, layout) {
   let tail;
   const onLine = (data) => {
     log.log(data);
+    log.render();
   };
   layout.append(label, header, log);
   return {

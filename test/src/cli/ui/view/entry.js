@@ -24,6 +24,7 @@ const textElement = {style: {}};
 const text = sinon.spy(() => textElement);
 const logElement = {
   log: sinon.spy(),
+  render: sinon.spy(),
 };
 const log = sinon.spy(() => logElement);
 const layout = {
@@ -80,6 +81,7 @@ describe('cli', () => {
         describe('setLog', () => {
           before(() => {
             logElement.log.reset();
+            logElement.render.reset();
             logElement.content = 'some content';
             const fnTail = tail.Tail;
             tail.Tail = Tail;
@@ -98,11 +100,13 @@ describe('cli', () => {
             lastTail.options.should.eql(TAIL_OPTIONS);
             logElement.log.should.have.been.calledWith('line 1');
             logElement.log.should.have.been.calledWith('line 2');
+            logElement.render.should.have.been.calledTwice;
           });
 
           describe('after setting a new log', () => {
             before(() => {
               logElement.log.reset();
+              logElement.render.reset();
               oldTail = lastTail;
               oldTail.unwatch = sinon.spy();
               const fnTail = tail.Tail;
@@ -116,6 +120,7 @@ describe('cli', () => {
             it('should stop listening on the old log', () => {
               oldTail.unwatch.should.have.been.calledOnce;
               logElement.log.should.not.have.been.called;
+              logElement.render.should.not.have.been.called;
             });
           });
         });
