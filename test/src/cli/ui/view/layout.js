@@ -2,29 +2,49 @@ import blessed from 'blessed';
 import {createLayout} from '../../../../../src/cli/ui/view/layout';
 import {
   SELECTED_INDICATOR_PROPERTIES,
+  RIGHT_POINTER,
+  DOWN_POINTER,
 } from '../../../../../src/cli/ui/view/constants';
 
 let layout;
 const screen = {
   append: sinon.spy(),
   log: sinon.spy(),
+  height: 10,
 };
 const label1 = 'label1';
 const label2 = 'label2';
 const label3 = 'label3';
-const textElement1 = {height: 10};
-const textElement2 = {height: 5};
-const textElement3 = {height: 15};
-const logElement1 = {height: 5};
-const logElement2 = {height: 10};
-const logElement3 = {height: 20};
-const state = {
+const textElement1 = {height: 1};
+const textElement2 = {height: 1};
+const textElement3 = {
+  height: 1,
+  focus: sinon.spy(),
+};
+const logElement1 = {height: 0};
+const logElement2 = {height: 0};
+const logElement3 = {
+  height: 0,
+  focus: sinon.spy(),
+  setScrollPerc: sinon.spy(),
+};
+const notExpandedState = {
   lines: [
     label2,
     label3,
     label1,
   ],
   selected: 1,
+  expanded: false,
+};
+const expandedState = {
+  lines: [
+    label2,
+    label3,
+    label1,
+  ],
+  selected: 1,
+  expanded: true,
 };
 
 const selectedIndicator = {style: {}};
@@ -83,28 +103,72 @@ describe('cli', () => {
           });
 
           describe('then apply', () => {
-            before(() => {
-              layout.apply(state);
-            });
-
-            it('should calculate the top positions', () => {
-              textElement2.top.should.eql(0);
-              logElement2.top.should.eql(5);
-              textElement3.top.should.eql(15);
-              logElement3.top.should.eql(30);
-              textElement1.top.should.eql(50);
-              logElement1.top.should.eql(60);
-              selectedIndicator.top.should.eql(15);
-            });
-
-            describe('then apply with the same state', () => {
+            describe('when not expanded', () => {
               before(() => {
-                screen.log.reset();
-                layout.apply(state);
+                textElement3.focus.reset();
+                layout.apply(notExpandedState);
               });
 
-              it('should do nothing', () => {
-                screen.log.should.not.have.been.called;
+              it('should set the selected indicator to a right pointer', () => {
+                selectedIndicator.content.should.eql(RIGHT_POINTER);
+              });
+
+              it('should focus the header', () => {
+                textElement3.focus.should.have.been.calledOnce;
+              });
+
+              it('should calculate the top positions', () => {
+                textElement2.top.should.eql(0);
+                logElement2.top.should.eql(1);
+                textElement3.top.should.eql(1);
+                logElement3.top.should.eql(2);
+                textElement1.top.should.eql(2);
+                logElement1.top.should.eql(3);
+                selectedIndicator.top.should.eql(1);
+              });
+
+              describe('then apply with the same state', () => {
+                before(() => {
+                  screen.log.reset();
+                  layout.apply(notExpandedState);
+                });
+
+                it('should do nothing', () => {
+                  screen.log.should.not.have.been.called;
+                });
+              });
+            });
+
+            describe('when expanded', () => {
+              before(() => {
+                logElement3.focus.reset();
+                layout.apply(expandedState);
+              });
+
+              it('should set the selected indicator to a down pointer', () => {
+                selectedIndicator.content.should.eql(DOWN_POINTER);
+              });
+
+              it('should scroll to the bottom of the log', () => {
+                logElement3.setScrollPerc.should.have.been.calledWith(100);
+              });
+
+              it('should focus the expanded log', () => {
+                logElement3.focus.should.have.been.calledOnce;
+              });
+
+              it('should set the expanded log height', () => {
+                logElement3.height.should.eql(7);
+              });
+
+              it('should calculate the top positions', () => {
+                textElement2.top.should.eql(0);
+                logElement2.top.should.eql(1);
+                textElement3.top.should.eql(1);
+                logElement3.top.should.eql(2);
+                textElement1.top.should.eql(9);
+                logElement1.top.should.eql(10);
+                selectedIndicator.top.should.eql(1);
               });
             });
           });

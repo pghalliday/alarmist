@@ -2,29 +2,30 @@ import _ from 'lodash';
 import {Tail} from 'tail';
 import blessed from 'blessed';
 import {
-  TEXT_PROPERTIES,
+  HEADER_PROPERTIES,
   LOG_PROPERTIES,
   TAIL_OPTIONS,
 } from './constants';
 
 function createEntry(label, layout) {
-  const textElement = blessed.text(_.cloneDeep(TEXT_PROPERTIES));
-  const logElement = blessed.log(_.cloneDeep(LOG_PROPERTIES));
+  const header = blessed.text(_.cloneDeep(HEADER_PROPERTIES));
+  const log = blessed.log(_.cloneDeep(LOG_PROPERTIES));
   let tail;
   const onLine = (data) => {
-    logElement.log(data);
+    log.log(data);
   };
-  layout.append(label, textElement, logElement);
+  layout.append(label, header, log);
   return {
     setHeader: (content, color) => {
-      textElement.content = content;
-      textElement.style.bg = color;
+      header.content = content;
+      header.style.bg = color;
     },
     setLog: (logFilePath) => {
       if(!_.isUndefined(tail)) {
         tail.unwatch();
         tail.removeListener('line', onLine);
       }
+      log.content = '';
       tail = new Tail(logFilePath, TAIL_OPTIONS);
       tail.on('line', onLine);
     },

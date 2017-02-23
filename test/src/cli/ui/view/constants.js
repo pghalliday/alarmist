@@ -4,9 +4,9 @@ describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
       describe('constants', () => {
-        describe('TEXT_PROPERTIES', () => {
+        describe('HEADER_PROPERTIES', () => {
           it('should define the default text properties', () => {
-            constants.TEXT_PROPERTIES.should.eql({
+            constants.HEADER_PROPERTIES.should.eql({
               left: 2,
               width: '100%',
               height: 1,
@@ -22,7 +22,6 @@ describe('cli', () => {
             constants.SELECTED_INDICATOR_PROPERTIES.should.eql({
               left: 0,
               height: 1,
-              content: '\u25ba',
             });
           });
         });
@@ -31,13 +30,10 @@ describe('cli', () => {
           it('should define the scrolling log box properties', () => {
             constants.LOG_PROPERTIES.should.eql({
               left: 3,
-              width: '100%-2',
+              width: '100%-3',
               height: 0,
               keys: true,
               vi: true,
-              padding: {
-                right: 1,
-              },
               scrollbar: {
                 ch: ' ',
                 inverse: true,

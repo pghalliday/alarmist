@@ -2,7 +2,7 @@ import tail from 'tail';
 import blessed from 'blessed';
 import {createEntry} from '../../../../../src/cli/ui/view/entry';
 import {
-  TEXT_PROPERTIES,
+  HEADER_PROPERTIES,
   LOG_PROPERTIES,
   TAIL_OPTIONS,
 } from '../../../../../src/cli/ui/view/constants';
@@ -48,7 +48,7 @@ describe('cli', () => {
         });
 
         it('should construct a text element', () => {
-          text.should.have.been.calledWith(TEXT_PROPERTIES);
+          text.should.have.been.calledWith(HEADER_PROPERTIES);
         });
 
         it('should construct a log element', () => {
@@ -80,12 +80,17 @@ describe('cli', () => {
         describe('setLog', () => {
           before(() => {
             logElement.log.reset();
+            logElement.content = 'some content';
             const fnTail = tail.Tail;
             tail.Tail = Tail;
             entry.setLog('logFilePath');
             lastTail.emit('line', 'line 1');
             lastTail.emit('line', 'line 2');
             tail.Tail = fnTail;
+          });
+
+          it('should reset the log content', () => {
+            logElement.content.should.eql('');
           });
 
           it('should tail the log file to the log box', () => {
