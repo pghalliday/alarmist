@@ -1,5 +1,8 @@
 import blessed from 'blessed';
 import {createMonitor} from '../../../../../src/cli/ui/view/monitor';
+import {
+  TEXT_PROPERTIES,
+} from '../../../../../src/cli/ui/view/constants';
 
 let monitor;
 
@@ -22,14 +25,7 @@ describe('cli', () => {
         });
 
         it('should construct a text element', () => {
-          text.should.have.been.calledWith({
-            left: 2,
-            width: '100%',
-            height: 1,
-            style: {
-              fg: 'black',
-            },
-          });
+          text.should.have.been.calledWith(TEXT_PROPERTIES);
         });
 
         it('should append the element to the layout', () => {

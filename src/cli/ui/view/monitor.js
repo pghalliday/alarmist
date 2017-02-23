@@ -1,15 +1,11 @@
 import _ from 'lodash';
 import blessed from 'blessed';
+import {
+  TEXT_PROPERTIES,
+} from './constants';
 
 export function createMonitor(layout) {
-  const element = blessed.text({
-    left: 2,
-    width: '100%',
-    height: 1,
-    style: {
-      fg: 'black',
-    },
-  });
+  const element = blessed.text(TEXT_PROPERTIES);
   layout.append(element);
   return {
     update: (state) => {
