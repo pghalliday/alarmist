@@ -26,6 +26,33 @@ describe('cli', () => {
             });
           });
         });
+
+        describe('LOG_PROPERTIES', () => {
+          it('should define the scrolling log box properties', () => {
+            constants.LOG_PROPERTIES.should.eql({
+              left: 3,
+              width: '100%-2',
+              height: 0,
+              keys: true,
+              vi: true,
+              padding: {
+                right: 1,
+              },
+              scrollbar: {
+                ch: ' ',
+                inverse: true,
+              },
+            });
+          });
+        });
+
+        describe('TAIL_OPTIONS', () => {
+          it('should define the tail options', () => {
+            constants.TAIL_OPTIONS.should.eql({
+              fromBeginning: true,
+            });
+          });
+        });
       });
     });
   });

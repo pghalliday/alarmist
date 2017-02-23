@@ -1,11 +1,13 @@
 import _ from 'lodash';
-import blessed from 'blessed';
-import {
-  TEXT_PROPERTIES,
-} from './constants';
 import {
   jobLabel,
 } from '../helpers';
+import {
+  WORKING_DIR,
+  ALL_LOG,
+} from '../../../constants';
+import {createEntry} from './entry';
+import path from 'path';
 
 // eslint-disable-next-line max-len
 const jobContent = (status) => ` ${status.name}: ${status.id}: ${_.isUndefined(status.exitCode) ? 'pending' : status.exitCode}`;
@@ -13,12 +15,24 @@ const jobContent = (status) => ` ${status.name}: ${status.id}: ${_.isUndefined(s
 const jobBg = (status) => _.isUndefined(status.exitCode) ? 'yellow' : (status.exitCode === 0 ? 'green' : 'red');
 
 function createJob(name, layout) {
-  const element = blessed.text(_.cloneDeep(TEXT_PROPERTIES));
-  layout.append(jobLabel(name), element);
+  const entry = createEntry(jobLabel(name), layout);
+  let id;
   return {
     update: (status) => {
-      element.content = jobContent(status);
-      element.style.bg = jobBg(status);
+      const newId = status.id;
+      if (newId !== id) {
+        id = newId;
+        entry.setLog(path.join(
+          WORKING_DIR,
+          name,
+          '' + id,
+          ALL_LOG,
+        ));
+      }
+      entry.setHeader(
+        jobContent(status),
+        jobBg(status),
+      );
     },
   };
 }

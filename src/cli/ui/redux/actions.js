@@ -6,4 +6,5 @@ module.exports = createActions({
   EXIT: (code) => code,
   UP: () => undefined,
   DOWN: () => undefined,
+  TOGGLE_EXPANDED: () => undefined,
 });

@@ -13,9 +13,13 @@ export function createLayout(screen) {
   screen.append(selectedIndicator);
   screen.log('appended selected indicator');
   return {
-    append: (label, element) => {
-      elements[label] = element;
-      screen.append(element);
+    append: (label, header, log) => {
+      elements[label] = {
+        header: header,
+        log: log,
+      };
+      screen.append(header);
+      screen.append(log);
       screen.log(`appended ${label}`);
     },
     apply: (state) => {
@@ -29,10 +33,14 @@ export function createLayout(screen) {
             selectedIndicator.top = top;
             screen.log(`set selected indicator top to ${top}`);
           }
-          const element = elements[label];
-          element.top = top;
+          const subElements = elements[label];
+          const header = subElements.header;
+          const log = subElements.log;
+          header.top = top;
+          top += header.height;
+          log.top = top;
+          top += log.height;
           screen.log(`set ${label} top to ${top}`);
-          top += element.height;
         }
       }
     },

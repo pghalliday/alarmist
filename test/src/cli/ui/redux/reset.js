@@ -23,6 +23,7 @@ describe('cli', () => {
                 'monitor',
               ],
               selected: 0,
+              expanded: false,
             },
           });
         });

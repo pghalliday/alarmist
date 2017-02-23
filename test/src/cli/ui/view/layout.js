@@ -12,9 +12,12 @@ const screen = {
 const label1 = 'label1';
 const label2 = 'label2';
 const label3 = 'label3';
-const element1 = {height: 10};
-const element2 = {height: 5};
-const element3 = {height: 15};
+const textElement1 = {height: 10};
+const textElement2 = {height: 5};
+const textElement3 = {height: 15};
+const logElement1 = {height: 5};
+const logElement2 = {height: 10};
+const logElement3 = {height: 20};
 const state = {
   lines: [
     label2,
@@ -53,20 +56,29 @@ describe('cli', () => {
         describe('append', () => {
           before(() => {
             screen.append.reset();
-            layout.append(label1, element1);
-            layout.append(label2, element2);
-            layout.append(label3, element3);
+            layout.append(label1, textElement1, logElement1);
+            layout.append(label2, textElement2, logElement2);
+            layout.append(label3, textElement3, logElement3);
           });
 
           it('should append to the screen', () => {
             screen.append.should.have.been.calledWith(
-              sinon.match.same(element1)
+              sinon.match.same(textElement1)
             );
             screen.append.should.have.been.calledWith(
-              sinon.match.same(element2)
+              sinon.match.same(textElement2)
             );
             screen.append.should.have.been.calledWith(
-              sinon.match.same(element3)
+              sinon.match.same(textElement3)
+            );
+            screen.append.should.have.been.calledWith(
+              sinon.match.same(logElement1)
+            );
+            screen.append.should.have.been.calledWith(
+              sinon.match.same(logElement2)
+            );
+            screen.append.should.have.been.calledWith(
+              sinon.match.same(logElement3)
             );
           });
 
@@ -76,10 +88,13 @@ describe('cli', () => {
             });
 
             it('should calculate the top positions', () => {
-              element2.top.should.eql(0);
-              element3.top.should.eql(5);
-              element1.top.should.eql(20);
-              selectedIndicator.top.should.eql(5);
+              textElement2.top.should.eql(0);
+              logElement2.top.should.eql(5);
+              textElement3.top.should.eql(15);
+              logElement3.top.should.eql(30);
+              textElement1.top.should.eql(50);
+              logElement1.top.should.eql(60);
+              selectedIndicator.top.should.eql(15);
             });
 
             describe('then apply with the same state', () => {

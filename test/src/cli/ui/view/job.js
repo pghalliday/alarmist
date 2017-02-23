@@ -1,65 +1,66 @@
-import blessed from 'blessed';
 import {createJob} from '../../../../../src/cli/ui/view/job';
-import {
-  TEXT_PROPERTIES,
-} from '../../../../../src/cli/ui/view/constants';
+import Entry from '../../../../../src/cli/ui/view/entry';
 import {
   jobLabel,
 } from '../../../../../src/cli/ui/helpers';
+import path from 'path';
+import {
+  WORKING_DIR,
+  ALL_LOG,
+} from '../../../../../src/constants';
 
 let job;
 
-const element = {style: {}};
-const text = sinon.spy(() => element);
-const layout = {
-  append: sinon.spy(),
+const layout = {};
+const entry = {
+  setHeader: sinon.spy(),
+  setLog: sinon.spy(),
 };
+const createEntry = sinon.spy(() => entry);
 const name = 'name';
 const id = 0;
+const newId = 1;
 
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
       describe('job', () => {
         before(() => {
-          const fnText = blessed.text;
-          text.reset();
-          blessed.text = text;
+          const fnCreateEntry = Entry.createEntry;
+          createEntry.reset();
+          Entry.createEntry = createEntry;
           job = createJob(name, layout);
-          blessed.text = fnText;
+          Entry.createEntry = fnCreateEntry;
         });
 
-        it('should construct a text element', () => {
-          text.should.have.been.calledWith(TEXT_PROPERTIES);
-        });
-
-        it('should append the element to the layout', () => {
-          layout.append.should.have.been.calledWith(
+        it('should construct an entry', () => {
+          createEntry.should.have.been.calledWith(
             jobLabel(name),
-            sinon.match.same(element)
+            sinon.match.same(layout),
           );
         });
 
         describe('update', () => {
           describe('without an exit code', () => {
             before(() => {
+              entry.setHeader.reset();
               job.update({
                 name,
                 id,
               });
             });
 
-            it('should go yellow', () => {
-              element.style.bg.should.eql('yellow');
-            });
-
-            it('should display the name, id and pending', () => {
-              element.content.should.eql(` ${name}: ${id}: pending`);
+            it('should set the header', () => {
+              entry.setHeader.should.have.been.calledWith(
+                ` ${name}: ${id}: pending`,
+                'yellow',
+              );
             });
           });
 
-          describe('without a zero exit code', () => {
+          describe('with a zero exit code', () => {
             before(() => {
+              entry.setHeader.reset();
               job.update({
                 name,
                 id,
@@ -67,17 +68,17 @@ describe('cli', () => {
               });
             });
 
-            it('should go green', () => {
-              element.style.bg.should.eql('green');
-            });
-
-            it('should display the name, id and exit code', () => {
-              element.content.should.eql(` ${name}: ${id}: 0`);
+            it('should set the header', () => {
+              entry.setHeader.should.have.been.calledWith(
+                ` ${name}: ${id}: 0`,
+                'green',
+              );
             });
           });
 
           describe('with a non-zero exit code', () => {
             before(() => {
+              entry.setHeader.reset();
               job.update({
                 name,
                 id,
@@ -85,12 +86,41 @@ describe('cli', () => {
               });
             });
 
-            it('should go red', () => {
-              element.style.bg.should.eql('red');
+            it('should set the header', () => {
+              entry.setHeader.should.have.been.calledWith(
+                ` ${name}: ${id}: 1`,
+                'red',
+              );
+            });
+          });
+
+          describe('with a new id', () => {
+            before(() => {
+              entry.setLog.reset();
+              job.update({
+                name,
+                id: newId,
+              });
             });
 
-            it('should display the name, id and exit code', () => {
-              element.content.should.eql(` ${name}: ${id}: 1`);
+            it('should set the log', () => {
+              entry.setLog.should.have.been.calledWith(
+                path.join(WORKING_DIR, name, '' + newId, ALL_LOG)
+              );
+            });
+
+            describe('then with the same id', () => {
+              before(() => {
+                entry.setLog.reset();
+                job.update({
+                  name,
+                  id: newId,
+                });
+              });
+
+              it('should not set the log', () => {
+                entry.setLog.should.not.have.been.called;
+              });
             });
           });
         });

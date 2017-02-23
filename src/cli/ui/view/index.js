@@ -11,6 +11,7 @@ import {
 import {
   up,
   down,
+  toggleExpanded,
 } from '../redux/actions';
 
 // istanbul ignore next
@@ -24,6 +25,7 @@ function createView(store) {
   screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
   screen.key(['up', 'k'], () => store.dispatch(up()));
   screen.key(['down', 'j'], () => store.dispatch(down()));
+  screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const layout = createLayout(screen);
   const monitor = createMonitor(layout);
   const jobs = createJobs(layout);

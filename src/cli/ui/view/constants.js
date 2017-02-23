@@ -12,3 +12,22 @@ export const SELECTED_INDICATOR_PROPERTIES = {
   height: 1,
   content: '\u25ba',
 };
+
+export const LOG_PROPERTIES = {
+  left: 3,
+  width: '100%-2',
+  height: 0,
+  keys: true,
+  vi: true,
+  padding: {
+    right: 1,
+  },
+  scrollbar: {
+    ch: ' ',
+    inverse: true,
+  },
+};
+
+export const TAIL_OPTIONS = {
+  fromBeginning: true,
+};

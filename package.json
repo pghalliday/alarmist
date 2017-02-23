@@ -57,6 +57,7 @@
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
     "redux-logger": "^2.8.1",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "tail": "^1.2.1"
   }
 }

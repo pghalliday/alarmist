@@ -1,23 +1,29 @@
 import _ from 'lodash';
-import blessed from 'blessed';
-import {
-  TEXT_PROPERTIES,
-} from './constants';
+import {createEntry} from './entry';
 import {
   MONITOR_LABEL,
 } from '../constants';
+import {
+  WORKING_DIR,
+  ALL_LOG,
+} from '../../../constants';
+import path from 'path';
 
 export function createMonitor(layout) {
-  const element = blessed.text(_.cloneDeep(TEXT_PROPERTIES));
-  layout.append(MONITOR_LABEL, element);
+  const entry = createEntry(MONITOR_LABEL, layout);
+  entry.setLog(path.join(WORKING_DIR, ALL_LOG));
   return {
     update: (state) => {
       if (_.isUndefined(state.exitCode)) {
-        element.content = ' monitor: ok';
-        element.style.bg = 'green';
+        entry.setHeader(
+          ' monitor: ok',
+          'green',
+        );
       } else {
-        element.content = ` monitor: exited: ${state.exitCode}`;
-        element.style.bg = 'red';
+        entry.setHeader(
+          ` monitor: exited: ${state.exitCode}`,
+          'red',
+        );
       }
     },
   };

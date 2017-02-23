@@ -7,6 +7,7 @@ import {
   update,
   up,
   down,
+  toggleExpanded,
 } from './actions';
 import {
   MONITOR_LABEL,
@@ -43,6 +44,7 @@ const initialLayout = {
     MONITOR_LABEL,
   ],
   selected: 0,
+  expanded: false,
 };
 
 const layout = handleActions({
@@ -76,6 +78,11 @@ const layout = handleActions({
       });
     }
     return layout;
+  },
+  [toggleExpanded]: (layout) => {
+    return Object.assign({}, layout, {
+      expanded: !layout.expanded,
+    });
   },
 }, initialLayout);
 

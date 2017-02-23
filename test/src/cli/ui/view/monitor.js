@@ -1,71 +1,76 @@
-import blessed from 'blessed';
 import {createMonitor} from '../../../../../src/cli/ui/view/monitor';
-import {
-  TEXT_PROPERTIES,
-} from '../../../../../src/cli/ui/view/constants';
+import Entry from '../../../../../src/cli/ui/view/entry';
 import {
   MONITOR_LABEL,
 } from '../../../../../src/cli/ui/constants';
+import {
+  WORKING_DIR,
+  ALL_LOG,
+} from '../../../../../src/constants';
+import path from 'path';
 
 let monitor;
 
-const element = {style: {}};
-const text = sinon.spy(() => element);
-const layout = {
-  append: sinon.spy(),
+const layout = {};
+const entry = {
+  setHeader: sinon.spy(),
+  setLog: sinon.spy(),
 };
+const createEntry = sinon.spy(() => entry);
 
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
       describe('monitor', () => {
         before(() => {
-          const fnText = blessed.text;
-          text.reset();
-          blessed.text = text;
+          const fnCreateEntry = Entry.createEntry;
+          createEntry.reset();
+          Entry.createEntry = createEntry;
           monitor = createMonitor(layout);
-          blessed.text = fnText;
+          Entry.createEntry = fnCreateEntry;
         });
 
-        it('should construct a text element', () => {
-          text.should.have.been.calledWith(TEXT_PROPERTIES);
-        });
-
-        it('should append the element to the layout', () => {
-          layout.append.should.have.been.calledWith(
+        it('should construct an entry', () => {
+          createEntry.should.have.been.calledWith(
             MONITOR_LABEL,
-            sinon.match.same(element)
+            sinon.match.same(layout),
+          );
+        });
+
+        it('should set the log', () => {
+          entry.setLog.should.have.been.calledWith(
+            path.join(WORKING_DIR, ALL_LOG)
           );
         });
 
         describe('update', () => {
           describe('with an exit code', () => {
             before(() => {
+              entry.setHeader.reset();
               monitor.update({
                 exitCode: 0,
               });
             });
 
-            it('should go red', () => {
-              element.style.bg.should.eql('red');
-            });
-
-            it('should display the exit code', () => {
-              element.content.should.eql(' monitor: exited: 0');
+            it('should set the header', () => {
+              entry.setHeader.should.have.been.calledWith(
+                ' monitor: exited: 0',
+                'red',
+              );
             });
           });
 
           describe('without an exit code', () => {
             before(() => {
+              entry.setHeader.reset();
               monitor.update({});
             });
 
-            it('should go green', () => {
-              element.style.bg.should.eql('green');
-            });
-
-            it('should display ok', () => {
-              element.content.should.eql(' monitor: ok');
+            it('should set the header', () => {
+              entry.setHeader.should.have.been.calledWith(
+                ' monitor: ok',
+                'green',
+              );
             });
           });
         });
