@@ -6,23 +6,23 @@ import {
   DOWN_POINTER,
 } from './constants';
 
-export function createLayout(screen) {
+export function createLayout(program, container) {
   let lastState;
   const elements = {};
+  program.log('appending selected indicator');
   const selectedIndicator = blessed.text(
     _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
   );
-  screen.append(selectedIndicator);
-  screen.log('appended selected indicator');
+  container.append(selectedIndicator);
   return {
     append: (label, header, log) => {
+      program.log(`appending ${label}`);
       elements[label] = {
         header: header,
         log: log,
       };
-      screen.append(header);
-      screen.append(log);
-      screen.log(`appended ${label}`);
+      container.append(header);
+      container.append(log);
     },
     apply: (state) => {
       if (state !== lastState) {
@@ -41,25 +41,27 @@ export function createLayout(screen) {
           const subElements = elements[label];
           const header = subElements.header;
           const log = subElements.log;
-          log.height = 0;
+          log.height = container.height - totalHeaderHeight;
+          log.hide();
+          let logHeight = 0;
           if (label === selected) {
+            program.log(`setting selected indicator top to ${top}`);
             selectedIndicator.top = top;
-            screen.log(`set selected indicator top to ${top}`);
             if (state.expanded) {
               selectedIndicator.content = DOWN_POINTER;
-              log.height = screen.height - totalHeaderHeight;
-              log.setScrollPerc(100);
+              log.show();
               log.focus();
+              logHeight = log.height;
             } else {
               selectedIndicator.content = RIGHT_POINTER;
-              header.focus();
+              container.focus();
             }
           }
+          program.log(`setting ${label} top to ${top}`);
           header.top = top;
           top += header.height;
           log.top = top;
-          top += log.height;
-          screen.log(`set ${label} top to ${top}`);
+          top += logHeight;
         }
       }
     },

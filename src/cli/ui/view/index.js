@@ -13,6 +13,9 @@ import {
   down,
   toggleExpanded,
 } from '../redux/actions';
+import {
+  CONTAINER_PROPERTIES,
+} from './constants';
 
 // istanbul ignore next
 function createView(store) {
@@ -23,10 +26,12 @@ function createView(store) {
   screen.log('created');
   screen.title = 'alarmist';
   screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
-  screen.key(['up', 'k'], () => store.dispatch(up()));
-  screen.key(['down', 'j'], () => store.dispatch(down()));
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
-  const layout = createLayout(screen);
+  const container = blessed.box(CONTAINER_PROPERTIES);
+  screen.append(container);
+  container.key(['up', 'k'], () => store.dispatch(up()));
+  container.key(['down', 'j'], () => store.dispatch(down()));
+  const layout = createLayout(screen.program, container);
   const monitor = createMonitor(layout);
   const jobs = createJobs(layout);
   const update = () => {

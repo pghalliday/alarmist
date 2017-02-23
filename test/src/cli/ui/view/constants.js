@@ -46,6 +46,7 @@ describe('cli', () => {
           it('should define the tail options', () => {
             constants.TAIL_OPTIONS.should.eql({
               fromBeginning: true,
+              follow: true,
             });
           });
         });

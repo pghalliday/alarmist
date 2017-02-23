@@ -1,6 +1,11 @@
 export const RIGHT_POINTER = '\u25ba';
 export const DOWN_POINTER = '\u25bc';
 
+export const CONTAINER_PROPERTIES = {
+  width: '100%',
+  height: '100%',
+};
+
 export const HEADER_PROPERTIES = {
   left: 2,
   width: '100%',
@@ -29,4 +34,5 @@ export const LOG_PROPERTIES = {
 
 export const TAIL_OPTIONS = {
   fromBeginning: true,
+  follow: true,
 };
