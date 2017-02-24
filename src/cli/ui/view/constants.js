@@ -35,4 +35,5 @@ export const LOG_PROPERTIES = {
 export const TAIL_OPTIONS = {
   fromBeginning: true,
   follow: true,
+  useWatchFile: true,
 };
