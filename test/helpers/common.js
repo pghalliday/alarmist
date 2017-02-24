@@ -8,3 +8,7 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 global.expect = chai.expect;
 global.sinon = sinon;
+
+// override the working directory for tests
+import constants from '../../src/constants';
+constants.WORKING_DIR = '.alarmist-test';
