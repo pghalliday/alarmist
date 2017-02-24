@@ -2,6 +2,7 @@ import {createJobs} from '../../../../../src/cli/ui/view/jobs';
 import Job from '../../../../../src/cli/ui/view/job';
 
 let jobs;
+const service = {};
 const layout = {};
 const job = {
   update: sinon.spy(),
@@ -38,7 +39,7 @@ describe('cli', () => {
     describe('view', () => {
       describe('jobs', () => {
         before(() => {
-          jobs = createJobs(layout);
+          jobs = createJobs(service, layout);
         });
 
         describe('update', () => {
@@ -56,7 +57,8 @@ describe('cli', () => {
               createJob.should.have.been.calledOnce;
               createJob.should.have.been.calledWith(
                 name,
-                sinon.match.same(layout)
+                sinon.match.same(service),
+                sinon.match.same(layout),
               );
             });
 
@@ -81,7 +83,8 @@ describe('cli', () => {
                 createJob.should.have.been.calledOnce;
                 createJob.should.have.been.calledWith(
                   anotherName,
-                  sinon.match.same(layout)
+                  sinon.match.same(service),
+                  sinon.match.same(layout),
                 );
               });
 

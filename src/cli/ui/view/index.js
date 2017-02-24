@@ -18,7 +18,7 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView(store) {
+function createView(service, store) {
   const screen = blessed.screen({
     smartCSR: true,
     log: path.join(WORKING_DIR, UI_LOG),
@@ -32,8 +32,8 @@ function createView(store) {
   container.key(['up', 'k'], () => store.dispatch(up()));
   container.key(['down', 'j'], () => store.dispatch(down()));
   const layout = createLayout(screen.program, container);
-  const monitor = createMonitor(layout);
-  const jobs = createJobs(layout);
+  const monitor = createMonitor(service, layout);
+  const jobs = createJobs(service, layout);
   const update = () => {
     const state = store.getState();
     monitor.update(state.monitor);

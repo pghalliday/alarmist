@@ -26,6 +26,8 @@ export const LOG_PROPERTIES = {
   height: 0,
   keys: true,
   vi: true,
+  scrollable: true,
+  alwaysScroll: true,
   scrollbar: {
     ch: ' ',
     inverse: true,

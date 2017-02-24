@@ -41,6 +41,7 @@
     "babel-preset-env": "^1.1.8",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
+    "chokidar": "^1.6.1",
     "chokidar-cli": "^1.2.0",
     "coveralls": "^2.11.15",
     "cross-env": "^3.1.4",
@@ -56,14 +57,12 @@
   "dependencies": {
     "babel-polyfill": "^6.22.0",
     "blessed": "^0.1.81",
-    "chokidar": "^1.6.1",
     "lockfile": "^1.0.3",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
     "redux-logger": "^2.8.1",
-    "rimraf": "^2.5.4",
-    "tail": "^1.2.1"
+    "rimraf": "^2.5.4"
   }
 }

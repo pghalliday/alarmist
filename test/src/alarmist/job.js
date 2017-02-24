@@ -7,9 +7,14 @@ import {
   STDERR_LOG,
   ALL_LOG,
   STATUS_FILE,
+  CONTROL_SOCKET,
+  LOG_SOCKET,
+  READY_RESPONSE,
 } from '../../../src/constants.js';
+import {createServer} from 'net';
 import path from 'path';
 import _rimraf from 'rimraf';
+import _mkdirp from 'mkdirp';
 import {readFile as _readFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 import _id from '../../../src/utils/id';
@@ -20,6 +25,7 @@ import {
 } from '../../helpers/std-streams';
 
 const rimraf = promisify(_rimraf);
+const mkdirp = promisify(_mkdirp);
 const readFile = promisify(_readFile);
 
 const name = 'name';
@@ -40,21 +46,56 @@ const stdoutLog = path.join(reportDir, STDOUT_LOG);
 const stderrLog = path.join(reportDir, STDERR_LOG);
 const allLog = path.join(reportDir, ALL_LOG);
 const statusFile = path.join(reportDir, STATUS_FILE);
+const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
+const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 describe('alarmist', () => {
   describe('createJob', () => {
     let job;
+    let control;
+    let log;
+    let start;
+    let end;
+    let begin;
+    let logData;
     before(async () => {
       const fnNow = Date.now;
       Date.now = () => startTime;
       const fnGetId = _id.getId;
       _id.getId = sinon.spy(() => id);
       await rimraf(WORKING_DIR);
+      await mkdirp(WORKING_DIR);
+      control = createServer((client) => {
+        client.once('data', (data) => {
+          start = JSON.parse(data);
+          client.once('data', (data) => {
+            end = JSON.parse(data);
+          });
+          client.write(READY_RESPONSE);
+        });
+      });
+      await new Promise((resolve) => control.listen(controlSocket, resolve));
+      log = createServer((client) => {
+        client.once('data', (data) => {
+          logData = Buffer.alloc(0);
+          begin = JSON.parse(data);
+          client.on('data', (data) => {
+            logData = Buffer.concat([logData, data]);
+          });
+          client.write(READY_RESPONSE);
+        });
+      });
+      await new Promise((resolve) => log.listen(logSocket, resolve));
       job = await createJob({
         name,
       });
       Date.now = fnNow;
       _id.getId = fnGetId;
+    });
+
+    after(async () => {
+      await new Promise((resolve) => control.close(resolve));
+      await new Promise((resolve) => log.close(resolve));
     });
 
     it('should open a stdout stream', () => {
@@ -65,10 +106,25 @@ describe('alarmist', () => {
       job.stderr.should.be.ok;
     });
 
-    it('should report pending', async () => {
+    it('should save the status', async () => {
       const status = await readFile(statusFile);
       JSON.parse(status[0]).should.eql({
         startTime,
+      });
+    });
+
+    it('should report start', async () => {
+      start.should.eql({
+        name,
+        id,
+        startTime,
+      });
+    });
+
+    it('should begin the log', async () => {
+      begin.should.eql({
+        name,
+        id,
       });
     });
 
@@ -115,12 +171,23 @@ describe('alarmist', () => {
         _all[0].should.eql(all);
       });
 
-      it('should report complete', async () => {
+      it('should save the status', async () => {
         const status = await readFile(statusFile);
         JSON.parse(status[0]).should.eql({
           exitCode,
           endTime,
           startTime,
+        });
+      });
+
+      it('should transmit the log', () => {
+        logData.should.eql(all);
+      });
+
+      it('should report end', () => {
+        end.should.eql({
+          endTime,
+          exitCode,
         });
       });
     });

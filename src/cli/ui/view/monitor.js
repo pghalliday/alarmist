@@ -3,15 +3,13 @@ import {createEntry} from './entry';
 import {
   MONITOR_LABEL,
 } from '../constants';
-import {
-  WORKING_DIR,
-  ALL_LOG,
-} from '../../../constants';
-import path from 'path';
 
-export function createMonitor(layout) {
+export function createMonitor(service, layout) {
   const entry = createEntry(MONITOR_LABEL, layout);
-  entry.setLog(path.join(WORKING_DIR, ALL_LOG));
+  entry.clear();
+  service.subscribeMonitorLog((data) => {
+    entry.log(data);
+  });
   return {
     update: (state) => {
       if (_.isUndefined(state.exitCode)) {

@@ -3,30 +3,37 @@ import Entry from '../../../../../src/cli/ui/view/entry';
 import {
   MONITOR_LABEL,
 } from '../../../../../src/cli/ui/constants';
-import {
-  WORKING_DIR,
-  ALL_LOG,
-} from '../../../../../src/constants';
-import path from 'path';
 
 let monitor;
 
 const layout = {};
 const entry = {
   setHeader: sinon.spy(),
-  setLog: sinon.spy(),
+  clear: sinon.spy(),
+  log: sinon.spy(),
 };
 const createEntry = sinon.spy(() => entry);
+const service = {
+  reset: () => service.callback = undefined,
+  log: (data) => {
+    service.callback(data);
+  },
+  subscribeMonitorLog: (callback) => {
+    service.callback = callback;
+  },
+};
 
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
       describe('monitor', () => {
         before(() => {
+          service.reset();
           const fnCreateEntry = Entry.createEntry;
           createEntry.reset();
           Entry.createEntry = createEntry;
-          monitor = createMonitor(layout);
+          monitor = createMonitor(service, layout);
+          service.log('log data');
           Entry.createEntry = fnCreateEntry;
         });
 
@@ -37,10 +44,12 @@ describe('cli', () => {
           );
         });
 
-        it('should set the log', () => {
-          entry.setLog.should.have.been.calledWith(
-            path.join(WORKING_DIR, ALL_LOG)
-          );
+        it('should clear the log', () => {
+          entry.clear.should.have.been.calledOnce;
+        });
+
+        it('should submit log entries', () => {
+          entry.log.should.have.been.calledWith('log data');
         });
 
         describe('update', () => {

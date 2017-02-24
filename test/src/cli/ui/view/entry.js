@@ -1,30 +1,16 @@
-import tail from 'tail';
 import blessed from 'blessed';
 import {createEntry} from '../../../../../src/cli/ui/view/entry';
 import {
   HEADER_PROPERTIES,
   LOG_PROPERTIES,
-  TAIL_OPTIONS,
 } from '../../../../../src/cli/ui/view/constants';
-import EventEmitter from 'events';
 
 let entry;
 
-let oldTail;
-let lastTail;
-const Tail = class extends EventEmitter {
-  constructor(filePath, options) {
-    super();
-    lastTail = this;
-    this.filePath = filePath;
-    this.options = options;
-  }
-};
 const textElement = {style: {}};
 const text = sinon.spy(() => textElement);
 const logElement = {
   log: sinon.spy(),
-  render: sinon.spy(),
 };
 const log = sinon.spy(() => logElement);
 const layout = {
@@ -78,50 +64,25 @@ describe('cli', () => {
           });
         });
 
-        describe('setLog', () => {
+        describe('log', () => {
           before(() => {
             logElement.log.reset();
-            logElement.render.reset();
-            logElement.content = 'some content';
-            const fnTail = tail.Tail;
-            tail.Tail = Tail;
-            entry.setLog('logFilePath');
-            lastTail.emit('line', 'line 1');
-            lastTail.emit('line', 'line 2');
-            tail.Tail = fnTail;
+            entry.log('log data');
           });
 
-          it('should reset the log content', () => {
+          it('should append to the log box', () => {
+            logElement.log.should.have.been.calledWith('log data');
+          });
+        });
+
+        describe('clear', () => {
+          before(() => {
+            logElement.content = 'log data';
+            entry.clear();
+          });
+
+          it('should clear the log box', () => {
             logElement.content.should.eql('');
-          });
-
-          it('should tail the log file to the log box', () => {
-            lastTail.filePath.should.eql('logFilePath');
-            lastTail.options.should.eql(TAIL_OPTIONS);
-            logElement.log.should.have.been.calledWith('line 1');
-            logElement.log.should.have.been.calledWith('line 2');
-            logElement.render.should.have.been.calledTwice;
-          });
-
-          describe('after setting a new log', () => {
-            before(() => {
-              logElement.log.reset();
-              logElement.render.reset();
-              oldTail = lastTail;
-              oldTail.unwatch = sinon.spy();
-              const fnTail = tail.Tail;
-              tail.Tail = Tail;
-              entry.setLog('logFilePath');
-              oldTail.emit('line', 'line 3');
-              oldTail.emit('line', 'line 4');
-              tail.Tail = fnTail;
-            });
-
-            it('should stop listening on the old log', () => {
-              oldTail.unwatch.should.have.been.calledOnce;
-              logElement.log.should.not.have.been.called;
-              logElement.render.should.not.have.been.called;
-            });
           });
         });
       });
