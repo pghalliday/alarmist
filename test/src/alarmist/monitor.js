@@ -2,9 +2,7 @@ import {createConnection} from 'net';
 import {createMonitor} from '../../../src/alarmist/monitor';
 import {
   WORKING_DIR,
-  STDOUT_LOG,
-  STDERR_LOG,
-  ALL_LOG,
+  PROCESS_LOG,
   CONTROL_SOCKET,
   LOG_SOCKET,
   READY_RESPONSE,
@@ -18,14 +16,10 @@ import _ from 'lodash';
 const rimraf = promisify(_rimraf);
 const readFile = promisify(_readFile);
 
-const stdout = Buffer.from('stdout');
-const stderr = Buffer.from('stderr');
-const all = Buffer.concat([stdout, stderr]);
+const log = Buffer.from('log');
 const exitCode = 0;
 
-const stdoutLog = path.join(WORKING_DIR, STDOUT_LOG);
-const stderrLog = path.join(WORKING_DIR, STDERR_LOG);
-const allLog = path.join(WORKING_DIR, ALL_LOG);
+const processLog = path.join(WORKING_DIR, PROCESS_LOG);
 const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
 const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
@@ -74,24 +68,21 @@ describe('alarmist', () => {
       monitor = await createMonitor();
     });
 
-    it('should open a stdout stream', async () => {
-      monitor.stdout.should.be.ok;
-      await monitor.close();
-    });
-
-    it('should open a stderr stream', async () => {
-      monitor.stderr.should.be.ok;
+    it('should open a log stream', async () => {
+      monitor.log.should.be.ok;
       await monitor.close();
     });
 
     describe('should open a control socket', () => {
-      let control;
+      let controlConnection;
       beforeEach(async () => {
-        control = createConnection(controlSocket);
-        await new Promise((resolve) => control.on('connect', resolve));
+        controlConnection = createConnection(controlSocket);
+        await new Promise(
+          (resolve) => controlConnection.on('connect', resolve)
+        );
       });
       afterEach(async () => {
-        control.end();
+        controlConnection.end();
         await monitor.close();
       });
 
@@ -99,11 +90,11 @@ describe('alarmist', () => {
         let event;
         let ready;
         beforeEach((done) => {
-          control.write(JSON.stringify(startEvent));
+          controlConnection.write(JSON.stringify(startEvent));
           monitor.on('start', (_event) => {
             event = _event;
           });
-          control.once('data', (_ready) => {
+          controlConnection.once('data', (_ready) => {
             ready = _ready;
             done();
           });
@@ -119,7 +110,7 @@ describe('alarmist', () => {
 
         describe('and then recieves an end message', () => {
           beforeEach((done) => {
-            control.write(JSON.stringify(endMessage));
+            controlConnection.write(JSON.stringify(endMessage));
             monitor.on('end', (_event) => {
               event = _event;
               done();
@@ -134,21 +125,21 @@ describe('alarmist', () => {
     });
 
     describe('should open a log socket', () => {
-      let log;
+      let logConnection;
       beforeEach(async () => {
-        log = createConnection(logSocket);
-        await new Promise((resolve) => log.on('connect', resolve));
+        logConnection = createConnection(logSocket);
+        await new Promise((resolve) => logConnection.on('connect', resolve));
       });
       afterEach(async () => {
-        log.end();
+        logConnection.end();
         await monitor.close();
       });
 
       describe('that when it receives a begin message', () => {
         let ready;
         beforeEach((done) => {
-          log.write(JSON.stringify(beginMessage));
-          log.once('data', (_ready) => {
+          logConnection.write(JSON.stringify(beginMessage));
+          logConnection.once('data', (_ready) => {
             ready = _ready;
             done();
           });
@@ -161,7 +152,7 @@ describe('alarmist', () => {
         describe('and then recieves data', () => {
           let event;
           beforeEach((done) => {
-            log.write(logData);
+            logConnection.write(logData);
             monitor.on('log', (_event) => {
               event = _event;
               done();
@@ -177,8 +168,7 @@ describe('alarmist', () => {
 
     describe('#exit', () => {
       let exitEvent;
-      let receivedStdout;
-      let receivedStderr;
+      let receivedLog;
       beforeEach(async () => {
         await new Promise((resolve) => {
           monitor.on('exit', (event) => {
@@ -186,42 +176,23 @@ describe('alarmist', () => {
             monitor.cleanup = sinon.spy(() => Promise.resolve());
             resolve();
           });
-          receivedStdout = Buffer.alloc(0);
-          receivedStderr = Buffer.alloc(0);
-          monitor.stdout.on('data', (data) => {
-            receivedStdout = Buffer.concat([receivedStdout, data]);
+          receivedLog = Buffer.alloc(0);
+          monitor.log.on('data', (data) => {
+            receivedLog = Buffer.concat([receivedLog, data]);
           });
-          monitor.stderr.on('data', (data) => {
-            receivedStderr = Buffer.concat([receivedStderr, data]);
-          });
-          monitor.stdout.write(stdout);
-          monitor.stderr.write(stderr);
+          monitor.log.write(log);
           monitor.exit(exitCode);
         });
         await monitor.close();
       });
 
-      it('should write the stdout log', async () => {
-        const _stdout = await readFile(stdoutLog);
-        _stdout[0].should.eql(stdout);
+      it('should write the process log', async () => {
+        const _log = await readFile(processLog);
+        _log[0].should.eql(log);
       });
 
-      it('should write the stderr log', async () => {
-        const _stderr = await readFile(stderrLog);
-        _stderr[0].should.eql(stderr);
-      });
-
-      it('should write the all log', async () => {
-        const _all = await readFile(allLog);
-        _all[0].should.eql(all);
-      });
-
-      it('should allow stdout stream to be read', async () => {
-        receivedStdout.should.eql(stdout);
-      });
-
-      it('should allow stderr stream to be read', async () => {
-        receivedStderr.should.eql(stderr);
+      it('should allow log stream to be read', async () => {
+        receivedLog.should.eql(log);
       });
 
       it('should emit an exit event', async () => {
@@ -232,24 +203,13 @@ describe('alarmist', () => {
     describe('#close', () => {
       describe('without a cleanup method', () => {
         beforeEach(async () => {
-          monitor.stdout.write(stdout);
-          monitor.stderr.write(stderr);
+          monitor.log.write(log);
           await monitor.close();
         });
 
-        it('should write the stdout log', async () => {
-          const _stdout = await readFile(stdoutLog);
-          _stdout[0].should.eql(stdout);
-        });
-
-        it('should write the stderr log', async () => {
-          const _stderr = await readFile(stderrLog);
-          _stderr[0].should.eql(stderr);
-        });
-
-        it('should write the all log', async () => {
-          const _all = await readFile(allLog);
-          _all[0].should.eql(all);
+        it('should write the process log', async () => {
+          const _log = await readFile(processLog);
+          _log[0].should.eql(log);
         });
       });
 

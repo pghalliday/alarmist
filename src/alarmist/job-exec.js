@@ -1,14 +1,15 @@
 import * as Job from './job';
-import {exec as cpExec} from 'child_process';
+import {spawn} from 'pty.js';
 
-export async function exec({name, command}) {
+export async function exec({name, command, args, options}) {
   const job = await Job.createJob({name});
-  await new Promise((resolve) => {
-    const proc = cpExec(command).on('exit', async (exitCode) => {
+  return await new Promise((resolve) => {
+    const term = spawn(command, args, options).on('exit', async (exitCode) => {
       await job.exit(exitCode);
       resolve();
     });
-    proc.stdout.pipe(job.stdout);
-    proc.stderr.pipe(job.stderr);
+    term.on('data', (data) => {
+      job.log.write(Buffer.from(data));
+    });
   });
 }

@@ -2,9 +2,7 @@ import {
   WORKING_DIR,
   ID_FILE,
   STATUS_FILE,
-  STDOUT_LOG,
-  STDERR_LOG,
-  ALL_LOG,
+  PROCESS_LOG,
   CONTROL_SOCKET,
   LOG_SOCKET,
 } from '../constants';
@@ -37,61 +35,57 @@ export async function createJob({name}) {
   await writeFile(statusFile, JSON.stringify({
     startTime,
   }));
-  const stdout = new PassThrough();
-  const stderr = new PassThrough();
-  const stdoutStream = createWriteStream(path.join(reportDir, STDOUT_LOG));
-  const stderrStream = createWriteStream(path.join(reportDir, STDERR_LOG));
-  const allStream = createWriteStream(path.join(reportDir, ALL_LOG));
-  stdout.pipe(stdoutStream);
-  stdout.pipe(allStream);
-  stdout.pipe(process.stdout);
-  stderr.pipe(stderrStream);
-  stderr.pipe(allStream);
-  stderr.pipe(process.stderr);
-  const streamEndPromises = [
-    new Promise((resolve) => stdoutStream.on('close', resolve)),
-    new Promise((resolve) => stderrStream.on('close', resolve)),
-    new Promise((resolve) => allStream.on('close', resolve)),
-  ];
+  const log = new PassThrough();
+  const logStream = createWriteStream(path.join(reportDir, PROCESS_LOG));
+  log.pipe(logStream);
+  log.pipe(process.stdout);
+  const logStreamEnded = new Promise(
+    (resolve) => logStream.on('close', resolve)
+  );
   // start the control socket
-  const control = createConnection(controlSocket);
-  const controlReady = new Promise((resolve) => control.once('data', resolve));
-  const controlEnded = new Promise((resolve) => control.once('end', resolve));
-  await new Promise((resolve) => control.once('connect', resolve));
-  control.write(JSON.stringify({
+  const controlConnection = createConnection(controlSocket);
+  const controlReady = new Promise(
+    (resolve) => controlConnection.once('data', resolve)
+  );
+  const controlEnded = new Promise(
+    (resolve) => controlConnection.once('end', resolve)
+  );
+  await new Promise((resolve) => controlConnection.once('connect', resolve));
+  controlConnection.write(JSON.stringify({
     name,
     id,
     startTime,
   }));
   await controlReady;
   // start the log socket
-  const log = createConnection(logSocket);
-  const logReady = new Promise((resolve) => log.once('data', resolve));
-  const logEnded = new Promise((resolve) => log.once('end', resolve));
-  await new Promise((resolve) => log.once('connect', resolve));
-  log.write(JSON.stringify({
+  const logConnection = createConnection(logSocket);
+  const logReady = new Promise(
+    (resolve) => logConnection.once('data', resolve)
+  );
+  const logEnded = new Promise(
+    (resolve) => logConnection.once('end', resolve)
+  );
+  await new Promise((resolve) => logConnection.once('connect', resolve));
+  logConnection.write(JSON.stringify({
     name,
     id,
   }));
   await logReady;
-  stdout.pipe(log);
-  stderr.pipe(log);
+  log.pipe(logConnection);
   // return the job
   return {
-    stdout,
-    stderr,
+    log,
     exit: async (exitCode) => {
       const endTime = Date.now();
-      stdout.end();
-      stderr.end();
-      await Promise.all(streamEndPromises);
+      log.end();
+      await logStreamEnded;
       await writeFile(statusFile, JSON.stringify({
         exitCode,
         startTime,
         endTime,
       }));
       await logEnded;
-      control.end(JSON.stringify({
+      controlConnection.end(JSON.stringify({
         endTime,
         exitCode,
       }));

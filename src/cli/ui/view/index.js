@@ -5,9 +5,10 @@ import Layout from './layout';
 import Monitor from './monitor';
 import Jobs from './jobs';
 import Job from './job';
+import logger from './logger';
 import {
   WORKING_DIR,
-  UI_LOG,
+  BLESSED_LOG,
 } from '../../../constants';
 import {
   up,
@@ -25,9 +26,11 @@ import {
 function createView(service, store) {
   const screen = blessed.screen({
     smartCSR: true,
-    log: path.join(WORKING_DIR, UI_LOG),
+    log: path.join(WORKING_DIR, BLESSED_LOG),
   });
-  screen.log('created');
+  logger.log = screen.log.bind(screen);
+  logger.debug = screen.debug.bind(screen);
+  logger.log('created');
   screen.title = 'alarmist';
   screen.key(['C-c'], () => process.exit(0));
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
@@ -35,7 +38,7 @@ function createView(service, store) {
   screen.append(container);
   container.key(['up', 'k'], () => store.dispatch(up()));
   container.key(['down', 'j'], () => store.dispatch(down()));
-  const layout = new Layout(screen.program, container);
+  const layout = new Layout(container);
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
   const jobs = new Jobs(Job, layout);

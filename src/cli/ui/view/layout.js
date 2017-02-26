@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import logger from './logger';
 import blessed from 'blessed';
 import {
   SELECTED_INDICATOR_PROPERTIES,
@@ -7,18 +8,17 @@ import {
 } from './constants';
 
 export default class Layout {
-  constructor(program, container) {
-    this.program = program;
+  constructor(container) {
     this.container = container;
     this.entries = {};
-    this.program.log('appending selected indicator');
+    logger.log('appending selected indicator');
     this.selectedIndicator = blessed.text(
       _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
     );
     this.container.append(this.selectedIndicator);
   }
   append(label, entry) {
-    this.program.log(`appending ${label}`);
+    logger.log(`appending ${label}`);
     this.entries[label] = entry;
     entry.setParent(this.container);
   }
@@ -42,7 +42,7 @@ export default class Layout {
         entry.collapse();
         let logHeight = 0;
         if (label === selected) {
-          this.program.log(`setting selected indicator top to ${top}`);
+          logger.log(`setting selected indicator top to ${top}`);
           this.selectedIndicator.top = top;
           if (state.expanded) {
             this.selectedIndicator.content = DOWN_POINTER;
@@ -54,7 +54,7 @@ export default class Layout {
             this.container.focus();
           }
         }
-        this.program.log(`setting ${label} top to ${top}`);
+        logger.log(`setting ${label} top to ${top}`);
         entry.setTop(top);
         top += entry.getHeaderHeight();
         top += logHeight;

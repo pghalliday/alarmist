@@ -10,6 +10,11 @@ import promisify from '../../../src/utils/promisify';
 const rimraf = promisify(_rimraf);
 
 const command = 'command';
+const args = [
+  'arg1',
+  'arg2',
+];
+const argv = [command].concat(args);
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -26,14 +31,15 @@ describe('cli', () => {
       execMonitor = sinon.spy(() => Promise.resolve(monitor));
       alarmist.execMonitor = execMonitor;
       await rimraf(WORKING_DIR);
-      await monitorCli(['-c', command]);
+      await monitorCli(argv);
       ui.createUi = fnCreateUi;
       alarmist.execMonitor = fnExecMonitor;
     });
 
     it('should create a monitor', async () => {
-      execMonitor.should.have.been.calledWithMatch({
+      execMonitor.should.have.been.calledWith({
         command,
+        args,
       });
     });
 

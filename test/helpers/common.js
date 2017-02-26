@@ -15,3 +15,6 @@ constants.WORKING_DIR = '.alarmist-test';
 
 // override the blessed functions
 import './blessed';
+
+// override logger functions
+import './logger';

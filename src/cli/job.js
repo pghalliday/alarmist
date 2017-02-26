@@ -3,11 +3,21 @@ import alarmist from '../';
 
 module.exports = function job(argv) {
   const args = minimist(argv, {
-    string: ['name', 'command'],
+    string: ['name'],
     alias: {
       name: 'n',
-      command: 'c',
     },
+    stopEarly: true,
   });
-  return alarmist.execJob(args);
+  return alarmist.execJob({
+    name: args.name,
+    command: args._[0],
+    args: args._.slice(1),
+  })
+  .catch(
+    // istanbul ignore next
+    (error) => {
+      console.error(error.stack);
+    }
+  );
 };

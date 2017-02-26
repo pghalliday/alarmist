@@ -6,14 +6,12 @@ import {PassThrough} from 'stream';
 import {createStore} from 'redux';
 
 const monitor = new EventEmitter();
-monitor.stdout = new PassThrough();
-monitor.stderr = new PassThrough();
+monitor.log = new PassThrough();
 const reducer = sinon.spy();
 const store = createStore(reducer);
 const service = createService(monitor, store);
 
-const stdout = Buffer.from('stdout');
-const stderr = Buffer.from('stderr');
+const log = Buffer.from('log');
 
 describe('cli', () => {
   describe('ui', () => {
@@ -49,21 +47,12 @@ describe('cli', () => {
         });
       });
 
-      it('should dispatch monitorLog actions on write to stdout', () => {
+      it('should dispatch monitorLog actions on write to log', () => {
         reducer.reset();
-        monitor.stdout.write(stdout);
+        monitor.log.write(log);
         reducer.should.have.been.calledWith(undefined, {
           type: 'MONITOR_LOG',
-          payload: stdout,
-        });
-      });
-
-      it('should dispatch monitorLog actions on write to stderr', () => {
-        reducer.reset();
-        monitor.stderr.write(stderr);
-        reducer.should.have.been.calledWith(undefined, {
-          type: 'MONITOR_LOG',
-          payload: stderr,
+          payload: log,
         });
       });
 

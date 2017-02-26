@@ -1,8 +1,6 @@
 import {
   WORKING_DIR,
-  STDOUT_LOG,
-  STDERR_LOG,
-  ALL_LOG,
+  PROCESS_LOG,
   CONTROL_SOCKET,
   LOG_SOCKET,
   READY_RESPONSE,
@@ -20,9 +18,7 @@ import _ from 'lodash';
 const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
-const stdoutLog = path.join(WORKING_DIR, STDOUT_LOG);
-const stderrLog = path.join(WORKING_DIR, STDERR_LOG);
-const allLog = path.join(WORKING_DIR, ALL_LOG);
+const processLog = path.join(WORKING_DIR, PROCESS_LOG);
 const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
 const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
@@ -31,27 +27,18 @@ export async function createMonitor() {
   await rimraf(WORKING_DIR);
   await mkdirp(WORKING_DIR);
   // set up streams for logging the watcher process
-  const stdout = new PassThrough();
-  const stderr = new PassThrough();
-  const stdoutStream = createWriteStream(stdoutLog);
-  const stderrStream = createWriteStream(stderrLog);
-  const allStream = createWriteStream(allLog);
-  stdout.pipe(stdoutStream);
-  stdout.pipe(allStream);
-  stderr.pipe(stderrStream);
-  stderr.pipe(allStream);
-  const streamEndPromises = [
-    new Promise((resolve) => stdoutStream.on('close', resolve)),
-    new Promise((resolve) => stderrStream.on('close', resolve)),
-    new Promise((resolve) => allStream.on('close', resolve)),
-  ];
-  const endStreams = async () => {
-    stdout.end();
-    stderr.end();
-    await Promise.all(streamEndPromises);
+  const log = new PassThrough();
+  const logStream = createWriteStream(processLog);
+  log.pipe(logStream);
+  const logStreamEnded = new Promise(
+    (resolve) => logStream.on('close', resolve)
+  );
+  const endLogStream = async () => {
+    logStream.end();
+    await logStreamEnded;
   };
   // set up the control socket for jobs
-  const control = createServer((client) => {
+  const controlServer = createServer((client) => {
     client.once('data', (data) => {
       const start = JSON.parse(data);
       monitor.emit('start', start);
@@ -62,11 +49,11 @@ export async function createMonitor() {
       client.write(READY_RESPONSE);
     });
   });
-  const controlListen = promisify(control.listen.bind(control));
-  const controlClose = promisify(control.close.bind(control));
+  const controlListen = promisify(controlServer.listen.bind(controlServer));
+  const controlClose = promisify(controlServer.close.bind(controlServer));
   await controlListen(controlSocket);
   // set up the log socket for jobs
-  const log = createServer((client) => {
+  const logServer = createServer((client) => {
     client.once('data', (data) => {
       const begin = JSON.parse(data);
       client.on('data', (data) => {
@@ -77,22 +64,21 @@ export async function createMonitor() {
       client.write(READY_RESPONSE);
     });
   });
-  const logListen = promisify(log.listen.bind(log));
-  const logClose = promisify(log.close.bind(log));
+  const logListen = promisify(logServer.listen.bind(logServer));
+  const logClose = promisify(logServer.close.bind(logServer));
   await logListen(logSocket);
   // expose the monitor properties and methods
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {
       await monitor.cleanup();
     }
-    await endStreams();
+    await endLogStream();
     await controlClose();
     await logClose();
   };
-  monitor.stdout = stdout;
-  monitor.stderr = stderr;
+  monitor.log = log;
   monitor.exit = async (code) => {
-    await endStreams();
+    await endLogStream();
     monitor.emit('exit', code);
   };
   return monitor;

@@ -1,12 +1,12 @@
 import * as Monitor from './monitor';
-import {exec as cpExec} from 'child_process';
+import {spawn} from 'pty.js';
 
-export async function exec({command}) {
+export async function exec({command, args, options}) {
   const monitor = await Monitor.createMonitor();
-  const proc = cpExec(command);
+  const term = spawn(command, args, options);
   let expectExit = false;
   const exitPromise = new Promise((resolve) => {
-    proc.on('exit', async (code) => {
+    term.on('exit', async (code) => {
       if (!expectExit) {
         delete monitor.cleanup;
         monitor.exit(code);
@@ -14,11 +14,12 @@ export async function exec({command}) {
       resolve();
     });
   });
-  proc.stdout.pipe(monitor.stdout);
-  proc.stderr.pipe(monitor.stderr);
+  term.on('data', (data) => {
+    monitor.log.write(Buffer.from(data));
+  });
   monitor.cleanup = async () => {
     expectExit = true;
-    proc.kill();
+    term.kill();
     await exitPromise;
   };
   return monitor;

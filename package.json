@@ -16,16 +16,16 @@
     "test": "run-s cmd:lint cmd:test cmd:coverage",
     "build": "run-s test cmd:build",
     "ci": "run-s build cmd:coveralls",
-    "alarmist:lint": "node ./bin/job.js -n lint -c 'npm run -s cmd:lint'",
-    "alarmist:test": "node ./bin/job.js -n test -c 'npm run -s cmd:test'",
-    "alarmist:coverage": "node ./bin/job.js -n coverage -c 'npm run -s cmd:coverage'",
-    "alarmist:build": "node ./bin/job.js -n build -c 'npm run -s cmd:build'",
+    "alarmist:lint": "node ./bin/job.js -n lint npm run -s cmd:lint",
+    "alarmist:test": "node ./bin/job.js -n test npm run -s cmd:test",
+    "alarmist:coverage": "node ./bin/job.js -n coverage npm run -s cmd:coverage",
+    "alarmist:build": "node ./bin/job.js -n build npm run -s cmd:build",
     "watch:lint": "chokidar '+(src|test)/**/*' -c 'npm run -s alarmist:lint'",
     "watch:test": "chokidar '+(src|test)/**/*' -c 'run-s -c alarmist:test alarmist:coverage'",
     "watch:build": "chokidar 'src/**/*' -c 'npm run -s alarmist:build'",
     "watch:alarmist": "run-p watch:build watch:lint watch:test",
     "watch": "chokidar '+(src|test)/**/*' -c 'npm run -s build'",
-    "start": "node ./bin/monitor.js -c 'npm run -s watch:alarmist'"
+    "start": "node ./bin/monitor.js npm run -s watch:alarmist"
   },
   "repository": {
     "type": "git",
@@ -63,6 +63,7 @@
     "lockfile": "^1.0.3",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
+    "pty.js": "^0.3.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
     "rimraf": "^2.5.4"

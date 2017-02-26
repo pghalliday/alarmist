@@ -4,11 +4,17 @@ import ui from './ui';
 
 module.exports = function cli(argv) {
   const args = minimist(argv, {
-    string: ['command'],
-    alias: {
-      command: 'c',
-    },
+    stopEarly: true,
   });
-  return alarmist.execMonitor(args)
-  .then(ui.createUi);
+  return alarmist.execMonitor({
+    command: args._[0],
+    args: args._.slice(1),
+  })
+  .then(ui.createUi)
+  .catch(
+    // istanbul ignore next
+    (error) => {
+      console.error(error.stack);
+    }
+  );
 };

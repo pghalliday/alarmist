@@ -1,3 +1,4 @@
+import logger from '../../../../../src/cli/ui/view/logger';
 import blessed from 'blessed';
 import helper from '../../../../helpers/blessed';
 import Layout from '../../../../../src/cli/ui/view/layout';
@@ -30,9 +31,6 @@ class Entry {
 }
 
 let layout;
-const program = {
-  log: sinon.spy(),
-};
 const container = {
   append: sinon.spy(),
   height: 10,
@@ -71,7 +69,7 @@ describe('cli', () => {
         before(() => {
           container.append.reset();
           blessed.text.reset();
-          layout = new Layout(program, container);
+          layout = new Layout(container);
           selectedIndicator = helper.text;
         });
 
@@ -142,12 +140,12 @@ describe('cli', () => {
 
               describe('then apply with the same state', () => {
                 before(() => {
-                  program.log.reset();
+                  logger.log.reset();
                   layout.apply(notExpandedState);
                 });
 
                 it('should do nothing', () => {
-                  program.log.should.not.have.been.called;
+                  logger.log.should.not.have.been.called;
                 });
               });
             });

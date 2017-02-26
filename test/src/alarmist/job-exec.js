@@ -8,8 +8,14 @@ const name = 'name';
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
-// eslint-disable-next-line max-len
-const command = `node test/bin/command.js ${stdout.toString()} ${stderr.toString()} ${exitCode}`;
+const all = Buffer.concat([stdout, stderr]);
+const command = 'node';
+const args = [
+  'test/bin/command.js',
+  stdout.toString(),
+  stderr.toString(),
+  exitCode,
+];
 
 class TestWritable extends Writable {
   constructor(options) {
@@ -28,8 +34,7 @@ describe('alarmist', () => {
     let createJob;
     before(async () => {
       job = {
-        stdout: new TestWritable(),
-        stderr: new TestWritable(),
+        log: new TestWritable(),
         exit: sinon.spy(() => Promise.resolve()),
       };
       createJob = sinon.spy(() => Promise.resolve(job));
@@ -38,6 +43,7 @@ describe('alarmist', () => {
       await exec({
         name,
         command,
+        args,
       });
       Job.createJob = fnCreateJob;
     });
@@ -48,12 +54,8 @@ describe('alarmist', () => {
       });
     });
 
-    it('should pipe to the job stdout', () => {
-      job.stdout.buffer.should.eql(stdout);
-    });
-
-    it('should pipe to the job stderr', () => {
-      job.stderr.buffer.should.eql(stderr);
+    it('should pipe to the job log', () => {
+      job.log.buffer.toString().should.eql(all.toString());
     });
 
     it('should complete the job', () => {

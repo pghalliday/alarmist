@@ -18,10 +18,19 @@ const mkdirp = promisify(_mkdirp);
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
-// eslint-disable-next-line max-len
-const exitingCommand = `node test/bin/command.js ${stdout.toString()} ${stderr.toString()} ${exitCode}`;
-// eslint-disable-next-line max-len
-const livingCommand = `node test/bin/service.js ${stdout.toString()} ${stderr.toString()}`;
+const all = Buffer.concat([stdout, stderr]);
+const command = 'node';
+const exitingArgs = [
+  'test/bin/command.js',
+  stdout.toString(),
+  stderr.toString(),
+  exitCode,
+];
+const livingArgs = [
+  'test/bin/service.js',
+  stdout.toString(),
+  stderr.toString(),
+];
 
 class TestWritable extends Writable {
   constructor(options) {
@@ -55,15 +64,15 @@ describe('alarmist', function() {
         const fnCreateMonitor = Monitor.createMonitor;
         await new Promise(async (resolve) => {
           monitor = {
-            stdout: new TestWritable(),
-            stderr: new TestWritable(),
+            log: new TestWritable(),
             close: sinon.spy(() => Promise.resolve()),
             exit: sinon.spy(resolve),
           };
           createMonitor = sinon.spy(() => Promise.resolve(monitor));
           Monitor.createMonitor = createMonitor;
           execMonitor = await exec({
-            command: exitingCommand,
+            command,
+            args: exitingArgs,
           });
         });
         await execMonitor.close();
@@ -74,12 +83,8 @@ describe('alarmist', function() {
         createMonitor.should.have.been.calledOnce;
       });
 
-      it('should pipe to the monitor stdout', () => {
-        monitor.stdout.buffer.should.eql(stdout);
-      });
-
-      it('should pipe to the monitor stderr', () => {
-        monitor.stderr.buffer.should.eql(stderr);
+      it('should pipe to the monitor log', () => {
+        monitor.log.buffer.should.eql(all);
       });
 
       it('should call exit', () => {
@@ -100,8 +105,7 @@ describe('alarmist', function() {
         let execMonitor;
         const fnCreateMonitor = Monitor.createMonitor;
         monitor = {
-          stdout: new TestWritable(),
-          stderr: new TestWritable(),
+          log: new TestWritable(),
           close: sinon.spy(async () => {
             await monitor.cleanup();
           }),
@@ -110,7 +114,8 @@ describe('alarmist', function() {
         Monitor.createMonitor = createMonitor;
         const waitPromise = waitForFile(path.join(WORKING_DIR, 'done'));
         execMonitor = await exec({
-          command: livingCommand,
+          command,
+          args: livingArgs,
         });
         await waitPromise;
         await execMonitor.close();
@@ -121,12 +126,8 @@ describe('alarmist', function() {
         createMonitor.should.have.been.calledOnce;
       });
 
-      it('should pipe to the monitor stdout', () => {
-        monitor.stdout.buffer.should.eql(stdout);
-      });
-
-      it('should pipe to the monitor stderr', () => {
-        monitor.stderr.buffer.should.eql(stderr);
+      it('should pipe to the monitor log', () => {
+        monitor.log.buffer.should.eql(all);
       });
 
       it('should close the monitor', () => {

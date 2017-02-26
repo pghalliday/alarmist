@@ -10,17 +10,23 @@ const rimraf = promisify(_rimraf);
 
 const name = 'name';
 const command = 'command';
+const args = [
+  'arg1',
+  'arg2',
+];
+const argv = ['-n', name, command].concat(args);
 
 describe('cli', () => {
   describe('job', () => {
     it('should execute the command', async () => {
       const fnExecJob = alarmist.execJob;
-      alarmist.execJob = sinon.spy();
+      alarmist.execJob = sinon.spy(() => Promise.resolve());
       await rimraf(WORKING_DIR);
-      await jobCli(['-n', name, '-c', command]);
-      alarmist.execJob.should.have.been.calledWithMatch({
+      await jobCli(argv);
+      alarmist.execJob.should.have.been.calledWith({
         name,
         command,
+        args,
       });
       alarmist.exec = fnExecJob;
     });

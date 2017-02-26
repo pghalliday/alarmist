@@ -7,6 +7,10 @@ const jobContent = (status) => ` ${status.name}: run ${status.id}: ${_.isUndefin
 const jobBg = (status) => _.isUndefined(status.exitCode) ? 'yellow' : (status.exitCode === 0 ? 'green' : 'red');
 
 export default class Job extends Entry {
+  constructor() {
+    super();
+    this.type = 'Job';
+  }
   _update(status) {
     this.setHeader(
       jobContent(status),

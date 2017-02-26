@@ -2,6 +2,10 @@ import _ from 'lodash';
 import Entry from './entry';
 
 export default class Monitor extends Entry {
+  constructor() {
+    super();
+    this.type = 'Monitor';
+  }
   _update(state) {
     if (_.isUndefined(state.exitCode)) {
       this.setHeader(

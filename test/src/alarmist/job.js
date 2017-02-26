@@ -3,9 +3,7 @@ import {
 } from '../../../src/alarmist/job';
 import {
   WORKING_DIR,
-  STDOUT_LOG,
-  STDERR_LOG,
-  ALL_LOG,
+  PROCESS_LOG,
   STATUS_FILE,
   CONTROL_SOCKET,
   LOG_SOCKET,
@@ -33,18 +31,15 @@ const startTime = 1000000;
 const endTime = 2000000;
 const id = 1;
 const exitCode = 0;
-const stdout = Buffer.from('stdout');
-const stderr = Buffer.from('stderr');
-const all = Buffer.concat([stdout, stderr]);
+const log = Buffer.from('log');
+const emptyBuffer = Buffer.alloc(0);
 
 const reportDir = path.join(
   WORKING_DIR,
   name,
   '' + id,
 );
-const stdoutLog = path.join(reportDir, STDOUT_LOG);
-const stderrLog = path.join(reportDir, STDERR_LOG);
-const allLog = path.join(reportDir, ALL_LOG);
+const processLog = path.join(reportDir, PROCESS_LOG);
 const statusFile = path.join(reportDir, STATUS_FILE);
 const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
 const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
@@ -52,8 +47,8 @@ const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 describe('alarmist', () => {
   describe('createJob', () => {
     let job;
-    let control;
-    let log;
+    let controlServer;
+    let logServer;
     let start;
     let end;
     let begin;
@@ -65,7 +60,7 @@ describe('alarmist', () => {
       _id.getId = sinon.spy(() => id);
       await rimraf(WORKING_DIR);
       await mkdirp(WORKING_DIR);
-      control = createServer((client) => {
+      controlServer = createServer((client) => {
         client.once('data', (data) => {
           start = JSON.parse(data);
           client.once('data', (data) => {
@@ -74,8 +69,10 @@ describe('alarmist', () => {
           client.write(READY_RESPONSE);
         });
       });
-      await new Promise((resolve) => control.listen(controlSocket, resolve));
-      log = createServer((client) => {
+      await new Promise(
+        (resolve) => controlServer.listen(controlSocket, resolve)
+      );
+      logServer = createServer((client) => {
         client.once('data', (data) => {
           logData = Buffer.alloc(0);
           begin = JSON.parse(data);
@@ -85,7 +82,7 @@ describe('alarmist', () => {
           client.write(READY_RESPONSE);
         });
       });
-      await new Promise((resolve) => log.listen(logSocket, resolve));
+      await new Promise((resolve) => logServer.listen(logSocket, resolve));
       job = await createJob({
         name,
       });
@@ -94,16 +91,12 @@ describe('alarmist', () => {
     });
 
     after(async () => {
-      await new Promise((resolve) => control.close(resolve));
-      await new Promise((resolve) => log.close(resolve));
+      await new Promise((resolve) => controlServer.close(resolve));
+      await new Promise((resolve) => logServer.close(resolve));
     });
 
-    it('should open a stdout stream', () => {
-      job.stdout.should.be.ok;
-    });
-
-    it('should open a stderr stream', () => {
-      job.stderr.should.be.ok;
+    it('should open a log stream', () => {
+      job.log.should.be.ok;
     });
 
     it('should save the status', async () => {
@@ -136,8 +129,7 @@ describe('alarmist', () => {
         Date.now = () => endTime;
         capture();
         try {
-          job.stdout.write(stdout);
-          job.stderr.write(stderr);
+          job.log.write(log);
           await job.exit(exitCode);
           [processStdout, processStderr] = flush();
         } catch (error) {
@@ -148,27 +140,17 @@ describe('alarmist', () => {
         }
       });
 
-      it('should write stdout to the console', async () => {
-        processStdout.should.eql(stdout);
+      it('should write log to stdout', async () => {
+        processStdout.should.eql(log);
       });
 
-      it('should write the stdout log', async () => {
-        const _stdout = await readFile(stdoutLog);
-        _stdout[0].should.eql(stdout);
+      it('should write nothing to stderr', async () => {
+        processStderr.should.eql(emptyBuffer);
       });
 
-      it('should write stderr to the console', async () => {
-        processStderr.should.eql(stderr);
-      });
-
-      it('should write the stderr log', async () => {
-        const _stderr = await readFile(stderrLog);
-        _stderr[0].should.eql(stderr);
-      });
-
-      it('should write the all log', async () => {
-        const _all = await readFile(allLog);
-        _all[0].should.eql(all);
+      it('should write the process log', async () => {
+        const _log = await readFile(processLog);
+        _log[0].should.eql(log);
       });
 
       it('should save the status', async () => {
@@ -181,7 +163,7 @@ describe('alarmist', () => {
       });
 
       it('should transmit the log', () => {
-        logData.should.eql(all);
+        logData.should.eql(log);
       });
 
       it('should report end', () => {
