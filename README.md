@@ -1,6 +1,6 @@
 # alarmist
 
-**IN DEVELOPMENT - to be released fully functional any minute now :)**
+**Functional but still IN DEVELOPMENT - expect issues ;)**
 
 [![Build Status](https://travis-ci.org/pghalliday/alarmist.svg?branch=master)](https://travis-ci.org/pghalliday/alarmist)
 [![Coverage Status](https://coveralls.io/repos/github/pghalliday/alarmist/badge.svg?branch=master)](https://coveralls.io/github/pghalliday/alarmist?branch=master)
