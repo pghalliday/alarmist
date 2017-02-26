@@ -5,24 +5,57 @@ import {
   LOG_PROPERTIES,
 } from './constants';
 
-function createEntry(label, layout) {
-  const header = blessed.text(_.cloneDeep(HEADER_PROPERTIES));
-  const log = blessed.log(_.cloneDeep(LOG_PROPERTIES));
-  layout.append(label, header, log);
-  return {
-    setHeader: (content, color) => {
-      header.content = content;
-      header.style.bg = color;
-    },
-    log: (data) => {
-      log.log(data.toString());
-    },
-    clear: () => {
-      log.content = '';
-    },
-  };
+export default class Entry {
+  constructor() {
+    this.header = blessed.text(_.cloneDeep(HEADER_PROPERTIES));
+    this.log = blessed.box(_.cloneDeep(LOG_PROPERTIES));
+    this.clear();
+  }
+  setParent(container) {
+    container.append(this.header);
+    container.append(this.log);
+  }
+  _update() {
+  }
+  update(state) {
+    if (this.state !== state) {
+      this.state = state;
+      this._update(state);
+    }
+  }
+  setHeader(content, color) {
+    this.header.content = content;
+    this.header.style.bg = color;
+  }
+  clear() {
+    this.log.content = '';
+  }
+  _setLog(data) {
+    this.log.content = data.toString();
+  }
+  setLog(data) {
+    if (data !== this.logData) {
+      this.logData = data;
+      this._setLog(data);
+    }
+  }
+  getHeaderHeight() {
+    return this.header.height;
+  }
+  setLogHeight(height) {
+    this.log.height = height;
+  }
+  setTop(top) {
+    this.header.top = top;
+    this.log.top = top + this.header.height;
+  }
+  collapse() {
+    this.log.hide();
+  }
+  expand() {
+    this.log.show();
+  }
+  focus() {
+    this.log.focus();
+  }
 }
-
-module.exports = {
-  createEntry,
-};

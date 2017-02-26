@@ -12,3 +12,6 @@ global.sinon = sinon;
 // override the working directory for tests
 import constants from '../../src/constants';
 constants.WORKING_DIR = '.alarmist-test';
+
+// override the blessed functions
+import './blessed';

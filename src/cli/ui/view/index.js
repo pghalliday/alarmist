@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import path from 'path';
 import blessed from 'blessed';
-import {createLayout} from './layout';
-import {createMonitor} from './monitor';
-import {createJobs} from './jobs';
+import Layout from './layout';
+import Monitor from './monitor';
+import Jobs from './jobs';
+import Job from './job';
 import {
   WORKING_DIR,
   UI_LOG,
@@ -13,6 +14,9 @@ import {
   down,
   toggleExpanded,
 } from '../redux/actions';
+import {
+  MONITOR_LABEL,
+} from '../constants';
 import {
   CONTAINER_PROPERTIES,
 } from './constants';
@@ -31,9 +35,10 @@ function createView(service, store) {
   screen.append(container);
   container.key(['up', 'k'], () => store.dispatch(up()));
   container.key(['down', 'j'], () => store.dispatch(down()));
-  const layout = createLayout(screen.program, container);
-  const monitor = createMonitor(service, layout);
-  const jobs = createJobs(service, layout);
+  const layout = new Layout(screen.program, container);
+  const monitor = new Monitor();
+  layout.append(MONITOR_LABEL, monitor);
+  const jobs = new Jobs(Job, layout);
   const update = () => {
     const state = store.getState();
     monitor.update(state.monitor);

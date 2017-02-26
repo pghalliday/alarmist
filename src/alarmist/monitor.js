@@ -54,10 +54,10 @@ export async function createMonitor() {
   const control = createServer((client) => {
     client.once('data', (data) => {
       const start = JSON.parse(data);
-      monitor.emit('update', start);
+      monitor.emit('start', start);
       client.once('data', (data) => {
         const end = JSON.parse(data);
-        monitor.emit('update', Object.assign({}, start, end));
+        monitor.emit('end', Object.assign({}, start, end));
       });
       client.write(READY_RESPONSE);
     });

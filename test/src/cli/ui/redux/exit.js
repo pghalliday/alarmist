@@ -7,6 +7,7 @@ import {
 let monitor;
 
 const exitCode = 0;
+const log = Buffer.alloc(0);
 
 describe('cli', () => {
   describe('ui', () => {
@@ -21,6 +22,7 @@ describe('cli', () => {
         it('should set the exit code', () => {
           monitor.should.eql({
             exitCode,
+            log,
           });
         });
       });

@@ -14,7 +14,6 @@ const service = createService(monitor, store);
 
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
-const all = Buffer.concat([stdout, stderr]);
 
 describe('cli', () => {
   describe('ui', () => {
@@ -32,75 +31,56 @@ describe('cli', () => {
         });
       });
 
-      it('should dispatch update actions', () => {
+      it('should dispatch start actions', () => {
         reducer.reset();
-        monitor.emit('update', 'status');
+        monitor.emit('start', 'status');
         reducer.should.have.been.calledWith(undefined, {
-          type: 'UPDATE',
+          type: 'START',
           payload: 'status',
         });
       });
 
-      describe('subscribeMonitorLog', () => {
-        let unsubscribe;
-        let logData;
-        before(() => {
-          logData = Buffer.alloc(0);
-          unsubscribe = service.subscribeMonitorLog((data) => {
-            logData = Buffer.concat([logData, data]);
-          });
-          monitor.stdout.write(stdout);
-          monitor.stderr.write(stderr);
-        });
-        after(() => {
-          unsubscribe();
-        });
-
-        it('should notify subscribers on writes', () => {
-          logData.should.eql(all);
+      it('should dispatch end actions', () => {
+        reducer.reset();
+        monitor.emit('end', 'status');
+        reducer.should.have.been.calledWith(undefined, {
+          type: 'END',
+          payload: 'status',
         });
       });
 
-      describe('subscribeJobLog', () => {
-        let unsubscribe;
-        let logData;
-        before(() => {
-          unsubscribe = service.subscribeJobLog('name', 2, (data) => {
-            logData = data;
-          });
+      it('should dispatch monitorLog actions on write to stdout', () => {
+        reducer.reset();
+        monitor.stdout.write(stdout);
+        reducer.should.have.been.calledWith(undefined, {
+          type: 'MONITOR_LOG',
+          payload: stdout,
         });
-        after(() => {
-          unsubscribe();
-        });
+      });
 
-        it('should notify subscribers on log events', () => {
-          logData = undefined;
-          monitor.emit('log', {
+      it('should dispatch monitorLog actions on write to stderr', () => {
+        reducer.reset();
+        monitor.stderr.write(stderr);
+        reducer.should.have.been.calledWith(undefined, {
+          type: 'MONITOR_LOG',
+          payload: stderr,
+        });
+      });
+
+      it('should dispatch jobLog actions on log events', () => {
+        reducer.reset();
+        monitor.emit('log', {
+          name: 'name',
+          id: 2,
+          data: 'log data',
+        });
+        reducer.should.have.been.calledWith(undefined, {
+          type: 'JOB_LOG',
+          payload: {
             name: 'name',
             id: 2,
             data: 'log data',
-          });
-          logData.should.eql('log data');
-        });
-
-        it('should not notify subscribers for other ids', () => {
-          logData = undefined;
-          monitor.emit('log', {
-            name: 'name',
-            id: 1,
-            data: 'log data',
-          });
-          expect(logData).to.be.undefined;
-        });
-
-        it('should not notify subscribers for other names', () => {
-          logData = undefined;
-          monitor.emit('log', {
-            name: 'other name',
-            id: 2,
-            data: 'log data',
-          });
-          expect(logData).to.be.undefined;
+          },
         });
       });
     });

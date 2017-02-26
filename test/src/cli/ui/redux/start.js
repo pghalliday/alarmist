@@ -1,7 +1,7 @@
 import store from '../../../../../src/cli/ui/redux/store';
 import {
   reset,
-  update,
+  start,
 } from '../../../../../src/cli/ui/redux/actions';
 import {
   MONITOR_LABEL,
@@ -15,53 +15,68 @@ let lines;
 
 const name = 'job name';
 const id = 2;
+const startTime = 100000;
 const earlierId = 1;
 const laterId = 3;
 
 const otherName = 'other job name';
 const otherId = 1;
 
+const log = Buffer.alloc(0);
+
 const job = {
   name,
   id,
+  startTime,
 };
 
 const earlierJob = {
   name,
   id: earlierId,
+  startTime,
 };
 
 const laterJob = {
   name,
   id: laterId,
+  startTime,
 };
 
 const otherJob = {
   name: otherName,
   id: otherId,
+  startTime,
 };
 
 const oneJob = {
-  [name]: job,
+  [name]: Object.assign({}, job, {
+    log,
+  }),
 };
 
 const oneLaterJob = {
-  [name]: laterJob,
+  [name]: Object.assign({}, laterJob, {
+    log,
+  }),
 };
 
 const twoJobs = {
-  [name]: job,
-  [otherName]: otherJob,
+  [name]: Object.assign({}, job, {
+    log,
+  }),
+  [otherName]: Object.assign({}, otherJob, {
+    log,
+  }),
 };
 
 describe('cli', () => {
   describe('ui', () => {
     describe('redux', () => {
-      describe('update', () => {
+      describe('start', () => {
         describe('with an empty state', () => {
           before(() => {
             store.dispatch(reset());
-            store.dispatch(update(job));
+            store.dispatch(start(job));
             const state = store.getState();
             jobs = state.jobs;
             lines = state.layout.lines;
@@ -83,8 +98,8 @@ describe('cli', () => {
           describe('and a new job name', () => {
             before(() => {
               store.dispatch(reset());
-              store.dispatch(update(job));
-              store.dispatch(update(otherJob));
+              store.dispatch(start(job));
+              store.dispatch(start(otherJob));
               const state = store.getState();
               jobs = state.jobs;
               lines = state.layout.lines;
@@ -107,8 +122,8 @@ describe('cli', () => {
             describe('and an earlier id', () => {
               before(() => {
                 store.dispatch(reset());
-                store.dispatch(update(job));
-                store.dispatch(update(earlierJob));
+                store.dispatch(start(job));
+                store.dispatch(start(earlierJob));
                 const state = store.getState();
                 jobs = state.jobs;
                 lines = state.layout.lines;
@@ -129,8 +144,8 @@ describe('cli', () => {
             describe('and a later id', () => {
               before(() => {
                 store.dispatch(reset());
-                store.dispatch(update(job));
-                store.dispatch(update(laterJob));
+                store.dispatch(start(job));
+                store.dispatch(start(laterJob));
                 const state = store.getState();
                 jobs = state.jobs;
                 lines = state.layout.lines;

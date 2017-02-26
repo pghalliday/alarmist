@@ -1,13 +1,18 @@
-import {createJobs} from '../../../../../src/cli/ui/view/jobs';
-import Job from '../../../../../src/cli/ui/view/job';
+import Jobs from '../../../../../src/cli/ui/view/jobs';
+import {jobLabel} from '../../../../../src/cli/ui/helpers';
 
 let jobs;
-const service = {};
-const layout = {};
-const job = {
-  update: sinon.spy(),
+const layout = {
+  append: sinon.spy(),
 };
-const createJob = sinon.spy(() => job);
+let job;
+let lastJob;
+class Job {
+  constructor() {
+    this.update = sinon.spy();
+    job = this;
+  }
+}
 
 const name = 'name';
 const anotherName = 'anotherName';
@@ -19,7 +24,7 @@ const anotherStatus = {
   name: anotherName,
 };
 const updatedStatus = {
-  name,
+  name: anotherName,
 };
 
 const newJob = {
@@ -30,36 +35,28 @@ const anotherNewJob = {
   [anotherName]: anotherStatus,
 };
 const updatedJob = {
-  [name]: updatedStatus,
-  [anotherName]: anotherStatus,
+  [name]: status,
+  [anotherName]: updatedStatus,
 };
 
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
-      describe('jobs', () => {
+      describe('Jobs', () => {
         before(() => {
-          jobs = createJobs(service, layout);
+          jobs = new Jobs(Job, layout);
         });
 
         describe('update', () => {
           describe('with a new job', () => {
             before(() => {
-              createJob.reset();
-              job.update.reset();
-              const fnCreateJob = Job.createJob;
-              Job.createJob = createJob;
+              layout.append.reset();
+              job = undefined;
               jobs.update(newJob);
-              Job.createJob = fnCreateJob;
             });
 
             it('should create a new job', () => {
-              createJob.should.have.been.calledOnce;
-              createJob.should.have.been.calledWith(
-                name,
-                sinon.match.same(service),
-                sinon.match.same(layout),
-              );
+              job.should.be.ok;
             });
 
             it('should update the new job', () => {
@@ -69,23 +66,22 @@ describe('cli', () => {
               );
             });
 
+            it('should append the job to the layout', () => {
+              layout.append.should.have.been.calledWith(
+                jobLabel(name),
+                job,
+              );
+            });
+
             describe('then with another new job', () => {
               before(() => {
-                createJob.reset();
-                job.update.reset();
-                const fnCreateJob = Job.createJob;
-                Job.createJob = createJob;
+                layout.append.reset();
+                job = undefined;
                 jobs.update(anotherNewJob);
-                Job.createJob = fnCreateJob;
               });
 
               it('should create a new job', () => {
-                createJob.should.have.been.calledOnce;
-                createJob.should.have.been.calledWith(
-                  anotherName,
-                  sinon.match.same(service),
-                  sinon.match.same(layout),
-                );
+                job.should.be.ok;
               });
 
               it('should update the new job', () => {
@@ -95,23 +91,33 @@ describe('cli', () => {
                 );
               });
 
+              it('should append the job to the layout', () => {
+                layout.append.should.have.been.calledWith(
+                  jobLabel(anotherName),
+                  job,
+                );
+              });
+
               describe('then with an updated job', () => {
                 before(() => {
-                  createJob.reset();
+                  layout.append.reset();
                   job.update.reset();
-                  const fnCreateJob = Job.createJob;
-                  Job.createJob = createJob;
+                  lastJob = job;
+                  job = undefined;
                   jobs.update(updatedJob);
-                  Job.createJob = fnCreateJob;
                 });
 
                 it('should not create a new job', () => {
-                  createJob.should.have.not.have.been.called;
+                  expect(job).to.not.be.ok;
+                });
+
+                it('should not append the job to the layout', () => {
+                  layout.append.should.not.have.been.called;
                 });
 
                 it('should update the job', () => {
-                  job.update.should.have.been.calledOnce;
-                  job.update.should.have.been.calledWith(
+                  lastJob.update.should.have.been.calledOnce;
+                  lastJob.update.should.have.been.calledWith(
                     sinon.match.same(updatedStatus)
                   );
                 });

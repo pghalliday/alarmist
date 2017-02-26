@@ -1,85 +1,60 @@
-import {createMonitor} from '../../../../../src/cli/ui/view/monitor';
+import Monitor from '../../../../../src/cli/ui/view/monitor';
 import Entry from '../../../../../src/cli/ui/view/entry';
-import {
-  MONITOR_LABEL,
-} from '../../../../../src/cli/ui/constants';
 
 let monitor;
-
-const layout = {};
-const entry = {
-  setHeader: sinon.spy(),
-  clear: sinon.spy(),
-  log: sinon.spy(),
-};
-const createEntry = sinon.spy(() => entry);
-const service = {
-  reset: () => service.callback = undefined,
-  log: (data) => {
-    service.callback(data);
-  },
-  subscribeMonitorLog: (callback) => {
-    service.callback = callback;
-  },
-};
+let log = Buffer.from('log');
 
 describe('cli', () => {
   describe('ui', () => {
     describe('view', () => {
-      describe('monitor', () => {
+      describe('Monitor', () => {
         before(() => {
-          service.reset();
-          const fnCreateEntry = Entry.createEntry;
-          createEntry.reset();
-          Entry.createEntry = createEntry;
-          monitor = createMonitor(service, layout);
-          service.log('log data');
-          Entry.createEntry = fnCreateEntry;
+          monitor = new Monitor();
+          sinon.spy(monitor, 'setHeader');
+          sinon.spy(monitor, 'setLog');
         });
 
-        it('should construct an entry', () => {
-          createEntry.should.have.been.calledWith(
-            MONITOR_LABEL,
-            sinon.match.same(layout),
-          );
+        it('should be an Entry', () => {
+          monitor.should.be.an.instanceOf(Entry);
         });
 
-        it('should clear the log', () => {
-          entry.clear.should.have.been.calledOnce;
-        });
-
-        it('should submit log entries', () => {
-          entry.log.should.have.been.calledWith('log data');
-        });
-
-        describe('update', () => {
+        describe('_update', () => {
           describe('with an exit code', () => {
             before(() => {
-              entry.setHeader.reset();
-              monitor.update({
+              monitor._update({
                 exitCode: 0,
+                log,
               });
             });
 
             it('should set the header', () => {
-              entry.setHeader.should.have.been.calledWith(
+              monitor.setHeader.should.have.been.calledWith(
                 ' monitor: exited: 0',
                 'red',
               );
+            });
+
+            it('should set the log', () => {
+              monitor.setLog.should.have.been.calledWith(log);
             });
           });
 
           describe('without an exit code', () => {
             before(() => {
-              entry.setHeader.reset();
-              monitor.update({});
+              monitor._update({
+                log,
+              });
             });
 
             it('should set the header', () => {
-              entry.setHeader.should.have.been.calledWith(
+              monitor.setHeader.should.have.been.calledWith(
                 ' monitor: ok',
                 'green',
               );
+            });
+
+            it('should set the log', () => {
+              monitor.setLog.should.have.been.calledWith(log);
             });
           });
         });

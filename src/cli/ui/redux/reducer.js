@@ -4,10 +4,13 @@ import {handleActions} from 'redux-actions';
 import {
   reset,
   exit,
-  update,
+  start,
+  end,
   up,
   down,
   toggleExpanded,
+  monitorLog,
+  jobLog,
 } from './actions';
 import {
   MONITOR_LABEL,
@@ -16,26 +19,61 @@ import {
   jobLabel,
 } from '../helpers';
 
-const initialMonitor = {};
+const initialMonitor = {
+  log: Buffer.alloc(0),
+};
 
 const monitor = handleActions({
   [reset]: () => initialMonitor,
-  [exit]: (monitor, {payload}) => ({exitCode: payload}),
+  [exit]: (monitor, {payload}) => {
+    return Object.assign({}, monitor, {
+      exitCode: payload,
+    });
+  },
+  [monitorLog]: (monitor, {payload}) => {
+    return Object.assign({}, monitor, {
+      log: Buffer.concat([monitor.log, payload]),
+    });
+  },
 }, initialMonitor);
 
 const initialJobs = {};
 
 const jobs = handleActions({
   [reset]: () => initialJobs,
-  [update]: (jobs, {payload}) => {
+  [start]: (jobs, {payload}) => {
     const name = payload.name;
     const existing = jobs[name];
     if (!_.isUndefined(existing) && existing.id > payload.id) {
       return jobs;
     }
     return Object.assign({}, jobs, {
-      [name]: payload,
+      [name]: Object.assign({
+        log: Buffer.alloc(0),
+      }, payload),
     });
+  },
+  [jobLog]: (jobs, {payload}) => {
+    const name = payload.name;
+    const job = jobs[name];
+    if (!_.isUndefined(job) && payload.id === job.id) {
+      return Object.assign({}, jobs, {
+        [name]: Object.assign({}, job, {
+          log: Buffer.concat([job.log, payload.data]),
+        }),
+      });
+    }
+    return jobs;
+  },
+  [end]: (jobs, {payload}) => {
+    const name = payload.name;
+    const job = jobs[name];
+    if (!_.isUndefined(job) && payload.id === job.id) {
+      return Object.assign({}, jobs, {
+        [name]: Object.assign({}, job, payload),
+      });
+    }
+    return jobs;
   },
 }, initialJobs);
 
@@ -49,7 +87,7 @@ const initialLayout = {
 
 const layout = handleActions({
   [reset]: () => initialLayout,
-  [update]: (layout, {payload}) => {
+  [start]: (layout, {payload}) => {
     const entry = jobLabel(payload.name);
     const lines = layout.lines;
     const index = _.indexOf(lines, entry);

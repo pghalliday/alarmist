@@ -100,7 +100,7 @@ describe('alarmist', () => {
         let ready;
         beforeEach((done) => {
           control.write(JSON.stringify(startEvent));
-          monitor.on('update', (_event) => {
+          monitor.on('start', (_event) => {
             event = _event;
           });
           control.once('data', (_ready) => {
@@ -109,7 +109,7 @@ describe('alarmist', () => {
           });
         });
 
-        it('should emit an update event', () => {
+        it('should emit a start event', () => {
           event.should.eql(startEvent);
         });
 
@@ -120,13 +120,13 @@ describe('alarmist', () => {
         describe('and then recieves an end message', () => {
           beforeEach((done) => {
             control.write(JSON.stringify(endMessage));
-            monitor.on('update', (_event) => {
+            monitor.on('end', (_event) => {
               event = _event;
               done();
             });
           });
 
-          it('should emit an update event', () => {
+          it('should emit an end event', () => {
             event.should.eql(endEvent);
           });
         });
