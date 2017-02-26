@@ -23,8 +23,9 @@
     "watch:lint": "chokidar '+(src|test)/**/*' -c 'npm run -s alarmist:lint'",
     "watch:test": "chokidar '+(src|test)/**/*' -c 'run-s -c alarmist:test alarmist:coverage'",
     "watch:build": "chokidar 'src/**/*' -c 'npm run -s alarmist:build'",
-    "watch:all": "run-p watch:build watch:lint watch:test",
-    "start": "node ./bin/monitor.js -c 'npm run -s watch:all'"
+    "watch:alarmist": "run-p watch:build watch:lint watch:test",
+    "watch": "chokidar '+(src|test)/**/*' -c 'npm run -s build'",
+    "start": "node ./bin/monitor.js -c 'npm run -s watch:alarmist'"
   },
   "repository": {
     "type": "git",
