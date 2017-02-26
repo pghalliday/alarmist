@@ -33,8 +33,12 @@ describe('cli', () => {
           blessed.box.should.have.been.calledWith(LOG_PROPERTIES);
         });
 
+        it('should hide the log', () => {
+          helper.box.hide.should.have.been.calledOnce;
+        });
+
         it('should clear the log', () => {
-          helper.box.content.should.eql('');
+          helper.box.setContent.should.have.been.calledWith('');
         });
 
         describe('setParent', () => {
@@ -76,13 +80,12 @@ describe('cli', () => {
 
         describe('setHeader', () => {
           before(() => {
-            helper.text.content = undefined;
-            helper.text.style.bg = undefined;
+            helper.reset();
             entry.setHeader('content', 'color');
           });
 
           it('should set the header content', () => {
-            helper.text.content.should.eql('content');
+            helper.text.setContent.should.have.been.calledWith('content');
           });
 
           it('should set the header color', () => {
@@ -92,23 +95,23 @@ describe('cli', () => {
 
         describe('clear', () => {
           before(() => {
-            helper.box.content = 'log data';
+            helper.reset();
             entry.clear();
           });
 
           it('should clear the log box', () => {
-            helper.box.content.should.eql('');
+            helper.box.setContent.should.have.been.calledWith('');
           });
         });
 
         describe('_setLog', () => {
           before(() => {
-            helper.box.content = '';
+            helper.reset();
             entry._setLog(Buffer.from('log data'));
           });
 
           it('should set the log box content', () => {
-            helper.box.content.should.eql('log data');
+            helper.box.setContent.should.have.been.calledWith('log data');
           });
         });
 
@@ -141,10 +144,10 @@ describe('cli', () => {
         });
 
         describe('setLogHeight', () => {
-            before(() => {
-              helper.box.height = undefined;
-              entry.setLogHeight(10);
-            });
+          before(() => {
+            helper.reset();
+            entry.setLogHeight(10);
+          });
 
           it('should set the log height', () => {
             helper.box.height.should.eql(10);
@@ -153,8 +156,7 @@ describe('cli', () => {
 
         describe('setTop', () => {
           before(() => {
-            helper.text.top = undefined;
-            helper.box.top = undefined;
+            helper.reset();
             entry.setTop(10);
           });
 
@@ -167,31 +169,54 @@ describe('cli', () => {
           });
         });
 
-        describe('collapse', () => {
-          before(() => {
-            helper.box.hide.reset();
-            entry.collapse();
-          });
-
-          it('should hide the log', () => {
-            helper.box.hide.should.have.been.calledOnce;
-          });
-        });
-
         describe('expand', () => {
           before(() => {
-            helper.box.show.reset();
+            helper.reset();
+            helper.lines = [];
             entry.expand();
           });
 
           it('should show the log', () => {
             helper.box.show.should.have.been.calledOnce;
           });
+
+          describe('then expand again', () => {
+            before(() => {
+              helper.reset();
+              entry.expand();
+            });
+
+            it('should do nothing', () => {
+              helper.box.show.should.not.have.been.called;
+            });
+          });
+
+          describe('then collapse', () => {
+            before(() => {
+              helper.reset();
+              entry.collapse();
+            });
+
+            it('should hide the log', () => {
+              helper.box.hide.should.have.been.calledOnce;
+            });
+
+            describe('then collapse again', () => {
+              before(() => {
+                helper.reset();
+                entry.collapse();
+              });
+
+              it('should do nothing', () => {
+                helper.box.hide.should.not.have.been.called;
+              });
+            });
+          });
         });
 
         describe('focus', () => {
           before(() => {
-            helper.box.focus.reset();
+            helper.reset();
             entry.focus();
           });
 

@@ -39,7 +39,7 @@ describe('cli', () => {
 
             it('should set the header', () => {
               job.setHeader.should.have.been.calledWith(
-                ` ${name}: ${id}: pending`,
+                ` ${name}: run ${id}: pending`,
                 'yellow',
               );
             });
@@ -65,7 +65,7 @@ describe('cli', () => {
 
             it('should set the header', () => {
               job.setHeader.should.have.been.calledWith(
-                ` ${name}: ${id}: 0`,
+                ` ${name}: run ${id}: ok`,
                 'green',
               );
             });
@@ -91,7 +91,7 @@ describe('cli', () => {
 
             it('should set the header', () => {
               job.setHeader.should.have.been.calledWith(
-                ` ${name}: ${id}: 1`,
+                ` ${name}: run ${id}: exit code 1`,
                 'red',
               );
             });

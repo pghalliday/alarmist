@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Entry from './entry';
 
 // eslint-disable-next-line max-len
-const jobContent = (status) => ` ${status.name}: ${status.id}: ${_.isUndefined(status.exitCode) ? 'pending' : status.exitCode}`;
+const jobContent = (status) => ` ${status.name}: run ${status.id}: ${_.isUndefined(status.exitCode) ? 'pending' : (status.exitCode === 0 ? 'ok' : 'exit code ' + status.exitCode)}`;
 // eslint-disable-next-line max-len
 const jobBg = (status) => _.isUndefined(status.exitCode) ? 'yellow' : (status.exitCode === 0 ? 'green' : 'red');
 

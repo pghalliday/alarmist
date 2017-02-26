@@ -29,7 +29,7 @@ function createView(service, store) {
   });
   screen.log('created');
   screen.title = 'alarmist';
-  screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
+  screen.key(['C-c'], () => process.exit(0));
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const container = blessed.box(CONTAINER_PROPERTIES);
   screen.append(container);
