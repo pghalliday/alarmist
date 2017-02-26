@@ -7,6 +7,8 @@
 
 Monitor parallel jobs
 
+![alt Alarmist UI](https://raw.githubusercontent.com/pghalliday/alarmist/master/alarmist.png "Alarmist UI")
+
 ## Install
 
 ```
@@ -18,14 +20,21 @@ npm install --save-dev alarmist
 Execute a job
 
 ```
-alarmist-job -n name -c my-command
+alarmist-job -n name my-command [args...]
 ```
 
 Monitor jobs
 
 ```
-alarmist-monitor -c my-watch-command
+alarmist-monitor my-watch-command [args...]
 ```
+
+Jobs will appear on first run and can be expanded (one at a time) to display logs
+
+- [CTRL-c] - stop the monitor
+- [up, down, j, k] -  select a job
+- [enter, o] - expand/collapse job logs
+  - [up, down, j, k, g, SHIFT-g] - navigate log when expanded
 
 ## API
 
@@ -45,11 +54,10 @@ alarmist.createJob({
 });
 ```
 
-The job will expose `stdout` and `stdin` write streams that you can use for logging.
+The job will expose a `log` write stream that you can use for logging.
 
 ```javascript
-job.stdout.write('this gets recorded as stdout');
-job.stderr.write('this gets recorded as stderr');
+job.log.write('this gets logged');
 ```
 
 When the job is complete call the `complete` method to signal success or failure with an exit code.
@@ -67,7 +75,8 @@ job.complete({
 ```javascript
 alarmist.execJob({
   name: 'name',
-  command: 'my-command'
+  command: 'my-command',
+  args: []
 }).then(function() {
   ...
 });
@@ -79,32 +88,51 @@ Start a monitor and watcher process
 
 ```javascript
 alarmist.execMonitor({
-  command: 'my-watcher-command'
+  command: 'my-watcher-command',
+  args: []
 })
 .then(function(monitor) {
   ...
 });
 ```
 
-Listen for update events when jobs start
+Listen for start events when jobs start
 
 ```javascript
-monitor.on('update', function(job) {
+monitor.on('start', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
 });
 ```
 
-Listen for update events when jobs end
+Listen for log events when jobs log data
 
 ```javascript
-monitor.on('update', function(job) {
+monitor.on('log', function(job) {
+  console.log(job.id);
+  console.log(job.name);
+  console.log(job.data); // this should be a Buffer
+});
+```
+
+Listen for end events when jobs end
+
+```javascript
+monitor.on('end', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
   console.log(job.endTime);
   console.log(job.exitCode);
+});
+```
+
+Read from the monitor log stream, for logging from the watcher command
+
+```javascript
+monitor.log.on('data', function(data) {
+  console.log(data) // this shoud be a Buffer
 });
 ```
 
@@ -136,11 +164,10 @@ alarmist.createMonitor()
 
 Listen for job events as above
 
-Log stdout and stderr for your watcher process
+Log for your watcher process
 
 ```javascript
-monitor.stdout.write('output');
-monitor.stderr.write('error');
+monitor.log.write('output');
 ```
 
 Signal the exit of the watcher process (watcher processes aren't meant to exit so this is really signalling an error)
@@ -160,3 +187,4 @@ Run tests, etc before pushing changes/opening a PR
 - `npm run build` - run tests then build
 - `npm run watch` - watch for changes and run build
 - `npm run ci` - run build and submit coverage to coveralls
+- `npm start` - use alarmist to monitor its own build tasks in parallel :)
