@@ -70,7 +70,10 @@ describe('alarmist', () => {
         });
       });
       await new Promise(
-        (resolve) => controlServer.listen(getControlSocket(), resolve)
+        async (resolve) => controlServer.listen(
+          await getControlSocket(true),
+          resolve,
+	)
       );
       logServer = createServer((client) => {
         client.once('data', (data) => {
@@ -82,7 +85,12 @@ describe('alarmist', () => {
           client.write(READY_RESPONSE);
         });
       });
-      await new Promise((resolve) => logServer.listen(getLogSocket(), resolve));
+      await new Promise(
+        async (resolve) => logServer.listen(
+          await getLogSocket(true),
+          resolve,
+	)
+      );
       job = await createJob({
         name,
       });

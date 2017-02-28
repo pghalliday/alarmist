@@ -76,7 +76,7 @@ describe('alarmist', () => {
     describe('should open a control socket', () => {
       let controlConnection;
       beforeEach(async () => {
-        controlConnection = createConnection(getControlSocket());
+        controlConnection = createConnection(await getControlSocket());
         await new Promise(
           (resolve) => controlConnection.on('connect', resolve)
         );
@@ -127,7 +127,7 @@ describe('alarmist', () => {
     describe('should open a log socket', () => {
       let logConnection;
       beforeEach(async () => {
-        logConnection = createConnection(getLogSocket());
+        logConnection = createConnection(await getLogSocket());
         await new Promise((resolve) => logConnection.on('connect', resolve));
       });
       afterEach(async () => {

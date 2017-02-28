@@ -51,7 +51,8 @@ export async function createMonitor() {
   });
   const controlListen = promisify(controlServer.listen.bind(controlServer));
   const controlClose = promisify(controlServer.close.bind(controlServer));
-  await controlListen(getControlSocket());
+  const controlSocket = await getControlSocket(true);
+  await controlListen(controlSocket);
   // set up the log socket for jobs
   const logServer = createServer((client) => {
     client.once('data', (data) => {
@@ -66,7 +67,8 @@ export async function createMonitor() {
   });
   const logListen = promisify(logServer.listen.bind(logServer));
   const logClose = promisify(logServer.close.bind(logServer));
-  await logListen(getLogSocket());
+  const logSocket = await getLogSocket(true);
+  await logListen(logSocket);
   // expose the monitor properties and methods
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {

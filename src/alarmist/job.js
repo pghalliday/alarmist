@@ -42,7 +42,8 @@ export async function createJob({name}) {
     (resolve) => logStream.on('close', resolve)
   );
   // start the control socket
-  const controlConnection = createConnection(getControlSocket());
+  const controlSocket = await getControlSocket(false);
+  const controlConnection = createConnection(controlSocket);
   const controlReady = new Promise(
     (resolve) => controlConnection.once('data', resolve)
   );
@@ -57,7 +58,8 @@ export async function createJob({name}) {
   }));
   await controlReady;
   // start the log socket
-  const logConnection = createConnection(getLogSocket());
+  const logSocket = await getLogSocket(false);
+  const logConnection = createConnection(logSocket);
   const logReady = new Promise(
     (resolve) => logConnection.once('data', resolve)
   );

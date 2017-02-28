@@ -5,8 +5,6 @@ const STATUS_FILE = 'status.json';
 const ID_FILE = 'id';
 const CONTROL_SOCKET = 'control.sock';
 const LOG_SOCKET = 'log.sock';
-const CONTROL_NAMED_PIPE = '\\\\.\\pipe\\node-alarmist-control';
-const LOG_NAMED_PIPE = '\\\\.\\pipe\\node-alarmist-log';
 const READY_RESPONSE = 'ready';
 
 module.exports = {
@@ -17,7 +15,5 @@ module.exports = {
   ID_FILE,
   CONTROL_SOCKET,
   LOG_SOCKET,
-  CONTROL_NAMED_PIPE,
-  LOG_NAMED_PIPE,
   READY_RESPONSE,
 };
