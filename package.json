@@ -1,6 +1,6 @@
 {
   "name": "alarmist",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
   "bin": {
@@ -25,7 +25,8 @@
     "watch:build": "chokidar 'src/**/*' -c 'npm run -s alarmist:build'",
     "watch:alarmist": "run-p watch:build watch:lint watch:test",
     "watch": "chokidar '+(src|test)/**/*' -c 'npm run -s build'",
-    "start": "node ./bin/monitor.js npm run -s watch:alarmist"
+    "start": "node ./bin/monitor.js npm run -s watch:alarmist",
+    "prepublish": "run-s build"
   },
   "repository": {
     "type": "git",
