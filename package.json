@@ -26,7 +26,7 @@
     "watch:alarmist": "run-p watch:build watch:lint watch:test",
     "watch": "chokidar \"+(src|test)/**/*\" -c \"npm run -s build\"",
     "start": "node ./bin/monitor.js npm run -s watch:alarmist",
-    "prepublish": "run-s build"
+    "prepublish": "run-s cmd:build"
   },
   "repository": {
     "type": "git",
