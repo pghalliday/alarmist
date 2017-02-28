@@ -1,6 +1,6 @@
 {
   "name": "alarmist",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
   "bin": {
@@ -51,7 +51,6 @@
     "cross-env": "^3.1.4",
     "eslint": "^3.14.1",
     "eslint-config-google": "^0.7.1",
-    "minimist": "^1.2.0",
     "mocha": "^3.2.0",
     "npm-run-all": "^4.0.1",
     "nyc": "^10.1.2",
@@ -64,6 +63,7 @@
     "cross-spawn": "^5.1.0",
     "lockfile": "^1.0.3",
     "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
