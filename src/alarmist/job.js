@@ -3,9 +3,11 @@ import {
   ID_FILE,
   STATUS_FILE,
   PROCESS_LOG,
-  CONTROL_SOCKET,
-  LOG_SOCKET,
 } from '../constants';
+import {
+  getControlSocket,
+  getLogSocket,
+} from './local-socket';
 import {createConnection} from 'net';
 import _mkdirp from 'mkdirp';
 import {
@@ -19,9 +21,6 @@ import _id from '../utils/id';
 
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
-
-const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
-const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 export async function createJob({name}) {
   // set up the file reporting
@@ -43,7 +42,7 @@ export async function createJob({name}) {
     (resolve) => logStream.on('close', resolve)
   );
   // start the control socket
-  const controlConnection = createConnection(controlSocket);
+  const controlConnection = createConnection(getControlSocket());
   const controlReady = new Promise(
     (resolve) => controlConnection.once('data', resolve)
   );
@@ -58,7 +57,7 @@ export async function createJob({name}) {
   }));
   await controlReady;
   // start the log socket
-  const logConnection = createConnection(logSocket);
+  const logConnection = createConnection(getLogSocket());
   const logReady = new Promise(
     (resolve) => logConnection.once('data', resolve)
   );

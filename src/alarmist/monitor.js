@@ -1,10 +1,12 @@
 import {
   WORKING_DIR,
   PROCESS_LOG,
-  CONTROL_SOCKET,
-  LOG_SOCKET,
   READY_RESPONSE,
 } from '../constants';
+import {
+  getControlSocket,
+  getLogSocket,
+} from './local-socket';
 import {createServer} from 'net';
 import _mkdirp from 'mkdirp';
 import _rimraf from 'rimraf';
@@ -19,8 +21,6 @@ const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
 const processLog = path.join(WORKING_DIR, PROCESS_LOG);
-const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
-const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 export async function createMonitor() {
   const monitor = new EventEmitter();
@@ -51,7 +51,7 @@ export async function createMonitor() {
   });
   const controlListen = promisify(controlServer.listen.bind(controlServer));
   const controlClose = promisify(controlServer.close.bind(controlServer));
-  await controlListen(controlSocket);
+  await controlListen(getControlSocket());
   // set up the log socket for jobs
   const logServer = createServer((client) => {
     client.once('data', (data) => {
@@ -66,7 +66,7 @@ export async function createMonitor() {
   });
   const logListen = promisify(logServer.listen.bind(logServer));
   const logClose = promisify(logServer.close.bind(logServer));
-  await logListen(logSocket);
+  await logListen(getLogSocket());
   // expose the monitor properties and methods
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {

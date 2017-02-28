@@ -3,10 +3,12 @@ import {createMonitor} from '../../../src/alarmist/monitor';
 import {
   WORKING_DIR,
   PROCESS_LOG,
-  CONTROL_SOCKET,
-  LOG_SOCKET,
   READY_RESPONSE,
 } from '../../../src/constants.js';
+import {
+  getControlSocket,
+  getLogSocket,
+} from '../../../src/alarmist/local-socket';
 import path from 'path';
 import _rimraf from 'rimraf';
 import {readFile as _readFile} from 'fs';
@@ -20,8 +22,6 @@ const log = Buffer.from('log');
 const exitCode = 0;
 
 const processLog = path.join(WORKING_DIR, PROCESS_LOG);
-const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
-const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 const name = 'job name';
 const id = 1;
@@ -76,7 +76,7 @@ describe('alarmist', () => {
     describe('should open a control socket', () => {
       let controlConnection;
       beforeEach(async () => {
-        controlConnection = createConnection(controlSocket);
+        controlConnection = createConnection(getControlSocket());
         await new Promise(
           (resolve) => controlConnection.on('connect', resolve)
         );
@@ -127,7 +127,7 @@ describe('alarmist', () => {
     describe('should open a log socket', () => {
       let logConnection;
       beforeEach(async () => {
-        logConnection = createConnection(logSocket);
+        logConnection = createConnection(getLogSocket());
         await new Promise((resolve) => logConnection.on('connect', resolve));
       });
       afterEach(async () => {

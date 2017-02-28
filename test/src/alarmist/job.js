@@ -5,10 +5,12 @@ import {
   WORKING_DIR,
   PROCESS_LOG,
   STATUS_FILE,
-  CONTROL_SOCKET,
-  LOG_SOCKET,
   READY_RESPONSE,
 } from '../../../src/constants.js';
+import {
+  getControlSocket,
+  getLogSocket,
+} from '../../../src/alarmist/local-socket';
 import {createServer} from 'net';
 import path from 'path';
 import _rimraf from 'rimraf';
@@ -41,8 +43,6 @@ const reportDir = path.join(
 );
 const processLog = path.join(reportDir, PROCESS_LOG);
 const statusFile = path.join(reportDir, STATUS_FILE);
-const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
-const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 describe('alarmist', () => {
   describe('createJob', () => {
@@ -70,7 +70,7 @@ describe('alarmist', () => {
         });
       });
       await new Promise(
-        (resolve) => controlServer.listen(controlSocket, resolve)
+        (resolve) => controlServer.listen(getControlSocket(), resolve)
       );
       logServer = createServer((client) => {
         client.once('data', (data) => {
@@ -82,7 +82,7 @@ describe('alarmist', () => {
           client.write(READY_RESPONSE);
         });
       });
-      await new Promise((resolve) => logServer.listen(logSocket, resolve));
+      await new Promise((resolve) => logServer.listen(getLogSocket(), resolve));
       job = await createJob({
         name,
       });
