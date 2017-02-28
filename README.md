@@ -36,6 +36,8 @@ Jobs will appear on first run and can be expanded (one at a time) to display log
 - [enter, o] - expand/collapse job logs
   - [up, down, j, k, g, SHIFT-g] - navigate log when expanded
 
+**NB. by default many commands will not produced colored output when run like this, however many commands also have options to force colors. Eg. many node CLI tools use the `chalk` library and so will have a `--color` option or support the `FORCE_COLOR=true` environment variable**
+
 ## API
 
 ```javascript

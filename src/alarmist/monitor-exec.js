@@ -1,12 +1,12 @@
 import * as Monitor from './monitor';
-import {spawn} from 'pty.js';
+import spawn from 'cross-spawn';
 
-export async function exec({command, args, options}) {
+export async function exec({command, args}) {
   const monitor = await Monitor.createMonitor();
-  const term = spawn(command, args, options);
+  const proc = spawn(command, args, {stdio: 'pipe'});
   let expectExit = false;
   const exitPromise = new Promise((resolve) => {
-    term.on('exit', async (code) => {
+    proc.on('exit', async (code) => {
       if (!expectExit) {
         delete monitor.cleanup;
         monitor.exit(code);
@@ -14,12 +14,11 @@ export async function exec({command, args, options}) {
       resolve();
     });
   });
-  term.on('data', (data) => {
-    monitor.log.write(Buffer.from(data));
-  });
+  proc.stdout.pipe(monitor.log);
+  proc.stderr.pipe(monitor.log);
   monitor.cleanup = async () => {
     expectExit = true;
-    term.kill();
+    proc.kill();
     await exitPromise;
   };
   return monitor;

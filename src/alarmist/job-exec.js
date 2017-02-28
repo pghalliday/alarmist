@@ -1,15 +1,15 @@
 import * as Job from './job';
-import {spawn} from 'pty.js';
+import spawn from 'cross-spawn';
 
-export async function exec({name, command, args, options}) {
+export async function exec({name, command, args}) {
   const job = await Job.createJob({name});
   return await new Promise((resolve) => {
-    const term = spawn(command, args, options).on('exit', async (exitCode) => {
+    const proc = spawn(command, args, {stdio: 'pipe'})
+    .on('exit', async (exitCode) => {
       await job.exit(exitCode);
       resolve();
     });
-    term.on('data', (data) => {
-      job.log.write(Buffer.from(data));
-    });
+    proc.stdout.pipe(job.log);
+    proc.stderr.pipe(job.log);
   });
 }
