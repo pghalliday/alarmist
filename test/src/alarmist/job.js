@@ -3,6 +3,7 @@ import {
 } from '../../../src/alarmist/job';
 import {
   WORKING_DIR,
+  JOBS_DIR,
   PROCESS_LOG,
   STATUS_FILE,
   READY_RESPONSE,
@@ -38,6 +39,7 @@ const emptyBuffer = Buffer.alloc(0);
 
 const reportDir = path.join(
   WORKING_DIR,
+  JOBS_DIR,
   name,
   '' + id,
 );

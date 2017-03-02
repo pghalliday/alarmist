@@ -1,7 +1,5 @@
 # alarmist
 
-**Functional but still IN DEVELOPMENT - expect issues ;)**
-
 [![Build Status](https://travis-ci.org/pghalliday/alarmist.svg?branch=master)](https://travis-ci.org/pghalliday/alarmist)
 [![Coverage Status](https://coveralls.io/repos/github/pghalliday/alarmist/badge.svg?branch=master)](https://coveralls.io/github/pghalliday/alarmist?branch=master)
 
@@ -38,6 +36,25 @@ Jobs will appear on first run and can be expanded (one at a time) to display log
 
 **NB. By default many commands will not produce colored output when run like this, however many commands also have options to force colors. Eg. many node CLI tools use the `chalk` library and so will have a `--color` option or support the `FORCE_COLOR=true` environment variable**
 
+All the logs and status files will also be captured in the `.alarmist` working directory with the following structure
+
+```
+.
+└── .alarmist/
+    ├── blessed.log - internal UI logging for debug purposes
+    ├── process.log - the monitor command's log
+    ├── control.sock - unix socket or windows named pipe information that jobs use to notify the monitor on status change
+    ├── log.sock - unix socket or windows named pipe information that jobs use to pipe logs to the monitor
+    └── jobs/
+      └── [name]
+          ├── last-run - the last run number
+          └── [run number]/
+              ├── process.log - the job run's log
+              └── status.json - the job run's status
+```
+
+**NB. The `.alarmist` working directory will be reset every time the monitor is started**
+
 ## API
 
 ```javascript
@@ -61,7 +78,7 @@ The job will expose a `log` write stream that you can use for logging.
 job.log.write('this gets logged');
 ```
 
-When the job is complete call the `complete` method to signal success or failure with an exit code.
+When the job is complete call the `exit` method to signal success or failure with an exit code.
 
 ```javascript
 job.exit(0)

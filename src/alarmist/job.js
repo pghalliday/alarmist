@@ -1,5 +1,6 @@
 import {
   WORKING_DIR,
+  JOBS_DIR,
   ID_FILE,
   STATUS_FILE,
   PROCESS_LOG,
@@ -24,7 +25,7 @@ const writeFile = promisify(_writeFile);
 
 export async function createJob(name) {
   // set up the file reporting
-  const jobDir = path.join(WORKING_DIR, name);
+  const jobDir = path.join(WORKING_DIR, JOBS_DIR, name);
   const idFile = path.join(jobDir, ID_FILE);
   const id = await _id.getId(idFile);
   const reportDir = path.join(jobDir, '' + id);

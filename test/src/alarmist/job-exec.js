@@ -32,20 +32,21 @@ describe('alarmist', () => {
   describe('execJob', () => {
     let job;
     let createJob;
-    before(async () => {
+    before(async function() {
+      // eslint-disable-next-line no-invalid-this
+      this.timeout(5000);
       job = {
         log: new TestWritable(),
         exit: sinon.spy(() => Promise.resolve()),
       };
       createJob = sinon.spy(() => Promise.resolve(job));
-      const fnCreateJob = Job.createJob;
-      Job.createJob = createJob;
+      sinon.stub(Job, 'createJob', createJob);
       await exec({
         name,
         command,
         args,
       });
-      Job.createJob = fnCreateJob;
+      Job.createJob.restore();
     });
 
     it('should create a job', () => {

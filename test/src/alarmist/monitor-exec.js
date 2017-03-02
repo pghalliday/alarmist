@@ -54,33 +54,37 @@ function waitForFile(file) {
   });
 };
 
+let monitor;
+
 describe('alarmist', function() {
   describe('execMonitor', () => {
     describe('with a process that exits', () => {
-      let monitor;
-      let createMonitor;
       before(async () => {
         let execMonitor;
-        const fnCreateMonitor = Monitor.createMonitor;
         await new Promise(async (resolve) => {
           monitor = {
             log: new TestWritable(),
             close: sinon.spy(() => Promise.resolve()),
             exit: sinon.spy(resolve),
           };
-          createMonitor = sinon.spy(() => Promise.resolve(monitor));
-          Monitor.createMonitor = createMonitor;
+          sinon.stub(
+            Monitor,
+            'createMonitor',
+            async () => Promise.resolve(monitor)
+          );
           execMonitor = await exec({
             command,
             args: exitingArgs,
           });
         });
         await execMonitor.close();
-        Monitor.createMonitor = fnCreateMonitor;
+      });
+      after(() => {
+        Monitor.createMonitor.restore();
       });
 
       it('should create a monitor', () => {
-        createMonitor.should.have.been.calledOnce;
+        Monitor.createMonitor.should.have.been.calledOnce;
       });
 
       it('should pipe to the monitor log', () => {
@@ -97,21 +101,21 @@ describe('alarmist', function() {
     });
 
     describe('with a process that lives', () => {
-      let monitor;
-      let createMonitor;
       before(async () => {
         await rimraf(WORKING_DIR);
         await mkdirp(WORKING_DIR);
         let execMonitor;
-        const fnCreateMonitor = Monitor.createMonitor;
         monitor = {
           log: new TestWritable(),
           close: sinon.spy(async () => {
             await monitor.cleanup();
           }),
         };
-        createMonitor = sinon.spy(() => Promise.resolve(monitor));
-        Monitor.createMonitor = createMonitor;
+        sinon.stub(
+          Monitor,
+          'createMonitor',
+          async () => Promise.resolve(monitor)
+        );
         const waitPromise = waitForFile(path.join(WORKING_DIR, 'done'));
         execMonitor = await exec({
           command,
@@ -119,11 +123,13 @@ describe('alarmist', function() {
         });
         await waitPromise;
         await execMonitor.close();
-        Monitor.createMonitor = fnCreateMonitor;
+      });
+      after(() => {
+        Monitor.createMonitor.restore();
       });
 
       it('should create a monitor', () => {
-        createMonitor.should.have.been.calledOnce;
+        Monitor.createMonitor.should.have.been.calledOnce;
       });
 
       it('should pipe to the monitor log', () => {
