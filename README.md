@@ -65,9 +65,8 @@ job.log.write('this gets logged');
 When the job is complete call the `complete` method to signal success or failure with an exit code.
 
 ```javascript
-job.complete({
-  exitCode: 0
-}).then(function() {
+job.exit(0)
+.then(function() {
   ...
 });
 ```
