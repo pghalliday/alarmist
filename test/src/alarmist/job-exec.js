@@ -49,9 +49,7 @@ describe('alarmist', () => {
     });
 
     it('should create a job', () => {
-      createJob.should.have.been.calledWith({
-        name,
-      });
+      createJob.should.have.been.calledWith(name);
     });
 
     it('should pipe to the job log', () => {

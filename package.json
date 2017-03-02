@@ -1,6 +1,6 @@
 {
   "name": "alarmist",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
   "bin": {

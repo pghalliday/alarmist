@@ -91,9 +91,7 @@ describe('alarmist', () => {
           resolve,
 	)
       );
-      job = await createJob({
-        name,
-      });
+      job = await createJob(name);
       Date.now = fnNow;
       _id.getId = fnGetId;
     });

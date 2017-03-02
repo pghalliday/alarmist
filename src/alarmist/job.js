@@ -22,7 +22,7 @@ import _id from '../utils/id';
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-export async function createJob({name}) {
+export async function createJob(name) {
   // set up the file reporting
   const jobDir = path.join(WORKING_DIR, name);
   const idFile = path.join(jobDir, ID_FILE);

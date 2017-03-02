@@ -49,9 +49,8 @@ var alarmist = require('alarmist');
 Create a job.
 
 ```javascript
-alarmist.createJob({
-  name: 'name'
-}).then(function(job) {
+alarmist.createJob('name')]
+.then(function(job) {
   ...
 });
 ```
