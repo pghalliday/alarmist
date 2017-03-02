@@ -1,3 +1,4 @@
+import logger from '../cli/ui/view/logger';
 import {
   WORKING_DIR,
   PROCESS_LOG,
@@ -72,6 +73,7 @@ export async function createMonitor() {
   // expose the monitor properties and methods
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {
+      logger.log('close');
       await monitor.cleanup();
     }
     await endLogStream();

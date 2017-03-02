@@ -7,6 +7,7 @@ import {createStore} from 'redux';
 
 const monitor = new EventEmitter();
 monitor.log = new PassThrough();
+monitor.close = async () => Promise.resolve();
 const reducer = sinon.spy();
 const store = createStore(reducer);
 const service = createService(monitor, store);
@@ -16,8 +17,8 @@ const log = Buffer.from('log');
 describe('cli', () => {
   describe('ui', () => {
     describe('service', () => {
-      after(() => {
-        service.stop();
+      after(async () => {
+        await service.stop();
       });
 
       it('should dispatch exit actions', () => {

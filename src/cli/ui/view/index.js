@@ -32,7 +32,10 @@ function createView(service, store) {
   logger.debug = screen.debug.bind(screen);
   logger.log('created');
   screen.title = 'alarmist';
-  screen.key(['C-c'], () => process.exit(0));
+  screen.key(['C-c'], async () => {
+    await service.stop();
+    process.exit(0);
+  });
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const container = blessed.box(CONTAINER_PROPERTIES);
   screen.append(container);

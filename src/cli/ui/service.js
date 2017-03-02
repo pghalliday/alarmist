@@ -29,12 +29,13 @@ export function createService(monitor, store) {
   monitor.on('log', onJobLog);
   monitor.log.on('data', onMonitorLog);
   return {
-    stop: () => {
+    stop: async () => {
       monitor.removeListener('exit', onExit);
       monitor.removeListener('start', onStart);
       monitor.removeListener('end', onEnd);
       monitor.removeListener('log', onJobLog);
       monitor.log.removeListener('data', onMonitorLog);
+      await monitor.close();
     },
   };
 }

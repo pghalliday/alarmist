@@ -1,13 +1,13 @@
 import {createActions} from 'redux-actions';
 
-module.exports = createActions({
-  RESET: () => undefined,
-  START: (status) => status,
-  END: (status) => status,
-  EXIT: (code) => code,
-  UP: () => undefined,
-  DOWN: () => undefined,
-  TOGGLE_EXPANDED: () => undefined,
-  MONITOR_LOG: (data) => data,
-  JOB_LOG: (logData) => logData,
-});
+module.exports = createActions(
+  'RESET',
+  'START',
+  'END',
+  'EXIT',
+  'UP',
+  'DOWN',
+  'TOGGLE_EXPANDED',
+  'MONITOR_LOG',
+  'JOB_LOG',
+);
