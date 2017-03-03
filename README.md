@@ -4,9 +4,20 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/w4tcbmqhghndynob/branch/master?svg=true)](https://ci.appveyor.com/project/pghalliday/alarmist/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/pghalliday/alarmist/badge.svg?branch=master)](https://coveralls.io/github/pghalliday/alarmist?branch=master)
 
-Monitor parallel jobs
-
 ![alt Alarmist UI](https://raw.githubusercontent.com/pghalliday/alarmist/master/alarmist.png "Alarmist UI")
+
+- Tired of fixing lint errors so you can see if your unit tests pass?
+- Tired of fixing all your tests only to find the linting's up the spout?
+- Tired of waiting for everything to pass before your build completes and you can actually see if stuff works?
+- Tired of your watch tasks just taking too long to complete?
+
+Well this is the tool for you! ...at least if you like to live in the terminal :)
+
+You no longer have to make the choice between starting lots of watcher terminals or jumbling up all your watcher jobs in one.
+
+Alarmist will start everything in parallel (when it can) and provide a clean interface hightlighting failures but allowing you to focus on the particular tests you're interested in at the moment.
+
+Enabling you to experiment with a new feature or get down and dirty debugging a failing test without being unduly distracted by failures you don't care about right now!
 
 ## Install
 
@@ -56,146 +67,42 @@ All the logs and status files will also be captured in the `.alarmist` working d
 
 **NB. The `.alarmist` working directory will be reset every time the monitor is started**
 
+## Helpers
+
+The following packages provide helpers and can be installed with npm.
+
+- [`alarmist-npm`](https://www.npmjs.com/package/alarmist-npm) - a simple wrapper for running npm scripts
+- [`alarmist-webpack`](https://www.npmjs.com/package/alarmist-webpack) - a wrapper for the webpack watcher to take advantage of fast incremental builds
+
+## Example `package.json` configuration
+
+This will use `chokidar` for watching and the `npm-run-all` package to parallelize the watcher tasks.
+
+```
+npm install --save-dev chokidar npm-run-all webpack alarmist alarmist-npm alarmist-webpack
+```
+
+Then to watch parallel eslint, nyc/mocha and webpack jobs (other configuration not shown here)
+
+```javascript
+...
+  "scripts": {
+    "cmd:lint": "eslint .",
+    "cmd:test": "nyc mocha",
+    "cmd:coverage": "nyc report -r text && nyc check-coverage",
+    "alarmist:lint": "chokidar \"+(src|test)/**/*\" -c \"alarmist-npm cmd:lint\"",
+    "alarmist:test": "chokidar \"+(src|test)/**/*\" -c \"alarmist-npm cmd:test\"",
+    "alarmist:coverage": "chokidar \"coverage/lcov.info\" -c \"alarmist-npm cmd:coverage\"",
+    "alarmist:build": "alarmist-webpack -n cmd:build",
+    "start": "alarmist-monitor run-p alarmist:lint alarmist:test alarmist:coverage alarmist:build",
+    ...
+  }
+...
+```
+
 ## API
 
-```javascript
-var alarmist = require('alarmist');
-```
-
-### Custom jobs
-
-Create a job.
-
-```javascript
-alarmist.createJob('name')]
-.then(function(job) {
-  ...
-});
-```
-
-The job will expose a `log` write stream that you can use for logging.
-
-```javascript
-job.log.write('this gets logged');
-```
-
-When the job is complete call the `end` method and optionally signal failure with an error message (should be string)
-
-```javascript
-job.end(error)
-.then(function() {
-  ...
-});
-```
-
-### Execute a job
-
-```javascript
-alarmist.execJob({
-  name: 'name',
-  command: 'my-command',
-  args: []
-}).then(function() {
-  ...
-});
-```
-
-## Monitor jobs and execute a watcher
-
-Start a monitor and watcher process
-
-```javascript
-alarmist.execMonitor({
-  command: 'my-watcher-command',
-  args: []
-})
-.then(function(monitor) {
-  ...
-});
-```
-
-Listen for start events when jobs start
-
-```javascript
-monitor.on('run-start', function(job) {
-  console.log(job.id);
-  console.log(job.name);
-  console.log(job.startTime);
-});
-```
-
-Listen for log events when jobs log data
-
-```javascript
-monitor.on('run-log', function(job) {
-  console.log(job.id);
-  console.log(job.name);
-  console.log(job.data); // this should be a Buffer
-});
-```
-
-Listen for end events when jobs end
-
-```javascript
-monitor.on('run-end', function(job) {
-  console.log(job.id);
-  console.log(job.name);
-  console.log(job.startTime);
-  console.log(job.endTime);
-  console.log(job.error);
-});
-```
-
-Read from the monitor log stream, for logging from the watcher command
-
-```javascript
-monitor.log.on('data', function(data) {
-  console.log(data) // this shoud be a Buffer
-});
-```
-
-Listen for an `end` event that signifies an error as the watcher process should not exit
-
-```javascript
-monitor.on('end', function(error) {
-  console.log(error);
-});
-```
-
-Stop a monitor
-
-```javascript
-monitor.close();
-```
-
-### Monitor jobs with your own watcher
-
-Start a monitor
-
-```javascript
-alarmist.createMonitor()
-.then(function(monitor) {
-  // create and manage your watcher
-  ...
-});
-```
-
-Listen for job events as above
-
-Log for your watcher process
-
-```javascript
-monitor.log.write('output');
-```
-
-Signal the end of the watcher routine (watcher routines aren't meant to end so this is really signalling an error)
-
-```javascript
-// provide an error string
-monitor.end(error);
-```
-
-Listen for end events and close the monitor as above
+Create your own custom watchers, jobs, etc using the [NodeJS API](./API.md)
 
 ## Contributing
 
