@@ -32,7 +32,12 @@
     "type": "git",
     "url": "git+https://github.com/pghalliday/alarmist.git"
   },
-  "keywords": [],
+  "keywords": [
+    "parallel",
+    "build",
+    "terminal",
+    "watch"
+  ],
   "author": "Peter Halliday <pghalliday@gmail.com> (http://pghalliday.com)",
   "license": "ISC",
   "bugs": {
