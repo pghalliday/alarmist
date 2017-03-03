@@ -2,18 +2,13 @@ import logger from '../cli/ui/view/logger';
 import * as Monitor from './monitor';
 import spawn from 'cross-spawn';
 
-// We start child processes detached and kill them by
-// process group because otherwise grandchildren
-// will not be killed - of course this means that
-// if something goes wrong and cleanup is not called
-// then that process group will not be killed. But
-// this is the best case as grandchildren will be
-// orphaned if not detached anyway (I think)
+// tree-kill gives us a cross-platform
+// way to kill children and grandchildren, etc
+import kill from 'tree-kill';
+
 export async function exec({command, args}) {
   const monitor = await Monitor.createMonitor();
-  const proc = spawn(command, args, {
-    detached: true,
-  });
+  const proc = spawn(command, args);
   let expectExit = false;
   const exitPromise = new Promise((resolve) => {
     proc.on('exit', async (code) => {
@@ -29,7 +24,7 @@ export async function exec({command, args}) {
   monitor.cleanup = async () => {
     logger.log('cleanup');
     expectExit = true;
-    process.kill(-proc.pid);
+    kill(proc.pid);
     await exitPromise;
   };
   return monitor;
