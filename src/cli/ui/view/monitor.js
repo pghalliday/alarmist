@@ -7,14 +7,14 @@ export default class Monitor extends Entry {
     this.type = 'Monitor';
   }
   _update(state) {
-    if (_.isUndefined(state.exitCode)) {
+    if (_.isUndefined(state.error)) {
       this.setHeader(
         ' monitor: ok',
         'green',
       );
     } else {
       this.setHeader(
-        ` monitor: exited: ${state.exitCode}`,
+        ` monitor: ${state.error}`,
         'red',
       );
     }

@@ -1,7 +1,7 @@
 import logger from '../cli/ui/view/logger';
 import {
   WORKING_DIR,
-  PROCESS_LOG,
+  MONITOR_LOG,
   READY_RESPONSE,
 } from '../constants';
 import {
@@ -21,7 +21,7 @@ import _ from 'lodash';
 const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
-const processLog = path.join(WORKING_DIR, PROCESS_LOG);
+const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
 export async function createMonitor() {
   const monitor = new EventEmitter();
@@ -29,7 +29,7 @@ export async function createMonitor() {
   await mkdirp(WORKING_DIR);
   // set up streams for logging the watcher process
   const log = new PassThrough();
-  const logStream = createWriteStream(processLog);
+  const logStream = createWriteStream(monitorLog);
   log.pipe(logStream);
   const logStreamEnded = new Promise(
     (resolve) => logStream.on('close', resolve)
@@ -42,10 +42,10 @@ export async function createMonitor() {
   const controlServer = createServer((client) => {
     client.once('data', (data) => {
       const start = JSON.parse(data);
-      monitor.emit('start', start);
+      monitor.emit('run-start', start);
       client.once('data', (data) => {
         const end = JSON.parse(data);
-        monitor.emit('end', Object.assign({}, start, end));
+        monitor.emit('run-end', Object.assign({}, start, end));
       });
       client.write(READY_RESPONSE);
     });
@@ -59,7 +59,7 @@ export async function createMonitor() {
     client.once('data', (data) => {
       const begin = JSON.parse(data);
       client.on('data', (data) => {
-        monitor.emit('log', Object.assign({}, begin, {
+        monitor.emit('run-log', Object.assign({}, begin, {
           data,
         }));
       });
@@ -81,9 +81,9 @@ export async function createMonitor() {
     await logClose();
   };
   monitor.log = log;
-  monitor.exit = async (code) => {
+  monitor.end = async (error) => {
     await endLogStream();
-    monitor.emit('exit', code);
+    monitor.emit('end', error);
   };
   return monitor;
 }

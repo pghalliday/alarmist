@@ -2,9 +2,9 @@ import _ from 'lodash';
 import Entry from './entry';
 
 // eslint-disable-next-line max-len
-const jobContent = (status) => ` ${status.name}: run ${status.id}: ${_.isUndefined(status.exitCode) ? 'pending' : (status.exitCode === 0 ? 'ok' : 'exit code ' + status.exitCode)}`;
+const jobContent = (status) => ` ${status.name}: run ${status.id}: ${_.isUndefined(status.endTime) ? 'pending' : (_.isUndefined(status.error) ? 'ok' : status.error)}`;
 // eslint-disable-next-line max-len
-const jobBg = (status) => _.isUndefined(status.exitCode) ? 'yellow' : (status.exitCode === 0 ? 'green' : 'red');
+const jobBg = (status) => _.isUndefined(status.endTime) ? 'yellow' : (_.isUndefined(status.error) ? 'green' : 'red');
 
 export default class Job extends Entry {
   constructor() {

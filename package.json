@@ -10,7 +10,7 @@
   "scripts": {
     "cmd:lint": "eslint .",
     "cmd:test": "cross-env NODE_ENV=test nyc mocha",
-    "cmd:coverage": "nyc report && nyc check-coverage",
+    "cmd:coverage": "nyc report -r text && nyc check-coverage",
     "cmd:build": "rimraf lib && babel src --out-dir lib",
     "cmd:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "run-s cmd:lint cmd:test cmd:coverage",
@@ -21,11 +21,11 @@
     "alarmist:coverage": "node ./bin/job.js -n coverage run-s -s cmd:coverage",
     "alarmist:build": "node ./bin/job.js -n build run-s -s cmd:build",
     "watch:lint": "chokidar \"+(src|test)/**/*\" -c \"run-s -s alarmist:lint\"",
-    "watch:test": "chokidar \"+(src|test)/**/*\" -c \"run-s -c alarmist:test alarmist:coverage\"",
+    "watch:test": "chokidar \"+(src|test)/**/*\" -c \"run-s -s alarmist:test\"",
+    "watch:coverage": "chokidar \"coverage/lcov.info\" -c \"run-s -s alarmist:coverage\"",
     "watch:build": "chokidar \"src/**/*\" -c \"run-s -s alarmist:build\"",
-    "watch:alarmist": "run-p watch:build watch:lint watch:test",
     "watch": "chokidar \"+(src|test)/**/*\" -c \"run-s -s build\"",
-    "start": "cross-env FORCE_COLOR=true node ./bin/monitor.js run-s -s watch:alarmist",
+    "start": "node ./bin/monitor.js run-p watch:lint watch:test watch:coverage watch:build",
     "prepublish": "run-s cmd:build"
   },
   "repository": {

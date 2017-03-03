@@ -2,12 +2,12 @@ import {createActions} from 'redux-actions';
 
 module.exports = createActions(
   'RESET',
-  'START',
+  'RUN_START',
+  'RUN_END',
   'END',
-  'EXIT',
   'UP',
   'DOWN',
   'TOGGLE_EXPANDED',
-  'MONITOR_LOG',
-  'JOB_LOG',
+  'LOG',
+  'RUN_LOG',
 );

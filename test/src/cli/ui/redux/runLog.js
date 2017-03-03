@@ -1,8 +1,8 @@
 import store from '../../../../../src/cli/ui/redux/store';
 import {
   reset,
-  start,
-  jobLog,
+  runStart,
+  runLog,
 } from '../../../../../src/cli/ui/redux/actions';
 
 let jobs;
@@ -45,15 +45,15 @@ const logUnknownName = {
 describe('cli', () => {
   describe('ui', () => {
     describe('redux', () => {
-      describe('jobLog', () => {
+      describe('runLog', () => {
         before(() => {
           store.dispatch(reset());
-          store.dispatch(start(jobStart));
+          store.dispatch(runStart(jobStart));
         });
 
         describe('with an unknown name', () => {
           before(() => {
-            store.dispatch(jobLog(logUnknownName));
+            store.dispatch(runLog(logUnknownName));
             jobs = store.getState().jobs;
           });
 
@@ -71,7 +71,7 @@ describe('cli', () => {
 
         describe('with an unknown id', () => {
           before(() => {
-            store.dispatch(jobLog(logUnknownId));
+            store.dispatch(runLog(logUnknownId));
             jobs = store.getState().jobs;
           });
 
@@ -89,7 +89,7 @@ describe('cli', () => {
 
         describe('with a known name and id', () => {
           before(() => {
-            store.dispatch(jobLog(logData1));
+            store.dispatch(runLog(logData1));
             jobs = store.getState().jobs;
           });
 
@@ -106,7 +106,7 @@ describe('cli', () => {
 
           describe('when dispatched again', () => {
             before(() => {
-              store.dispatch(jobLog(logData2));
+              store.dispatch(runLog(logData2));
               jobs = store.getState().jobs;
             });
 

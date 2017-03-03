@@ -3,6 +3,7 @@ import Entry from '../../../../../src/cli/ui/view/entry';
 
 let monitor;
 let log = Buffer.from('log');
+const error = 'message';
 
 describe('cli', () => {
   describe('ui', () => {
@@ -19,17 +20,17 @@ describe('cli', () => {
         });
 
         describe('_update', () => {
-          describe('with an exit code', () => {
+          describe('with an error', () => {
             before(() => {
               monitor._update({
-                exitCode: 0,
+                error,
                 log,
               });
             });
 
             it('should set the header', () => {
               monitor.setHeader.should.have.been.calledWith(
-                ' monitor: exited: 0',
+                ` monitor: ${error}`,
                 'red',
               );
             });
@@ -39,7 +40,7 @@ describe('cli', () => {
             });
           });
 
-          describe('without an exit code', () => {
+          describe('without an error', () => {
             before(() => {
               monitor._update({
                 log,

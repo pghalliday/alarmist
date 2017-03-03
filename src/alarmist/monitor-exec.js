@@ -8,13 +8,15 @@ import kill from 'tree-kill';
 
 export async function exec({command, args}) {
   const monitor = await Monitor.createMonitor();
-  const proc = spawn(command, args);
+  const proc = spawn(command, args, {
+    env: Object.assign({}, process.env, {FORCE_COLOR: true}),
+  });
   let expectExit = false;
   const exitPromise = new Promise((resolve) => {
     proc.on('exit', async (code) => {
       if (!expectExit) {
         delete monitor.cleanup;
-        monitor.exit(code);
+        monitor.end(`exit code: ${code}`);
       }
       resolve();
     });

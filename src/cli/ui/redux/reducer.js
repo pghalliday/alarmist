@@ -3,14 +3,14 @@ import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {
   reset,
-  exit,
-  start,
   end,
+  runStart,
+  runEnd,
   up,
   down,
   toggleExpanded,
-  monitorLog,
-  jobLog,
+  log,
+  runLog,
 } from './actions';
 import {
   MONITOR_LABEL,
@@ -25,12 +25,12 @@ const initialMonitor = {
 
 const monitor = handleActions({
   [reset]: () => initialMonitor,
-  [exit]: (monitor, {payload}) => {
+  [end]: (monitor, {payload}) => {
     return Object.assign({}, monitor, {
-      exitCode: payload,
+      error: payload,
     });
   },
-  [monitorLog]: (monitor, {payload}) => {
+  [log]: (monitor, {payload}) => {
     return Object.assign({}, monitor, {
       log: Buffer.concat([monitor.log, payload]),
     });
@@ -41,7 +41,7 @@ const initialJobs = {};
 
 const jobs = handleActions({
   [reset]: () => initialJobs,
-  [start]: (jobs, {payload}) => {
+  [runStart]: (jobs, {payload}) => {
     const name = payload.name;
     const existing = jobs[name];
     if (!_.isUndefined(existing) && existing.id > payload.id) {
@@ -53,7 +53,7 @@ const jobs = handleActions({
       }, payload),
     });
   },
-  [jobLog]: (jobs, {payload}) => {
+  [runLog]: (jobs, {payload}) => {
     const name = payload.name;
     const job = jobs[name];
     if (!_.isUndefined(job) && payload.id === job.id) {
@@ -65,7 +65,7 @@ const jobs = handleActions({
     }
     return jobs;
   },
-  [end]: (jobs, {payload}) => {
+  [runEnd]: (jobs, {payload}) => {
     const name = payload.name;
     const job = jobs[name];
     if (!_.isUndefined(job) && payload.id === job.id) {
@@ -87,7 +87,7 @@ const initialLayout = {
 
 const layout = handleActions({
   [reset]: () => initialLayout,
-  [start]: (layout, {payload}) => {
+  [runStart]: (layout, {payload}) => {
     const entry = jobLabel(payload.name);
     const lines = layout.lines;
     const index = _.indexOf(lines, entry);

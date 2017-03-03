@@ -1,7 +1,7 @@
 import store from '../../../../../src/cli/ui/redux/store';
 import {
   reset,
-  start,
+  runStart,
   up,
   down,
 } from '../../../../../src/cli/ui/redux/actions';
@@ -30,8 +30,8 @@ describe('cli', () => {
       describe('with 3 lines and the first selected', () => {
         before(() => {
           store.dispatch(reset());
-          store.dispatch(start(job));
-          store.dispatch(start(otherJob));
+          store.dispatch(runStart(job));
+          store.dispatch(runStart(otherJob));
         });
 
         describe('move down', () => {

@@ -2,7 +2,7 @@ import {createConnection} from 'net';
 import {createMonitor} from '../../../src/alarmist/monitor';
 import {
   WORKING_DIR,
-  PROCESS_LOG,
+  MONITOR_LOG,
   READY_RESPONSE,
 } from '../../../src/constants.js';
 import {
@@ -21,7 +21,7 @@ const readFile = promisify(_readFile);
 const log = Buffer.from('log');
 const exitCode = 0;
 
-const processLog = path.join(WORKING_DIR, PROCESS_LOG);
+const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
 const name = 'job name';
 const id = 1;
@@ -91,7 +91,7 @@ describe('alarmist', () => {
         let ready;
         beforeEach((done) => {
           controlConnection.write(JSON.stringify(startEvent));
-          monitor.on('start', (_event) => {
+          monitor.on('run-start', (_event) => {
             event = _event;
           });
           controlConnection.once('data', (_ready) => {
@@ -111,7 +111,7 @@ describe('alarmist', () => {
         describe('and then recieves an end message', () => {
           beforeEach((done) => {
             controlConnection.write(JSON.stringify(endMessage));
-            monitor.on('end', (_event) => {
+            monitor.on('run-end', (_event) => {
               event = _event;
               done();
             });
@@ -153,7 +153,7 @@ describe('alarmist', () => {
           let event;
           beforeEach((done) => {
             logConnection.write(logData);
-            monitor.on('log', (_event) => {
+            monitor.on('run-log', (_event) => {
               event = _event;
               done();
             });
@@ -166,12 +166,12 @@ describe('alarmist', () => {
       });
     });
 
-    describe('#exit', () => {
+    describe('#end', () => {
       let exitEvent;
       let receivedLog;
       beforeEach(async () => {
         await new Promise((resolve) => {
-          monitor.on('exit', (event) => {
+          monitor.on('end', (event) => {
             exitEvent = event;
             monitor.cleanup = sinon.spy(() => Promise.resolve());
             resolve();
@@ -181,13 +181,13 @@ describe('alarmist', () => {
             receivedLog = Buffer.concat([receivedLog, data]);
           });
           monitor.log.write(log);
-          monitor.exit(exitCode);
+          monitor.end('message');
         });
         await monitor.close();
       });
 
-      it('should write the process log', async () => {
-        const _log = await readFile(processLog);
+      it('should write the monitor log', async () => {
+        const _log = await readFile(monitorLog);
         _log[0].should.eql(log);
       });
 
@@ -195,8 +195,8 @@ describe('alarmist', () => {
         receivedLog.should.eql(log);
       });
 
-      it('should emit an exit event', async () => {
-        exitEvent.should.eql(exitCode);
+      it('should emit an end event', async () => {
+        exitEvent.should.eql('message');
       });
     });
 
@@ -207,8 +207,8 @@ describe('alarmist', () => {
           await monitor.close();
         });
 
-        it('should write the process log', async () => {
-          const _log = await readFile(processLog);
+        it('should write the monitor log', async () => {
+          const _log = await readFile(monitorLog);
           _log[0].should.eql(log);
         });
       });

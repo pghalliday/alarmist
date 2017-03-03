@@ -8,7 +8,7 @@ import Job from './job';
 import logger from './logger';
 import {
   WORKING_DIR,
-  BLESSED_LOG,
+  UI_LOG,
 } from '../../../constants';
 import {
   up,
@@ -26,7 +26,7 @@ import {
 function createView(service, store) {
   const screen = blessed.screen({
     smartCSR: true,
-    log: path.join(WORKING_DIR, BLESSED_LOG),
+    log: path.join(WORKING_DIR, UI_LOG),
   });
   logger.log = screen.log.bind(screen);
   logger.debug = screen.debug.bind(screen);

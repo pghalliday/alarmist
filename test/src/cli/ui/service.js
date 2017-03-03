@@ -21,51 +21,51 @@ describe('cli', () => {
         await service.stop();
       });
 
-      it('should dispatch exit actions', () => {
+      it('should dispatch end actions', () => {
         reducer.reset();
-        monitor.emit('exit', 0);
+        monitor.emit('end', 0);
         reducer.should.have.been.calledWith(undefined, {
-          type: 'EXIT',
+          type: 'END',
           payload: 0,
         });
       });
 
-      it('should dispatch start actions', () => {
+      it('should dispatch run start actions', () => {
         reducer.reset();
-        monitor.emit('start', 'status');
+        monitor.emit('run-start', 'status');
         reducer.should.have.been.calledWith(undefined, {
-          type: 'START',
+          type: 'RUN_START',
           payload: 'status',
         });
       });
 
-      it('should dispatch end actions', () => {
+      it('should dispatch run end actions', () => {
         reducer.reset();
-        monitor.emit('end', 'status');
+        monitor.emit('run-end', 'status');
         reducer.should.have.been.calledWith(undefined, {
-          type: 'END',
+          type: 'RUN_END',
           payload: 'status',
         });
       });
 
-      it('should dispatch monitorLog actions on write to log', () => {
+      it('should dispatch log actions on write to log', () => {
         reducer.reset();
         monitor.log.write(log);
         reducer.should.have.been.calledWith(undefined, {
-          type: 'MONITOR_LOG',
+          type: 'LOG',
           payload: log,
         });
       });
 
-      it('should dispatch jobLog actions on log events', () => {
+      it('should dispatch run log actions on log events', () => {
         reducer.reset();
-        monitor.emit('log', {
+        monitor.emit('run-log', {
           name: 'name',
           id: 2,
           data: 'log data',
         });
         reducer.should.have.been.calledWith(undefined, {
-          type: 'JOB_LOG',
+          type: 'RUN_LOG',
           payload: {
             name: 'name',
             id: 2,

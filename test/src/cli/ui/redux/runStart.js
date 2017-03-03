@@ -1,7 +1,7 @@
 import store from '../../../../../src/cli/ui/redux/store';
 import {
   reset,
-  start,
+  runStart,
 } from '../../../../../src/cli/ui/redux/actions';
 import {
   MONITOR_LABEL,
@@ -72,11 +72,11 @@ const twoJobs = {
 describe('cli', () => {
   describe('ui', () => {
     describe('redux', () => {
-      describe('start', () => {
+      describe('runStart', () => {
         describe('with an empty state', () => {
           before(() => {
             store.dispatch(reset());
-            store.dispatch(start(job));
+            store.dispatch(runStart(job));
             const state = store.getState();
             jobs = state.jobs;
             lines = state.layout.lines;
@@ -98,8 +98,8 @@ describe('cli', () => {
           describe('and a new job name', () => {
             before(() => {
               store.dispatch(reset());
-              store.dispatch(start(job));
-              store.dispatch(start(otherJob));
+              store.dispatch(runStart(job));
+              store.dispatch(runStart(otherJob));
               const state = store.getState();
               jobs = state.jobs;
               lines = state.layout.lines;
@@ -122,8 +122,8 @@ describe('cli', () => {
             describe('and an earlier id', () => {
               before(() => {
                 store.dispatch(reset());
-                store.dispatch(start(job));
-                store.dispatch(start(earlierJob));
+                store.dispatch(runStart(job));
+                store.dispatch(runStart(earlierJob));
                 const state = store.getState();
                 jobs = state.jobs;
                 lines = state.layout.lines;
@@ -144,8 +144,8 @@ describe('cli', () => {
             describe('and a later id', () => {
               before(() => {
                 store.dispatch(reset());
-                store.dispatch(start(job));
-                store.dispatch(start(laterJob));
+                store.dispatch(runStart(job));
+                store.dispatch(runStart(laterJob));
                 const state = store.getState();
                 jobs = state.jobs;
                 lines = state.layout.lines;

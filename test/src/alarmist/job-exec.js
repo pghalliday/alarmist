@@ -3,18 +3,30 @@ import {
   exec,
 } from '../../../src/alarmist/job-exec.js';
 import {Writable} from 'stream';
+import {
+  capture,
+  flush,
+  restore,
+} from '../../helpers/std-streams';
 
 const name = 'name';
-const exitCode = 0;
+const successCode = 0;
+const failCode = 1;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
 const all = Buffer.concat([stdout, stderr]);
 const command = 'node';
-const args = [
+const successArgs = [
   'test/bin/command.js',
   stdout.toString(),
   stderr.toString(),
-  exitCode,
+  successCode,
+];
+const failArgs = [
+  'test/bin/command.js',
+  stdout.toString(),
+  stderr.toString(),
+  failCode,
 ];
 
 class TestWritable extends Writable {
@@ -28,37 +40,97 @@ class TestWritable extends Writable {
   }
 }
 
+let job;
+let createJob;
+let processStdout;
+let processStderr;
+
 describe('alarmist', () => {
   describe('execJob', () => {
-    let job;
-    let createJob;
-    before(async function() {
-      // eslint-disable-next-line no-invalid-this
-      this.timeout(5000);
-      job = {
-        log: new TestWritable(),
-        exit: sinon.spy(() => Promise.resolve()),
-      };
-      createJob = sinon.spy(() => Promise.resolve(job));
-      sinon.stub(Job, 'createJob', createJob);
-      await exec({
-        name,
-        command,
-        args,
+    describe('with success', () => {
+      before(async function() {
+        // eslint-disable-next-line no-invalid-this
+        this.timeout(5000);
+        capture();
+        job = {
+          log: new TestWritable(),
+          end: sinon.spy(() => Promise.resolve()),
+        };
+        createJob = sinon.spy(() => Promise.resolve(job));
+        sinon.stub(Job, 'createJob', createJob);
+        await exec({
+          name,
+          command,
+          args: successArgs,
+        });
+        Job.createJob.restore();
+        [processStdout, processStderr] = flush();
+        restore();
       });
-      Job.createJob.restore();
+
+      it('should create a job', () => {
+        createJob.should.have.been.calledWith(name);
+      });
+
+      it('should write to stdout', async () => {
+        processStdout.should.eql(stdout);
+      });
+
+      it('should write to stderr', async () => {
+        processStderr.should.eql(stderr);
+      });
+
+      it('should pipe to the job log', () => {
+        job.log.buffer.toString().should.eql(all.toString());
+      });
+
+      it('should complete the job', () => {
+        job.end.should.have.been.calledOnce;
+      });
     });
 
-    it('should create a job', () => {
-      createJob.should.have.been.calledWith(name);
-    });
+    describe('with fail', () => {
+      before(async function() {
+        // eslint-disable-next-line no-invalid-this
+        this.timeout(5000);
+        capture();
+        job = {
+          log: new TestWritable(),
+          end: sinon.spy(() => Promise.resolve()),
+        };
+        createJob = sinon.spy(() => Promise.resolve(job));
+        sinon.stub(Job, 'createJob', createJob);
+        await exec({
+          name,
+          command,
+          args: failArgs,
+        });
+        Job.createJob.restore();
+        [processStdout, processStderr] = flush();
+        restore();
+      });
 
-    it('should pipe to the job log', () => {
-      job.log.buffer.toString().should.eql(all.toString());
-    });
+      it('should create a job', () => {
+        createJob.should.have.been.calledWith(name);
+      });
 
-    it('should complete the job', () => {
-      job.exit.should.have.been.calledWith(exitCode);
+      it('should write to stdout', async () => {
+        processStdout.should.eql(stdout);
+      });
+
+      it('should write to stderr', async () => {
+        processStderr.should.eql(stderr);
+      });
+
+      it('should pipe to the job log', () => {
+        job.log.buffer.toString().should.eql(all.toString());
+      });
+
+      it('should complete the job', () => {
+        job.end.should.have.been.calledWith(
+          `exit code: ${failCode}`
+        );
+      });
     });
   });
 });

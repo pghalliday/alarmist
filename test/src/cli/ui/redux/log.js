@@ -1,7 +1,7 @@
 import store from '../../../../../src/cli/ui/redux/store';
 import {
   reset,
-  monitorLog,
+  log,
 } from '../../../../../src/cli/ui/redux/actions';
 
 let monitor;
@@ -13,10 +13,10 @@ const allData = Buffer.concat([data1, data2]);
 describe('cli', () => {
   describe('ui', () => {
     describe('redux', () => {
-      describe('monitorLog', () => {
+      describe('log', () => {
         before(() => {
           store.dispatch(reset());
-          store.dispatch(monitorLog(data1));
+          store.dispatch(log(data1));
           monitor = store.getState().monitor;
         });
 
@@ -28,7 +28,7 @@ describe('cli', () => {
 
         describe('when dispatched again', () => {
           before(() => {
-            store.dispatch(monitorLog(data2));
+            store.dispatch(log(data2));
             monitor = store.getState().monitor;
           });
 

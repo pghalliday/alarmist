@@ -1,40 +1,40 @@
 import _ from 'lodash';
 import {
-  exit,
-  start,
   end,
-  monitorLog,
-  jobLog,
+  runStart,
+  runEnd,
+  runLog,
+  log,
 } from './redux/actions';
 
 export function createService(monitor, store) {
-  const onExit = (code) => {
-    store.dispatch(exit(code));
+  const onEnd = (code) => {
+    store.dispatch(end(code));
   };
-  const onStart = (status) => {
-    store.dispatch(start(status));
+  const onRunStart = (status) => {
+    store.dispatch(runStart(status));
   };
-  const onEnd = (status) => {
-    store.dispatch(end(status));
+  const onRunEnd = (status) => {
+    store.dispatch(runEnd(status));
   };
-  const onJobLog = (logData) => {
-    store.dispatch(jobLog(logData));
+  const onRunLog = (logData) => {
+    store.dispatch(runLog(logData));
   };
-  const onMonitorLog = (data) => {
-    store.dispatch(monitorLog(data));
+  const onLog = (data) => {
+    store.dispatch(log(data));
   };
-  monitor.on('exit', onExit);
-  monitor.on('start', onStart);
   monitor.on('end', onEnd);
-  monitor.on('log', onJobLog);
-  monitor.log.on('data', onMonitorLog);
+  monitor.on('run-start', onRunStart);
+  monitor.on('run-end', onRunEnd);
+  monitor.on('run-log', onRunLog);
+  monitor.log.on('data', onLog);
   return {
     stop: async () => {
-      monitor.removeListener('exit', onExit);
-      monitor.removeListener('start', onStart);
       monitor.removeListener('end', onEnd);
-      monitor.removeListener('log', onJobLog);
-      monitor.log.removeListener('data', onMonitorLog);
+      monitor.removeListener('run-start', onRunStart);
+      monitor.removeListener('run-end', onRunEnd);
+      monitor.removeListener('run-log', onRunLog);
+      monitor.log.removeListener('data', onLog);
       await monitor.close();
     },
   };

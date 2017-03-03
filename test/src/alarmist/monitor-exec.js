@@ -67,7 +67,7 @@ describe('alarmist', function() {
           monitor = {
             log: new TestWritable(),
             close: sinon.spy(() => Promise.resolve()),
-            exit: sinon.spy(resolve),
+            end: sinon.spy(resolve),
           };
           sinon.stub(
             Monitor,
@@ -93,8 +93,8 @@ describe('alarmist', function() {
         monitor.log.buffer.should.eql(all);
       });
 
-      it('should call exit', () => {
-        monitor.exit.should.have.been.calledWith(exitCode);
+      it('should call end', () => {
+        monitor.end.should.have.been.calledWith(`exit code: ${exitCode}`);
       });
 
       it('should close the monitor', () => {

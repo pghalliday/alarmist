@@ -3,7 +3,7 @@ import {
   JOBS_DIR,
   ID_FILE,
   STATUS_FILE,
-  PROCESS_LOG,
+  RUN_LOG,
 } from '../constants';
 import {
   getControlSocket,
@@ -36,9 +36,8 @@ export async function createJob(name) {
     startTime,
   }));
   const log = new PassThrough();
-  const logStream = createWriteStream(path.join(reportDir, PROCESS_LOG));
+  const logStream = createWriteStream(path.join(reportDir, RUN_LOG));
   log.pipe(logStream);
-  log.pipe(process.stdout);
   const logStreamEnded = new Promise(
     (resolve) => logStream.on('close', resolve)
   );
@@ -77,19 +76,19 @@ export async function createJob(name) {
   // return the job
   return {
     log,
-    exit: async (exitCode) => {
+    end: async (error) => {
       const endTime = Date.now();
       log.end();
       await logStreamEnded;
       await writeFile(statusFile, JSON.stringify({
-        exitCode,
+        error: error,
         startTime,
         endTime,
       }));
       await logEnded;
       controlConnection.end(JSON.stringify({
+        error: error,
         endTime,
-        exitCode,
       }));
       await controlEnded;
     },

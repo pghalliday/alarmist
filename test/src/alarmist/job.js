@@ -4,7 +4,7 @@ import {
 import {
   WORKING_DIR,
   JOBS_DIR,
-  PROCESS_LOG,
+  RUN_LOG,
   STATUS_FILE,
   READY_RESPONSE,
 } from '../../../src/constants.js';
@@ -19,11 +19,6 @@ import _mkdirp from 'mkdirp';
 import {readFile as _readFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 import _id from '../../../src/utils/id';
-import {
-  capture,
-  flush,
-  restore,
-} from '../../helpers/std-streams';
 
 const rimraf = promisify(_rimraf);
 const mkdirp = promisify(_mkdirp);
@@ -32,42 +27,61 @@ const readFile = promisify(_readFile);
 const name = 'name';
 const startTime = 1000000;
 const endTime = 2000000;
-const id = 1;
-const exitCode = 0;
+const successId = 1;
+const failId = 2;
 const log = Buffer.from('log');
-const emptyBuffer = Buffer.alloc(0);
 
-const reportDir = path.join(
+const successReportDir = path.join(
   WORKING_DIR,
   JOBS_DIR,
   name,
-  '' + id,
+  '' + successId,
 );
-const processLog = path.join(reportDir, PROCESS_LOG);
-const statusFile = path.join(reportDir, STATUS_FILE);
+const successRunLog = path.join(successReportDir, RUN_LOG);
+const successStatusFile = path.join(successReportDir, STATUS_FILE);
+
+const failReportDir = path.join(
+  WORKING_DIR,
+  JOBS_DIR,
+  name,
+  '' + failId,
+);
+const failRunLog = path.join(failReportDir, RUN_LOG);
+const failStatusFile = path.join(failReportDir, STATUS_FILE);
+
+let successJob;
+let failJob;
+let controlServer;
+let logServer;
+let successStart;
+let successEnd;
+let failStart;
+let failEnd;
+let successBegin;
+let successLogData;
+let failBegin;
+let failLogData;
 
 describe('alarmist', () => {
-  describe('createJob', () => {
-    let job;
-    let controlServer;
-    let logServer;
-    let start;
-    let end;
-    let begin;
-    let logData;
+  describe('job', () => {
     before(async () => {
-      const fnNow = Date.now;
-      Date.now = () => startTime;
-      const fnGetId = _id.getId;
-      _id.getId = sinon.spy(() => id);
+      sinon.stub(Date, 'now', () => startTime);
       await rimraf(WORKING_DIR);
       await mkdirp(WORKING_DIR);
       controlServer = createServer((client) => {
         client.once('data', (data) => {
-          start = JSON.parse(data);
-          client.once('data', (data) => {
-            end = JSON.parse(data);
-          });
+          const start = JSON.parse(data);
+          if (start.id === successId) {
+            successStart = start;
+            client.once('data', (data) => {
+              successEnd = JSON.parse(data);
+            });
+          } else if (start.id === failId) {
+            failStart = start;
+            client.once('data', (data) => {
+              failEnd = JSON.parse(data);
+            });
+          }
           client.write(READY_RESPONSE);
         });
       });
@@ -75,15 +89,24 @@ describe('alarmist', () => {
         async (resolve) => controlServer.listen(
           await getControlSocket(true),
           resolve,
-	)
+        )
       );
       logServer = createServer((client) => {
         client.once('data', (data) => {
-          logData = Buffer.alloc(0);
-          begin = JSON.parse(data);
-          client.on('data', (data) => {
-            logData = Buffer.concat([logData, data]);
-          });
+          successLogData = Buffer.alloc(0);
+          failLogData = Buffer.alloc(0);
+          const begin = JSON.parse(data);
+          if (begin.id === successId) {
+            successBegin = begin;
+            client.on('data', (data) => {
+              successLogData = Buffer.concat([successLogData, data]);
+            });
+          } else if (begin.id === failId) {
+            failBegin = begin;
+            client.on('data', (data) => {
+              failLogData = Buffer.concat([failLogData, data]);
+            });
+          }
           client.write(READY_RESPONSE);
         });
       });
@@ -91,11 +114,15 @@ describe('alarmist', () => {
         async (resolve) => logServer.listen(
           await getLogSocket(true),
           resolve,
-	)
+        )
       );
-      job = await createJob(name);
-      Date.now = fnNow;
-      _id.getId = fnGetId;
+      sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
+      successJob = await createJob(name);
+      _id.getId.restore();
+      sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
+      failJob = await createJob(name);
+      _id.getId.restore();
+      Date.now.restore();
     });
 
     after(async () => {
@@ -104,80 +131,119 @@ describe('alarmist', () => {
     });
 
     it('should open a log stream', () => {
-      job.log.should.be.ok;
+      successJob.log.should.be.ok;
+      failJob.log.should.be.ok;
     });
 
     it('should save the status', async () => {
-      const status = await readFile(statusFile);
+      let status = await readFile(successStatusFile);
+      JSON.parse(status[0]).should.eql({
+        startTime,
+      });
+      status = await readFile(failStatusFile);
       JSON.parse(status[0]).should.eql({
         startTime,
       });
     });
 
     it('should report start', async () => {
-      start.should.eql({
+      successStart.should.eql({
         name,
-        id,
+        id: successId,
+        startTime,
+      });
+      failStart.should.eql({
+        name,
+        id: failId,
         startTime,
       });
     });
 
     it('should begin the log', async () => {
-      begin.should.eql({
+      successBegin.should.eql({
         name,
-        id,
+        id: successId,
+      });
+      failBegin.should.eql({
+        name,
+        id: failId,
       });
     });
 
-    describe('#exit', () => {
-      let processStdout;
-      let processStderr;
-      before(async () => {
-        const fnNow = Date.now;
-        Date.now = () => endTime;
-        capture();
-        try {
-          job.log.write(log);
-          await job.exit(exitCode);
-          [processStdout, processStderr] = flush();
-        } catch (error) {
-          throw(error);
-        } finally {
-          Date.now = fnNow;
-          restore();
-        }
-      });
+    describe('#end', () => {
+      describe('without error', () => {
+        before(async () => {
+          sinon.stub(Date, 'now', () => endTime);
+          try {
+            successJob.log.write(log);
+            await successJob.end();
+          } catch (error) {
+            throw(error);
+          } finally {
+            Date.now.restore();
+          }
+        });
 
-      it('should write log to stdout', async () => {
-        processStdout.should.eql(log);
-      });
+        it('should write the process log', async () => {
+          const _log = await readFile(successRunLog);
+          _log[0].should.eql(log);
+        });
 
-      it('should write nothing to stderr', async () => {
-        processStderr.should.eql(emptyBuffer);
-      });
+        it('should save the status', async () => {
+          const status = await readFile(successStatusFile);
+          JSON.parse(status[0]).should.eql({
+            endTime,
+            startTime,
+          });
+        });
 
-      it('should write the process log', async () => {
-        const _log = await readFile(processLog);
-        _log[0].should.eql(log);
-      });
+        it('should transmit the log', () => {
+          successLogData.should.eql(log);
+        });
 
-      it('should save the status', async () => {
-        const status = await readFile(statusFile);
-        JSON.parse(status[0]).should.eql({
-          exitCode,
-          endTime,
-          startTime,
+        it('should report end', () => {
+          successEnd.should.eql({
+            endTime,
+          });
         });
       });
 
-      it('should transmit the log', () => {
-        logData.should.eql(log);
-      });
+      describe('with error', () => {
+        before(async () => {
+          sinon.stub(Date, 'now', () => endTime);
+          try {
+            failJob.log.write(log);
+            await failJob.end('message');
+          } catch (error) {
+            throw(error);
+          } finally {
+            Date.now.restore();
+          }
+        });
 
-      it('should report end', () => {
-        end.should.eql({
-          endTime,
-          exitCode,
+        it('should write the process log', async () => {
+          const _log = await readFile(failRunLog);
+          _log[0].should.eql(log);
+        });
+
+        it('should save the status', async () => {
+          const status = await readFile(failStatusFile);
+          JSON.parse(status[0]).should.eql({
+            endTime,
+            startTime,
+            error: 'message',
+          });
+        });
+
+        it('should transmit the log', () => {
+          failLogData.should.eql(log);
+        });
+
+        it('should report end', () => {
+          failEnd.should.eql({
+            endTime,
+            error: 'message',
+          });
         });
       });
     });

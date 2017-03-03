@@ -8,7 +8,7 @@ const id = 0;
 const log = Buffer.from('log');
 const startTime = 100000;
 const endTime = 200000;
-const exitCode = 0;
+const error = 'message';
 
 describe('cli', () => {
   describe('ui', () => {
@@ -49,7 +49,7 @@ describe('cli', () => {
             });
           });
 
-          describe('with a zero exit code', () => {
+          describe('with an end time', () => {
             before(() => {
               job.setHeader.reset();
               job.setLog.reset();
@@ -58,7 +58,6 @@ describe('cli', () => {
                 id,
                 startTime,
                 endTime,
-                exitCode,
                 log,
               });
             });
@@ -75,7 +74,7 @@ describe('cli', () => {
             });
           });
 
-          describe('with a non-zero exit code', () => {
+          describe('with an error', () => {
             before(() => {
               job.setHeader.reset();
               job.setLog.reset();
@@ -84,14 +83,14 @@ describe('cli', () => {
                 id,
                 startTime,
                 endTime,
-                exitCode: 1,
+                error,
                 log,
               });
             });
 
             it('should set the header', () => {
               job.setHeader.should.have.been.calledWith(
-                ` ${name}: run ${id}: exit code 1`,
+                ` ${name}: run ${id}: ${error}`,
                 'red',
               );
             });

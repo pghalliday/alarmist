@@ -41,15 +41,15 @@ All the logs and status files will also be captured in the `.alarmist` working d
 ```
 .
 └── .alarmist/
-    ├── blessed.log - internal UI logging for debug purposes
-    ├── process.log - the monitor command's log
+    ├── ui.log - internal UI logging for debug purposes
+    ├── monitor.log - the monitor command's log
     ├── control.sock - unix socket or windows named pipe information that jobs use to notify the monitor on status change
     ├── log.sock - unix socket or windows named pipe information that jobs use to pipe logs to the monitor
     └── jobs/
       └── [name]
           ├── last-run - the last run number
           └── [run number]/
-              ├── process.log - the job run's log
+              ├── run.log - the job run's log
               └── status.json - the job run's status
 ```
 
@@ -78,10 +78,10 @@ The job will expose a `log` write stream that you can use for logging.
 job.log.write('this gets logged');
 ```
 
-When the job is complete call the `exit` method to signal success or failure with an exit code.
+When the job is complete call the `end` method and optionally signal failure with an error message (should be string)
 
 ```javascript
-job.exit(0)
+job.end(error)
 .then(function() {
   ...
 });
@@ -116,7 +116,7 @@ alarmist.execMonitor({
 Listen for start events when jobs start
 
 ```javascript
-monitor.on('start', function(job) {
+monitor.on('run-start', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
@@ -126,7 +126,7 @@ monitor.on('start', function(job) {
 Listen for log events when jobs log data
 
 ```javascript
-monitor.on('log', function(job) {
+monitor.on('run-log', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.data); // this should be a Buffer
@@ -136,12 +136,12 @@ monitor.on('log', function(job) {
 Listen for end events when jobs end
 
 ```javascript
-monitor.on('end', function(job) {
+monitor.on('run-end', function(job) {
   console.log(job.id);
   console.log(job.name);
   console.log(job.startTime);
   console.log(job.endTime);
-  console.log(job.exitCode);
+  console.log(job.error);
 });
 ```
 
@@ -153,11 +153,11 @@ monitor.log.on('data', function(data) {
 });
 ```
 
-Listen for an `exit` event that signifies an error as the watcher process should not exit
+Listen for an `end` event that signifies an error as the watcher process should not exit
 
 ```javascript
-monitor.on('exit', function(code) {
-  console.log(code);
+monitor.on('end', function(error) {
+  console.log(error);
 });
 ```
 
@@ -187,14 +187,14 @@ Log for your watcher process
 monitor.log.write('output');
 ```
 
-Signal the exit of the watcher process (watcher processes aren't meant to exit so this is really signalling an error)
+Signal the end of the watcher routine (watcher routines aren't meant to end so this is really signalling an error)
 
 ```javascript
-// provide an exit code
-monitor.exit(1);
+// provide an error string
+monitor.end(error);
 ```
 
-Listen for exit events and close the monitor as above
+Listen for end events and close the monitor as above
 
 ## Contributing
 
