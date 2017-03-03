@@ -59,7 +59,9 @@ let monitor;
 describe('alarmist', function() {
   describe('execMonitor', () => {
     describe('with a process that exits', () => {
-      before(async () => {
+      before(async function() {
+        // eslint-disable-next-line no-invalid-this
+        this.timeout(5000);
         let execMonitor;
         await new Promise(async (resolve) => {
           monitor = {
@@ -101,7 +103,9 @@ describe('alarmist', function() {
     });
 
     describe('with a process that lives', () => {
-      before(async () => {
+      before(async function() {
+        // eslint-disable-next-line no-invalid-this
+        this.timeout(5000);
         await rimraf(WORKING_DIR);
         await mkdirp(WORKING_DIR);
         let execMonitor;
