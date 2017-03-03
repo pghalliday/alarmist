@@ -15,7 +15,7 @@ Well this is the tool for you! ...at least if you like to live in the terminal :
 
 You no longer have to make the choice between starting lots of watcher terminals or jumbling up all your watcher jobs in one.
 
-Alarmist will start everything in parallel (when it can) and provide a clean interface hightlighting failures but allowing you to focus on the particular tests you're interested in at the moment.
+Alarmist will start everything in parallel (when it can) and provide a clean interface highlighting failures but allowing you to focus on the particular tests you're interested in at the moment.
 
 Enabling you to experiment with a new feature or get down and dirty debugging a failing test without being unduly distracted by failures you don't care about right now!
 
