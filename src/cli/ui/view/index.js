@@ -27,6 +27,7 @@ function createView(service, store) {
   const screen = blessed.screen({
     smartCSR: true,
     log: path.join(WORKING_DIR, UI_LOG),
+    debug: false,
   });
   logger.log = screen.log.bind(screen);
   logger.debug = screen.debug.bind(screen);
@@ -38,6 +39,17 @@ function createView(service, store) {
   });
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const container = blessed.box(CONTAINER_PROPERTIES);
+  screen.on('keypress', (ch, key) => {
+    logger.debug(key);
+  });
+  screen.key(['S-k'], () => {
+    container.focus();
+    store.dispatch(up());
+  });
+  screen.key(['S-j'], () => {
+    container.focus();
+    store.dispatch(down());
+  });
   screen.append(container);
   container.key(['up', 'k'], () => store.dispatch(up()));
   container.key(['down', 'j'], () => store.dispatch(down()));

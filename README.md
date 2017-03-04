@@ -42,9 +42,12 @@ alarmist-monitor my-watch-command [args...]
 Jobs will appear on first run and can be expanded (one at a time) to display logs
 
 - [CTRL-c] - stop the monitor
-- [up, down, j, k] -  select a job
+- [up, down, j, k, SHIFT-j, SHIFT-k] -  select a job
 - [enter, o] - expand/collapse job logs
-  - [up, down, j, k, g, SHIFT-g] - navigate log when expanded
+  - [up, down, j, k, g, SHIFT-g, CTRL-u, CTRL-d, CTRL-f, CTRL-b] - navigate log when expanded (vi keys)
+  - [y] - copy complete log to clipboard without control sequences (no colors)
+  - [SHIFT-y] - copy complete log to clipboard with control sequences (colors)
+  - [SHIFT-j, SHIFT-k] - expand next or previous job
 
 **NB. By default many commands will not produce colored output when run like this, however many commands also have options to force colors. Eg. many node CLI tools use the `chalk` library and so will have a `--color` option or support the `FORCE_COLOR=true` environment variable**
 

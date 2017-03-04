@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import helper from '../../../../helpers/blessed';
 import blessed from 'blessed';
+import copyPaste from 'copy-paste';
 import Entry from '../../../../../src/cli/ui/view/entry';
 import {
   HEADER_PROPERTIES,
@@ -39,6 +40,29 @@ describe('cli', () => {
 
         it('should clear the log', () => {
           helper.box.setContent.should.have.been.calledWith('');
+        });
+
+        describe('on a "y" keypress', () => {
+          before(() => {
+            copyPaste.copy.reset();
+            helper.box.keyHandlers['y']();
+          });
+
+          it('should copy text without control sequences to clipboard', () => {
+            copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
+          });
+        });
+
+        describe('on a "SHIFT-y" keypress', () => {
+          before(() => {
+            copyPaste.copy.reset();
+            // eslint-disable-next-line new-cap
+            helper.box.keyHandlers['S-y']();
+          });
+
+          it('should copy text without control sequences to clipboard', () => {
+            copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
+          });
         });
 
         describe('setParent', () => {

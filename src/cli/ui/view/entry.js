@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {copy} from 'copy-paste';
 import blessed from 'blessed';
 import {
   HEADER_PROPERTIES,
@@ -11,6 +12,8 @@ export default class Entry {
     this.expanded = false;
     this.header = blessed.text(_.cloneDeep(HEADER_PROPERTIES));
     this.log = blessed.box(_.cloneDeep(LOG_PROPERTIES));
+    this.log.key(['y'], () => copy(this.log.getText()));
+    this.log.key(['S-y'], () => copy(this.log.getContent()));
     this.log.hide();
     this.clear();
   }
