@@ -1,4 +1,9 @@
-# The Alarmist
+<h1>
+<div style="align-items:center">
+<img height="35" src="https://raw.githubusercontent.com/pghalliday/alarmist/master/light.png"/>
+<span>The Alarmist</span>
+</div>
+</h1>
 
 [![Build Status](https://travis-ci.org/pghalliday/alarmist.svg?branch=master)](https://travis-ci.org/pghalliday/alarmist)
 [![Build status](https://ci.appveyor.com/api/projects/status/w4tcbmqhghndynob/branch/master?svg=true)](https://ci.appveyor.com/project/pghalliday/alarmist/branch/master)
