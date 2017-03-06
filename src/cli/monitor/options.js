@@ -14,6 +14,7 @@ import {
   MONITOR_USAGE_TEXT,
 } from '../../constants';
 
+// istanbul ignore next
 const toBool = (value) => value === 'true';
 
 const defaultReset = optionDefault(

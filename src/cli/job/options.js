@@ -13,10 +13,13 @@ import {
   JOB_USAGE_TEXT,
 } from '../../constants';
 
+// istanbul ignore next
+const toBool = (value) => value === 'true';
+
 const defaultColor = optionDefault(
   FORCE_COLOR_VAR,
   DEFAULT_COLOR_OPTION,
-  (value) => value === 'true',
+  toBool,
 );
 
 const defaultWorkingDirectory = optionDefault(
