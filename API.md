@@ -9,7 +9,10 @@ var alarmist = require('alarmist');
 Create a job.
 
 ```javascript
-alarmist.createJob('name')]
+alarmist.createJob({
+  name: 'name',
+  workingDirectory: '.alarmist'
+})]
 .then(function(job) {
   ...
 });
@@ -36,7 +39,9 @@ job.end(error)
 alarmist.execJob({
   name: 'name',
   command: 'my-command',
-  args: []
+  args: [],
+  workingDirectory: '.alarmist',
+  color: true
 }).then(function() {
   ...
 });
@@ -49,7 +54,10 @@ Start a monitor and watcher process
 ```javascript
 alarmist.execMonitor({
   command: 'my-watcher-command',
-  args: []
+  args: [],
+  workingDirectory: '.alarmist',
+  color: true,
+  reset: true
 })
 .then(function(monitor) {
   ...
@@ -115,7 +123,10 @@ monitor.close();
 Start a monitor
 
 ```javascript
-alarmist.createMonitor()
+alarmist.createMonitor({
+  workingDirectory: '.alarmist',
+  reset: true
+})
 .then(function(monitor) {
   // create and manage your watcher
   ...

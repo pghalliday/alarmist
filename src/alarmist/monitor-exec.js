@@ -1,4 +1,3 @@
-import logger from '../cli/ui/view/logger';
 import * as Monitor from './monitor';
 import spawn from 'cross-spawn';
 import {
@@ -34,7 +33,6 @@ export async function exec({command, args, reset, color, workingDir}) {
   proc.stdout.pipe(monitor.log);
   proc.stderr.pipe(monitor.log);
   monitor.cleanup = async () => {
-    logger.log('cleanup');
     expectExit = true;
     kill(proc.pid);
     await exitPromise;

@@ -44,6 +44,12 @@ them separated. This will also export the
 'ALARMIST_WORKING_DIRECTORY' environment variable for use by
 jobs started by the watcher tasks.
 
+Environment Variables:
+
+FORCE_COLOR
+ALARMIST_WORKING_DIRECTORY
+ALARMIST_RESET
+
 <command>: The command to start the watcher tasks
 <arg>: arguments for the command
 
@@ -70,6 +76,11 @@ variable will have already been set.
 <command>: The command to start the job
 <arg>: arguments for the command
 
+Environment Variables:
+
+FORCE_COLOR
+ALARMIST_WORKING_DIRECTORY
+
 Options:
     --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
     --force-color, -c     Set the FORCE_COLOR environment variable for the job (default: true)
@@ -86,8 +97,6 @@ Jobs will appear on first run and can be expanded (one at a time) to display log
   - [y] - copy complete log to clipboard without control sequences (no colors)
   - [SHIFT-y] - copy complete log to clipboard with control sequences (colors)
   - [SHIFT-j, SHIFT-k] - expand next or previous job
-
-**NB. By default many commands will not produce colored output when run like this, however many commands also have options to force colors. Eg. many node CLI tools use the `chalk` library and so will have a `--color` option or support the `FORCE_COLOR=true` environment variable**
 
 All the logs and status files will also be captured in the `.alarmist` working directory with the following structure
 
@@ -106,7 +115,7 @@ All the logs and status files will also be captured in the `.alarmist` working d
               └── status.json - the job run's status
 ```
 
-**NB. The `.alarmist` working directory will be reset every time the monitor is started**
+**NB. The `.alarmist` working directory will be reset every time the monitor is started by default. See the `--reset` option**
 
 ## Helpers
 

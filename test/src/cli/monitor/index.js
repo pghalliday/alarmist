@@ -1,6 +1,6 @@
 import monitorCli from '../../../../src/cli/monitor';
 import alarmist from '../../../../src';
-import ui from '../../../../src/cli/ui';
+import ui from '../../../../src/cli/monitor/ui';
 import {
   WORKING_DIR,
 } from '../../../helpers/constants';

@@ -1,5 +1,6 @@
 export const WORKING_DIRECTORY_VAR = 'ALARMIST_WORKING_DIRECTORY';
 export const FORCE_COLOR_VAR = 'FORCE_COLOR';
+export const RESET_VAR = 'ALARMIST_RESET';
 export const DEFAULT_WORKING_DIR = '.alarmist';
 export const DEFAULT_COLOR_OPTION = true;
 export const DEFAULT_RESET_OPTION = true;
@@ -16,6 +17,11 @@ variable will have already been set.
 <command>: The command to start the job
 <arg>: arguments for the command
 
+Environment Variables:
+
+FORCE_COLOR
+ALARMIST_WORKING_DIRECTORY
+
 Options:
 `;
 export const MONITOR_USAGE_TEXT = `
@@ -27,6 +33,12 @@ or export the 'ALARMIST_WORKING_DIRECTORY' variable to keep
 them separated. This will also export the
 'ALARMIST_WORKING_DIRECTORY' environment variable for use by
 jobs started by the watcher tasks.
+
+Environment Variables:
+
+FORCE_COLOR
+ALARMIST_WORKING_DIRECTORY
+ALARMIST_RESET
 
 <command>: The command to start the watcher tasks
 <arg>: arguments for the command

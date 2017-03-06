@@ -1,5 +1,5 @@
 import alarmist from '../../';
-import ui from '../ui';
+import ui from './ui';
 import {
   help,
   parse,

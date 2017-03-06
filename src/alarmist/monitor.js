@@ -1,4 +1,3 @@
-import logger from '../cli/ui/view/logger';
 import {
   MONITOR_LOG,
   READY_RESPONSE,
@@ -74,7 +73,6 @@ export async function createMonitor({reset, workingDir}) {
   // expose the monitor properties and methods
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {
-      logger.log('close');
       await monitor.cleanup();
     }
     await endLogStream();

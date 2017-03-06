@@ -1,8 +1,11 @@
 import minimist from 'minimist';
+import optionDefault from '../utils/option-default';
 import _ from 'lodash';
 import cliclopts from 'cliclopts';
 import {
   WORKING_DIRECTORY_VAR,
+  FORCE_COLOR_VAR,
+  RESET_VAR,
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
@@ -11,9 +14,24 @@ import {
   MONITOR_USAGE_TEXT,
 } from '../../constants';
 
-// istanbul ignore next
-const defaultWorkingDirectory =
-  process.env[WORKING_DIRECTORY_VAR] || DEFAULT_WORKING_DIR;
+const toBool = (value) => value === 'true';
+
+const defaultReset = optionDefault(
+  RESET_VAR,
+  DEFAULT_RESET_OPTION,
+  toBool,
+);
+
+const defaultColor = optionDefault(
+  FORCE_COLOR_VAR,
+  DEFAULT_COLOR_OPTION,
+  toBool,
+);
+
+const defaultWorkingDirectory = optionDefault(
+  WORKING_DIRECTORY_VAR,
+  DEFAULT_WORKING_DIR,
+);
 
 const cliOpts = cliclopts([{
   name: 'working-dir',
@@ -24,13 +42,13 @@ const cliOpts = cliclopts([{
   name: 'reset',
   abbr: 'r',
   boolean: true,
-  default: DEFAULT_RESET_OPTION,
+  default: defaultReset,
   help: 'Reset the working directory on start',
 }, {
   name: 'force-color',
   abbr: 'c',
   boolean: true,
-  default: DEFAULT_COLOR_OPTION,
+  default: defaultColor,
   help: 'Set the FORCE_COLOR environment variable for watchers and jobs',
 }, {
   name: 'help',

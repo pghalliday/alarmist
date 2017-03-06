@@ -1,8 +1,10 @@
 import minimist from 'minimist';
+import optionDefault from '../utils/option-default';
 import _ from 'lodash';
 import cliclopts from 'cliclopts';
 import {
   WORKING_DIRECTORY_VAR,
+  FORCE_COLOR_VAR,
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
@@ -11,9 +13,16 @@ import {
   JOB_USAGE_TEXT,
 } from '../../constants';
 
-// istanbul ignore next
-const defaultWorkingDirectory =
-  process.env[WORKING_DIRECTORY_VAR] || DEFAULT_WORKING_DIR;
+const defaultColor = optionDefault(
+  FORCE_COLOR_VAR,
+  DEFAULT_COLOR_OPTION,
+  (value) => value === 'true',
+);
+
+const defaultWorkingDirectory = optionDefault(
+  WORKING_DIRECTORY_VAR,
+  DEFAULT_WORKING_DIR,
+);
 
 const cliOpts = cliclopts([{
   name: 'working-dir',
@@ -24,7 +33,7 @@ const cliOpts = cliclopts([{
   name: 'force-color',
   abbr: 'c',
   boolean: true,
-  default: DEFAULT_COLOR_OPTION,
+  default: defaultColor,
   help: 'Set the FORCE_COLOR environment variable for the job',
 }, {
   name: 'help',

@@ -8,7 +8,7 @@ import Job from './job';
 import logger from './logger';
 import {
   UI_LOG,
-} from '../../../constants';
+} from '../../../../constants';
 import {
   up,
   down,
