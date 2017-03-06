@@ -1,15 +1,25 @@
 import logger from '../cli/ui/view/logger';
 import * as Monitor from './monitor';
 import spawn from 'cross-spawn';
+import {
+  WORKING_DIRECTORY_VAR,
+  FORCE_COLOR_VAR,
+} from '../constants';
 
 // tree-kill gives us a cross-platform
 // way to kill children and grandchildren, etc
 import kill from 'tree-kill';
 
-export async function exec({command, args}) {
-  const monitor = await Monitor.createMonitor();
+export async function exec({command, args, reset, color, workingDir}) {
+  const monitor = await Monitor.createMonitor({
+    reset,
+    workingDir,
+  });
   const proc = spawn(command, args, {
-    env: Object.assign({}, process.env, {FORCE_COLOR: true}),
+    env: Object.assign({}, process.env, {
+      [WORKING_DIRECTORY_VAR]: workingDir,
+      [FORCE_COLOR_VAR]: color,
+    }),
   });
   let expectExit = false;
   const exitPromise = new Promise((resolve) => {

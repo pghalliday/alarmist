@@ -7,7 +7,6 @@ import Jobs from './jobs';
 import Job from './job';
 import logger from './logger';
 import {
-  WORKING_DIR,
   UI_LOG,
 } from '../../../constants';
 import {
@@ -23,10 +22,10 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView(service, store) {
+function createView(service, store, workingDir) {
   const screen = blessed.screen({
     smartCSR: true,
-    log: path.join(WORKING_DIR, UI_LOG),
+    log: path.join(workingDir, UI_LOG),
     debug: false,
   });
   logger.log = screen.log.bind(screen);

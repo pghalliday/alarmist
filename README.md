@@ -32,16 +32,49 @@ npm install --save-dev alarmist
 
 ## CLI
 
-Execute a job
-
-```
-alarmist-job -n name my-command [args...]
-```
-
 Monitor jobs
 
 ```
-alarmist-monitor my-watch-command [args...]
+Usage: alarmist-monitor [options] <command> [<arg>...]
+
+Start monitoring jobs. If multiple monitors need to be run
+in the same directory then use the '--working-dir' option
+or export the 'ALARMIST_WORKING_DIRECTORY' variable to keep
+them separated. This will also export the
+'ALARMIST_WORKING_DIRECTORY' environment variable for use by
+jobs started by the watcher tasks.
+
+<command>: The command to start the watcher tasks
+<arg>: arguments for the command
+
+Options:
+    --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
+    --reset, -r           Reset the working directory on start (default: true)
+    --force-color, -c     Set the FORCE_COLOR environment variable for watchers and jobs (default: true)
+    --help, -h            Show help
+    --version, -v         Show version number
+```
+
+Execute a job
+
+```
+Usage: alarmist-job [options] <name> <command> [<arg>...]
+
+Start a job. The working directory should match the
+working directory of the monitor and usually this will
+be the default. If the job is started via a watcher started
+by the monitor then the 'ALARMIST_WORKING_DIRECTORY' environment
+variable will have already been set.
+
+<name>: The name of the job
+<command>: The command to start the job
+<arg>: arguments for the command
+
+Options:
+    --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
+    --force-color, -c     Set the FORCE_COLOR environment variable for the job (default: true)
+    --help, -h            Show help
+    --version, -v         Show version number
 ```
 
 Jobs will appear on first run and can be expanded (one at a time) to display logs

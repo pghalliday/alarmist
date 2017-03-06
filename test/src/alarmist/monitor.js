@@ -1,10 +1,12 @@
 import {createConnection} from 'net';
 import {createMonitor} from '../../../src/alarmist/monitor';
 import {
-  WORKING_DIR,
   MONITOR_LOG,
   READY_RESPONSE,
-} from '../../../src/constants.js';
+} from '../../../src/constants';
+import {
+  WORKING_DIR,
+} from '../../helpers/constants';
 import {
   getControlSocket,
   getLogSocket,
@@ -65,7 +67,10 @@ describe('alarmist', () => {
     let monitor;
     beforeEach(async () => {
       await rimraf(WORKING_DIR);
-      monitor = await createMonitor();
+      monitor = await createMonitor({
+        reset: true,
+        workingDir: WORKING_DIR,
+      });
     });
 
     it('should open a log stream', async () => {
@@ -76,7 +81,9 @@ describe('alarmist', () => {
     describe('should open a control socket', () => {
       let controlConnection;
       beforeEach(async () => {
-        controlConnection = createConnection(await getControlSocket());
+        controlConnection = createConnection(
+          await getControlSocket(WORKING_DIR)
+        );
         await new Promise(
           (resolve) => controlConnection.on('connect', resolve)
         );
@@ -127,7 +134,7 @@ describe('alarmist', () => {
     describe('should open a log socket', () => {
       let logConnection;
       beforeEach(async () => {
-        logConnection = createConnection(await getLogSocket());
+        logConnection = createConnection(await getLogSocket(WORKING_DIR));
         await new Promise((resolve) => logConnection.on('connect', resolve));
       });
       afterEach(async () => {

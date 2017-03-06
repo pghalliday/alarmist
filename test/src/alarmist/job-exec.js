@@ -8,8 +8,27 @@ import {
   flush,
   restore,
 } from '../../helpers/std-streams';
+import promisify from '../../../src/utils/promisify';
+import rimraf from 'rimraf';
+import mkdirp from 'mkdirp';
+import {
+  readFile,
+} from 'fs';
+import {
+  FORCE_COLOR_VAR,
+} from '../../../src/constants';
+import {
+  WORKING_DIR,
+} from '../../helpers/constants';
+import path from 'path';
+
+const primraf = promisify(rimraf);
+const pmkdirp = promisify(mkdirp);
+const preadFile = promisify(readFile);
 
 const name = 'name';
+const workingDir = 'working dir';
+const color = false;
 const successCode = 0;
 const failCode = 1;
 const stdout = Buffer.from('stdout');
@@ -51,6 +70,8 @@ describe('alarmist', () => {
       before(async function() {
         // eslint-disable-next-line no-invalid-this
         this.timeout(5000);
+        await primraf(WORKING_DIR);
+        await pmkdirp(WORKING_DIR);
         capture();
         job = {
           log: new TestWritable(),
@@ -62,6 +83,8 @@ describe('alarmist', () => {
           name,
           command,
           args: successArgs,
+          workingDir,
+          color,
         });
         Job.createJob.restore();
         [processStdout, processStderr] = flush();
@@ -69,7 +92,15 @@ describe('alarmist', () => {
       });
 
       it('should create a job', () => {
-        createJob.should.have.been.calledWith(name);
+        createJob.should.have.been.calledWith({
+          name,
+          workingDir,
+        });
+      });
+
+      it('should set the FORCE_COLOR variable', async () => {
+        const envVar = await preadFile(path.join(WORKING_DIR, FORCE_COLOR_VAR));
+        envVar[0].toString().should.eql(color + '');
       });
 
       it('should write to stdout', async () => {
@@ -104,6 +135,8 @@ describe('alarmist', () => {
           name,
           command,
           args: failArgs,
+          workingDir,
+          color,
         });
         Job.createJob.restore();
         [processStdout, processStderr] = flush();
@@ -111,7 +144,15 @@ describe('alarmist', () => {
       });
 
       it('should create a job', () => {
-        createJob.should.have.been.calledWith(name);
+        createJob.should.have.been.calledWith({
+          name,
+          workingDir,
+        });
+      });
+
+      it('should set the FORCE_COLOR variable', async () => {
+        const envVar = await preadFile(path.join(WORKING_DIR, FORCE_COLOR_VAR));
+        envVar[0].toString().should.eql(color + '');
       });
 
       it('should write to stdout', async () => {

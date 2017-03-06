@@ -1,6 +1,5 @@
 import logger from '../cli/ui/view/logger';
 import {
-  WORKING_DIR,
   MONITOR_LOG,
   READY_RESPONSE,
 } from '../constants';
@@ -21,12 +20,14 @@ import _ from 'lodash';
 const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
-const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
-
-export async function createMonitor() {
+export async function createMonitor({reset, workingDir}) {
+  const monitorLog = path.join(workingDir, MONITOR_LOG);
   const monitor = new EventEmitter();
-  await rimraf(WORKING_DIR);
-  await mkdirp(WORKING_DIR);
+  // istanbul ignore else
+  if (reset) {
+    await rimraf(workingDir);
+    await mkdirp(workingDir);
+  }
   // set up streams for logging the watcher process
   const log = new PassThrough();
   const logStream = createWriteStream(monitorLog);
@@ -52,7 +53,7 @@ export async function createMonitor() {
   });
   const controlListen = promisify(controlServer.listen.bind(controlServer));
   const controlClose = promisify(controlServer.close.bind(controlServer));
-  const controlSocket = await getControlSocket(true);
+  const controlSocket = await getControlSocket(workingDir, true);
   await controlListen(controlSocket);
   // set up the log socket for jobs
   const logServer = createServer((client) => {
@@ -68,7 +69,7 @@ export async function createMonitor() {
   });
   const logListen = promisify(logServer.listen.bind(logServer));
   const logClose = promisify(logServer.close.bind(logServer));
-  const logSocket = await getLogSocket(true);
+  const logSocket = await getLogSocket(workingDir, true);
   await logListen(logSocket);
   // expose the monitor properties and methods
   monitor.close = async () => {

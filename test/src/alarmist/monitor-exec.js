@@ -5,20 +5,31 @@ import {
 import {Writable} from 'stream';
 import chokidar from 'chokidar';
 import path from 'path';
+import promisify from '../../../src/utils/promisify';
+import rimraf from 'rimraf';
+import mkdirp from 'mkdirp';
+import {
+  readFile,
+} from 'fs';
+import {
+  WORKING_DIRECTORY_VAR,
+  FORCE_COLOR_VAR,
+} from '../../../src/constants';
 import {
   WORKING_DIR,
-} from '../../../src/constants';
-import promisify from '../../../src/utils/promisify';
-import _rimraf from 'rimraf';
-import _mkdirp from 'mkdirp';
+} from '../../helpers/constants';
 
-const rimraf = promisify(_rimraf);
-const mkdirp = promisify(_mkdirp);
+const primraf = promisify(rimraf);
+const pmkdirp = promisify(mkdirp);
+const preadFile = promisify(readFile);
 
 const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
 const all = Buffer.concat([stdout, stderr]);
+const workingDir = 'working dir';
+const reset = false;
+const color = false;
 const command = 'node';
 const exitingArgs = [
   'test/bin/command.js',
@@ -62,6 +73,8 @@ describe('alarmist', function() {
       before(async function() {
         // eslint-disable-next-line no-invalid-this
         this.timeout(5000);
+        await primraf(WORKING_DIR);
+        await pmkdirp(WORKING_DIR);
         let execMonitor;
         await new Promise(async (resolve) => {
           monitor = {
@@ -77,6 +90,9 @@ describe('alarmist', function() {
           execMonitor = await exec({
             command,
             args: exitingArgs,
+            workingDir,
+            reset,
+            color,
           });
         });
         await execMonitor.close();
@@ -86,7 +102,22 @@ describe('alarmist', function() {
       });
 
       it('should create a monitor', () => {
-        Monitor.createMonitor.should.have.been.calledOnce;
+        Monitor.createMonitor.should.have.been.calledWith({
+          workingDir,
+          reset,
+        });
+      });
+
+      it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {
+        const envVar = await preadFile(
+          path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
+        );
+        envVar[0].toString().should.eql(workingDir);
+      });
+
+      it('should set the FORCE_COLOR variable', async () => {
+        const envVar = await preadFile(path.join(WORKING_DIR, FORCE_COLOR_VAR));
+        envVar[0].toString().should.eql(color + '');
       });
 
       it('should pipe to the monitor log', () => {
@@ -106,8 +137,8 @@ describe('alarmist', function() {
       before(async function() {
         // eslint-disable-next-line no-invalid-this
         this.timeout(5000);
-        await rimraf(WORKING_DIR);
-        await mkdirp(WORKING_DIR);
+        await primraf(WORKING_DIR);
+        await pmkdirp(WORKING_DIR);
         let execMonitor;
         monitor = {
           log: new TestWritable(),
@@ -124,6 +155,9 @@ describe('alarmist', function() {
         execMonitor = await exec({
           command,
           args: livingArgs,
+          workingDir,
+          reset,
+          color,
         });
         await waitPromise;
         await execMonitor.close();
@@ -133,7 +167,22 @@ describe('alarmist', function() {
       });
 
       it('should create a monitor', () => {
-        Monitor.createMonitor.should.have.been.calledOnce;
+        Monitor.createMonitor.should.have.been.calledWith({
+          workingDir,
+          reset,
+        });
+      });
+
+      it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {
+        const envVar = await preadFile(
+          path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
+        );
+        envVar[0].toString().should.eql(workingDir);
+      });
+
+      it('should set the FORCE_COLOR variable', async () => {
+        const envVar = await preadFile(path.join(WORKING_DIR, FORCE_COLOR_VAR));
+        envVar[0].toString().should.eql(color + '');
       });
 
       it('should pipe to the monitor log', () => {

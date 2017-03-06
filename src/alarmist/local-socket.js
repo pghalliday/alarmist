@@ -8,15 +8,12 @@ import {
 } from 'uuid';
 import path from 'path';
 import {
-  WORKING_DIR,
   CONTROL_SOCKET,
   LOG_SOCKET,
 } from '../constants';
 
 const preadFile = promisify(readFile);
 const pwriteFile = promisify(writeFile);
-const controlSocket = path.join(WORKING_DIR, CONTROL_SOCKET);
-const logSocket = path.join(WORKING_DIR, LOG_SOCKET);
 
 // istanbul ignore next
 async function getSocket(server, file) {
@@ -40,11 +37,13 @@ async function getSocket(server, file) {
   }
 }
 
-async function getControlSocket(server) {
+async function getControlSocket(workingDir, server) {
+  const controlSocket = path.join(workingDir, CONTROL_SOCKET);
   return await getSocket(server, controlSocket);
 }
 
-async function getLogSocket(server) {
+async function getLogSocket(workingDir, server) {
+  const logSocket = path.join(workingDir, LOG_SOCKET);
   return await getSocket(server, logSocket);
 }
 

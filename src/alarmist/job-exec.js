@@ -1,10 +1,20 @@
 import * as Job from './job';
 import spawn from 'cross-spawn';
+import {
+  FORCE_COLOR_VAR,
+} from '../constants';
 
-export async function exec({name, command, args}) {
-  const job = await Job.createJob(name);
+export async function exec({name, command, args, workingDir, color}) {
+  const job = await Job.createJob({
+    workingDir,
+    name,
+  });
   return await new Promise((resolve) => {
-    const proc = spawn(command, args)
+    const proc = spawn(command, args, {
+      env: Object.assign({}, process.env, {
+        [FORCE_COLOR_VAR]: color,
+      }),
+    })
     .on('exit', async (code) => {
       const error = code !== 0 ? `exit code: ${code}` : undefined;
       await job.end(error);

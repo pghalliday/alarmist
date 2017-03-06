@@ -1,7 +1,7 @@
 import {getId} from '../../../src/utils/id';
 import {
   WORKING_DIR,
-} from '../../../src/constants.js';
+} from '../../helpers/constants';
 import _rimraf from 'rimraf';
 import _mkdirp from 'mkdirp';
 import promisify from '../../../src/utils/promisify';

@@ -1,5 +1,4 @@
 import {
-  WORKING_DIR,
   JOBS_DIR,
   ID_FILE,
   STATUS_FILE,
@@ -23,9 +22,9 @@ import _id from '../utils/id';
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-export async function createJob(name) {
+export async function createJob({name, workingDir}) {
   // set up the file reporting
-  const jobDir = path.join(WORKING_DIR, JOBS_DIR, name);
+  const jobDir = path.join(workingDir, JOBS_DIR, name);
   const idFile = path.join(jobDir, ID_FILE);
   const id = await _id.getId(idFile);
   const reportDir = path.join(jobDir, '' + id);
@@ -42,7 +41,7 @@ export async function createJob(name) {
     (resolve) => logStream.on('close', resolve)
   );
   // start the control socket
-  const controlSocket = await getControlSocket(false);
+  const controlSocket = await getControlSocket(workingDir, false);
   const controlConnection = createConnection(controlSocket);
   const controlReady = new Promise(
     (resolve) => controlConnection.once('data', resolve)
@@ -58,7 +57,7 @@ export async function createJob(name) {
   }));
   await controlReady;
   // start the log socket
-  const logSocket = await getLogSocket(false);
+  const logSocket = await getLogSocket(workingDir, false);
   const logConnection = createConnection(logSocket);
   const logReady = new Promise(
     (resolve) => logConnection.once('data', resolve)

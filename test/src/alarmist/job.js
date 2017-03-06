@@ -3,6 +3,8 @@ import {
 } from '../../../src/alarmist/job';
 import {
   WORKING_DIR,
+} from '../../helpers/constants';
+import {
   JOBS_DIR,
   RUN_LOG,
   STATUS_FILE,
@@ -14,15 +16,15 @@ import {
 } from '../../../src/alarmist/local-socket';
 import {createServer} from 'net';
 import path from 'path';
-import _rimraf from 'rimraf';
-import _mkdirp from 'mkdirp';
-import {readFile as _readFile} from 'fs';
+import rimraf from 'rimraf';
+import mkdirp from 'mkdirp';
+import {readFile} from 'fs';
 import promisify from '../../../src/utils/promisify';
 import _id from '../../../src/utils/id';
 
-const rimraf = promisify(_rimraf);
-const mkdirp = promisify(_mkdirp);
-const readFile = promisify(_readFile);
+const primraf = promisify(rimraf);
+const pmkdirp = promisify(mkdirp);
+const preadFile = promisify(readFile);
 
 const name = 'name';
 const startTime = 1000000;
@@ -66,8 +68,8 @@ describe('alarmist', () => {
   describe('job', () => {
     before(async () => {
       sinon.stub(Date, 'now', () => startTime);
-      await rimraf(WORKING_DIR);
-      await mkdirp(WORKING_DIR);
+      await primraf(WORKING_DIR);
+      await pmkdirp(WORKING_DIR);
       controlServer = createServer((client) => {
         client.once('data', (data) => {
           const start = JSON.parse(data);
@@ -87,7 +89,7 @@ describe('alarmist', () => {
       });
       await new Promise(
         async (resolve) => controlServer.listen(
-          await getControlSocket(true),
+          await getControlSocket(WORKING_DIR, true),
           resolve,
         )
       );
@@ -112,15 +114,15 @@ describe('alarmist', () => {
       });
       await new Promise(
         async (resolve) => logServer.listen(
-          await getLogSocket(true),
+          await getLogSocket(WORKING_DIR, true),
           resolve,
         )
       );
       sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
-      successJob = await createJob(name);
+      successJob = await createJob({name, workingDir: WORKING_DIR});
       _id.getId.restore();
       sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
-      failJob = await createJob(name);
+      failJob = await createJob({name, workingDir: WORKING_DIR});
       _id.getId.restore();
       Date.now.restore();
     });
@@ -136,11 +138,11 @@ describe('alarmist', () => {
     });
 
     it('should save the status', async () => {
-      let status = await readFile(successStatusFile);
+      let status = await preadFile(successStatusFile);
       JSON.parse(status[0]).should.eql({
         startTime,
       });
-      status = await readFile(failStatusFile);
+      status = await preadFile(failStatusFile);
       JSON.parse(status[0]).should.eql({
         startTime,
       });
@@ -185,12 +187,12 @@ describe('alarmist', () => {
         });
 
         it('should write the process log', async () => {
-          const _log = await readFile(successRunLog);
+          const _log = await preadFile(successRunLog);
           _log[0].should.eql(log);
         });
 
         it('should save the status', async () => {
-          const status = await readFile(successStatusFile);
+          const status = await preadFile(successStatusFile);
           JSON.parse(status[0]).should.eql({
             endTime,
             startTime,
@@ -222,12 +224,12 @@ describe('alarmist', () => {
         });
 
         it('should write the process log', async () => {
-          const _log = await readFile(failRunLog);
+          const _log = await preadFile(failRunLog);
           _log[0].should.eql(log);
         });
 
         it('should save the status', async () => {
-          const status = await readFile(failStatusFile);
+          const status = await preadFile(failStatusFile);
           JSON.parse(status[0]).should.eql({
             endTime,
             startTime,
