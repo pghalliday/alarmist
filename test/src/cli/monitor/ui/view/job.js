@@ -26,78 +26,163 @@ describe('cli', () => {
           });
 
           describe('_update', () => {
-            describe('without an exit code', () => {
-              before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
-                  name,
-                  id,
-                  startTime,
-                  log,
+            describe('for a service', () => {
+              describe('without an end time', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: true,
+                    startTime,
+                    log,
+                  });
+                });
+
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: ok`,
+                    'green',
+                  );
+                });
+
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
                 });
               });
 
-              it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: pending`,
-                  'yellow',
-                );
+              describe('with an end time', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: true,
+                    startTime,
+                    endTime,
+                    log,
+                  });
+                });
+
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: ended`,
+                    'red',
+                  );
+                });
+
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
+                });
               });
 
-              it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
+              describe('with an error', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: true,
+                    startTime,
+                    endTime,
+                    error,
+                    log,
+                  });
+                });
+
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: ${error}`,
+                    'red',
+                  );
+                });
+
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
+                });
               });
             });
 
-            describe('with an end time', () => {
-              before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
-                  name,
-                  id,
-                  startTime,
-                  endTime,
-                  log,
+            describe('for a regular job', () => {
+              describe('without an end time', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: false,
+                    startTime,
+                    log,
+                  });
+                });
+
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: pending`,
+                    'yellow',
+                  );
+                });
+
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
                 });
               });
 
-              it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: ok`,
-                  'green',
-                );
-              });
+              describe('with an end time', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: false,
+                    startTime,
+                    endTime,
+                    log,
+                  });
+                });
 
-              it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
-              });
-            });
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: ok`,
+                    'green',
+                  );
+                });
 
-            describe('with an error', () => {
-              before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
-                  name,
-                  id,
-                  startTime,
-                  endTime,
-                  error,
-                  log,
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
                 });
               });
 
-              it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: ${error}`,
-                  'red',
-                );
-              });
+              describe('with an error', () => {
+                before(() => {
+                  job.setHeader.reset();
+                  job.setLog.reset();
+                  job.update({
+                    name,
+                    id,
+                    service: false,
+                    startTime,
+                    endTime,
+                    error,
+                    log,
+                  });
+                });
 
-              it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
+                it('should set the header', () => {
+                  job.setHeader.should.have.been.calledWith(
+                    ` ${name}: run ${id}: ${error}`,
+                    'red',
+                  );
+                });
+
+                it('should set the log', () => {
+                  job.setLog.should.have.been.calledWith(log);
+                });
               });
             });
           });

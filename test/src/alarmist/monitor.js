@@ -26,6 +26,7 @@ const exitCode = 0;
 const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
 const name = 'job name';
+const service = false;
 const id = 1;
 const startTime = 100000;
 const endTime = 200000;
@@ -33,6 +34,7 @@ const endTime = 200000;
 const startEvent = {
   name,
   id,
+  service,
   startTime,
 };
 
@@ -44,6 +46,7 @@ const endMessage = {
 const endEvent = {
   name,
   id,
+  service,
   startTime,
   endTime,
   exitCode,

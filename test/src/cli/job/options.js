@@ -6,6 +6,7 @@ import _ from 'lodash';
 import {
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
+  DEFAULT_SERVICE_OPTION,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
@@ -54,6 +55,7 @@ const noOptions = [
 
 const shortOptions = [
   '-c',
+  '-s',
   '-w',
   workingDir,
   name,
@@ -64,6 +66,7 @@ const shortOptions = [
 
 const fullOptions = [
   '--force-color',
+  '--service',
   '--working-dir',
   workingDir,
   name,
@@ -74,6 +77,7 @@ const fullOptions = [
 
 const negatedOptions = [
   '--no-force-color',
+  '--no-service',
   '--working-dir',
   workingDir,
   name,
@@ -175,21 +179,25 @@ describe('cli', () => {
           'with no options': {
             argv: noOptions,
             color: DEFAULT_COLOR_OPTION,
+            service: DEFAULT_SERVICE_OPTION,
             workingDir: DEFAULT_WORKING_DIR,
           },
           'with short options': {
             argv: shortOptions,
             color: true,
+            service: true,
             workingDir,
           },
           'with full options': {
             argv: fullOptions,
             color: true,
+            service: true,
             workingDir,
           },
           'with negated options': {
             argv: negatedOptions,
             color: false,
+            service: false,
             workingDir,
           },
         }, (value, key) => {
@@ -212,6 +220,10 @@ describe('cli', () => {
 
             it('should set the color option', () => {
               options.color.should.eql(value.color);
+            });
+
+            it('should set the service option', () => {
+              options.service.should.eql(value.service);
             });
 
             it('should set the working directory', () => {

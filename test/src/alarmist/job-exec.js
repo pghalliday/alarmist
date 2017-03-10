@@ -29,6 +29,7 @@ const preadFile = promisify(readFile);
 const name = 'name';
 const workingDir = 'working dir';
 const color = false;
+const service = true;
 const successCode = 0;
 const failCode = 1;
 const stdout = Buffer.from('stdout');
@@ -60,7 +61,6 @@ class TestWritable extends Writable {
 }
 
 let job;
-let createJob;
 let processStdout;
 let processStderr;
 
@@ -77,24 +77,27 @@ describe('alarmist', () => {
           log: new TestWritable(),
           end: sinon.spy(() => Promise.resolve()),
         };
-        createJob = sinon.spy(() => Promise.resolve(job));
-        sinon.stub(Job, 'createJob', createJob);
+        sinon.stub(Job, 'createJob', sinon.spy(() => Promise.resolve(job)));
         await exec({
           name,
           command,
           args: successArgs,
           workingDir,
           color,
+          service,
         });
-        Job.createJob.restore();
         [processStdout, processStderr] = flush();
+      });
+      after(() => {
+        Job.createJob.restore();
         restore();
       });
 
       it('should create a job', () => {
-        createJob.should.have.been.calledWith({
+        Job.createJob.should.have.been.calledWith({
           name,
           workingDir,
+          service,
         });
       });
 
@@ -129,24 +132,27 @@ describe('alarmist', () => {
           log: new TestWritable(),
           end: sinon.spy(() => Promise.resolve()),
         };
-        createJob = sinon.spy(() => Promise.resolve(job));
-        sinon.stub(Job, 'createJob', createJob);
+        sinon.stub(Job, 'createJob', sinon.spy(() => Promise.resolve(job)));
         await exec({
           name,
           command,
           args: failArgs,
           workingDir,
           color,
+          service,
         });
-        Job.createJob.restore();
         [processStdout, processStderr] = flush();
+      });
+      after(() => {
+        Job.createJob.restore();
         restore();
       });
 
       it('should create a job', () => {
-        createJob.should.have.been.calledWith({
+        Job.createJob.should.have.been.calledWith({
           name,
           workingDir,
+          service,
         });
       });
 

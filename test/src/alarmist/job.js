@@ -27,6 +27,7 @@ const pmkdirp = promisify(mkdirp);
 const preadFile = promisify(readFile);
 
 const name = 'name';
+const service = false;
 const startTime = 1000000;
 const endTime = 2000000;
 const successId = 1;
@@ -119,10 +120,10 @@ describe('alarmist', () => {
         )
       );
       sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
-      successJob = await createJob({name, workingDir: WORKING_DIR});
+      successJob = await createJob({name, service, workingDir: WORKING_DIR});
       _id.getId.restore();
       sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
-      failJob = await createJob({name, workingDir: WORKING_DIR});
+      failJob = await createJob({name, service, workingDir: WORKING_DIR});
       _id.getId.restore();
       Date.now.restore();
     });
@@ -140,10 +141,12 @@ describe('alarmist', () => {
     it('should save the status', async () => {
       let status = await preadFile(successStatusFile);
       JSON.parse(status[0]).should.eql({
+        service,
         startTime,
       });
       status = await preadFile(failStatusFile);
       JSON.parse(status[0]).should.eql({
+        service,
         startTime,
       });
     });
@@ -152,11 +155,13 @@ describe('alarmist', () => {
       successStart.should.eql({
         name,
         id: successId,
+        service,
         startTime,
       });
       failStart.should.eql({
         name,
         id: failId,
+        service,
         startTime,
       });
     });
@@ -194,6 +199,7 @@ describe('alarmist', () => {
         it('should save the status', async () => {
           const status = await preadFile(successStatusFile);
           JSON.parse(status[0]).should.eql({
+            service,
             endTime,
             startTime,
           });
@@ -231,6 +237,7 @@ describe('alarmist', () => {
         it('should save the status', async () => {
           const status = await preadFile(failStatusFile);
           JSON.parse(status[0]).should.eql({
+            service,
             endTime,
             startTime,
             error: 'message',

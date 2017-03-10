@@ -72,6 +72,12 @@ be the default. If the job is started via a watcher started
 by the monitor then the 'ALARMIST_WORKING_DIRECTORY' environment
 variable will have already been set.
 
+A job can also be flagged as a service. Services are processes
+that are not supposed to exit. As such they will be shown as OK
+as long as they are running and error if they exit. The main
+use case is to capture the logs from a long running process, such
+as a web server, separately.
+
 <name>: The name of the job
 <command>: The command to start the job
 <arg>: arguments for the command
@@ -80,9 +86,11 @@ Environment Variables:
 
 FORCE_COLOR
 ALARMIST_WORKING_DIRECTORY
+ALARMIST_SERVICE
 
 Options:
     --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
+    --service, -s         Flag the job as a service
     --force-color, -c     Set the FORCE_COLOR environment variable for the job (default: true)
     --help, -h            Show help
     --version, -v         Show version number
@@ -132,7 +140,7 @@ This will use `chokidar` for watching and the `npm-run-all` package to paralleli
 npm install --save-dev chokidar npm-run-all webpack alarmist alarmist-npm alarmist-webpack
 ```
 
-Then to watch parallel eslint, nyc/mocha and webpack jobs (other configuration not shown here)
+Then to watch parallel eslint, nyc/mocha and webpack jobs, etc (other configuration not shown here)
 
 ```javascript
 ...
@@ -140,11 +148,13 @@ Then to watch parallel eslint, nyc/mocha and webpack jobs (other configuration n
     "cmd:lint": "eslint .",
     "cmd:test": "nyc mocha",
     "cmd:coverage": "nyc report -r text && nyc check-coverage",
+    "cmd:serve": "http-server build",
     "alarmist:lint": "chokidar \"+(src|test)/**/*\" -c \"alarmist-npm cmd:lint\"",
     "alarmist:test": "chokidar \"+(src|test)/**/*\" -c \"alarmist-npm cmd:test\"",
     "alarmist:coverage": "chokidar \"coverage/lcov.info\" -c \"alarmist-npm cmd:coverage\"",
     "alarmist:build": "alarmist-webpack -n cmd:build",
-    "start": "alarmist-monitor run-p alarmist:lint alarmist:test alarmist:coverage alarmist:build",
+    "alarmist:serve": "alarmist-npm --service cmd:serve",
+    "start": "alarmist-monitor run-p alarmist:lint alarmist:test alarmist:coverage alarmist:build alarmist:serve",
     ...
   }
 ...

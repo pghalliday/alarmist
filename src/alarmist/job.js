@@ -22,7 +22,7 @@ import _id from '../utils/id';
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-export async function createJob({name, workingDir}) {
+export async function createJob({name, service, workingDir}) {
   // set up the file reporting
   const jobDir = path.join(workingDir, JOBS_DIR, name);
   const idFile = path.join(jobDir, ID_FILE);
@@ -32,6 +32,7 @@ export async function createJob({name, workingDir}) {
   const startTime = Date.now();
   await mkdirp(reportDir);
   await writeFile(statusFile, JSON.stringify({
+    service,
     startTime,
   }));
   const log = new PassThrough();
@@ -53,6 +54,7 @@ export async function createJob({name, workingDir}) {
   controlConnection.write(JSON.stringify({
     name,
     id,
+    service,
     startTime,
   }));
   await controlReady;
@@ -80,6 +82,7 @@ export async function createJob({name, workingDir}) {
       log.end();
       await logStreamEnded;
       await writeFile(statusFile, JSON.stringify({
+        service,
         error: error,
         startTime,
         endTime,

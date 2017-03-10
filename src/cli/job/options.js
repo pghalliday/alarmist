@@ -5,8 +5,10 @@ import cliclopts from 'cliclopts';
 import {
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
+  SERVICE_VAR,
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
+  DEFAULT_SERVICE_OPTION,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
@@ -22,6 +24,12 @@ const defaultColor = optionDefault(
   toBool,
 );
 
+const defaultService = optionDefault(
+  SERVICE_VAR,
+  DEFAULT_SERVICE_OPTION,
+  toBool,
+);
+
 const defaultWorkingDirectory = optionDefault(
   WORKING_DIRECTORY_VAR,
   DEFAULT_WORKING_DIR,
@@ -32,6 +40,12 @@ const cliOpts = cliclopts([{
   abbr: 'w',
   default: defaultWorkingDirectory,
   help: 'The directory in which to write logs, etc',
+}, {
+  name: 'service',
+  abbr: 's',
+  boolean: true,
+  default: defaultService,
+  help: 'Flag the job as a service',
 }, {
   name: 'force-color',
   abbr: 'c',
@@ -87,6 +101,7 @@ export function parse(argv) {
     };
   }
   const args = parsed._.slice(2);
+  const service = parsed['service'];
   const color = parsed['force-color'];
   const workingDir = parsed['working-dir'];
   return {
@@ -94,6 +109,7 @@ export function parse(argv) {
     command,
     args,
     color,
+    service,
     workingDir,
     help: false,
     version: false,

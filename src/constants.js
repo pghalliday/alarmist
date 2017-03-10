@@ -1,8 +1,10 @@
 export const WORKING_DIRECTORY_VAR = 'ALARMIST_WORKING_DIRECTORY';
 export const FORCE_COLOR_VAR = 'FORCE_COLOR';
+export const SERVICE_VAR = 'ALARMIST_SERVICE';
 export const RESET_VAR = 'ALARMIST_RESET';
 export const DEFAULT_WORKING_DIR = '.alarmist';
 export const DEFAULT_COLOR_OPTION = true;
+export const DEFAULT_SERVICE_OPTION = false;
 export const DEFAULT_RESET_OPTION = true;
 export const JOB_USAGE_TEXT = `
 Usage: alarmist-job [options] <name> <command> [<arg>...]
@@ -13,14 +15,21 @@ be the default. If the job is started via a watcher started
 by the monitor then the 'ALARMIST_WORKING_DIRECTORY' environment
 variable will have already been set.
 
+A job can also be flagged as a service. Services are processes
+that are not supposed to exit. As such they will be shown as OK
+as long as they are running and error if they exit. The main
+use case is to capture the logs from a long running process, such
+as a web server, separately.
+
 <name>: The name of the job
 <command>: The command to start the job
 <arg>: arguments for the command
 
 Environment Variables:
 
-FORCE_COLOR
-ALARMIST_WORKING_DIRECTORY
+${FORCE_COLOR_VAR}
+${WORKING_DIRECTORY_VAR}
+${SERVICE_VAR}
 
 Options:
 `;
@@ -36,9 +45,9 @@ jobs started by the watcher tasks.
 
 Environment Variables:
 
-FORCE_COLOR
-ALARMIST_WORKING_DIRECTORY
-ALARMIST_RESET
+${FORCE_COLOR_VAR}
+${WORKING_DIRECTORY_VAR}
+${RESET_VAR}
 
 <command>: The command to start the watcher tasks
 <arg>: arguments for the command

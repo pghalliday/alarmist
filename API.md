@@ -11,7 +11,8 @@ Create a job.
 ```javascript
 alarmist.createJob({
   name: 'name',
-  workingDirectory: '.alarmist'
+  workingDirectory: '.alarmist',
+  service: false,
 })]
 .then(function(job) {
   ...
@@ -41,6 +42,7 @@ alarmist.execJob({
   command: 'my-command',
   args: [],
   workingDirectory: '.alarmist',
+  service: false,
   color: true
 }).then(function() {
   ...

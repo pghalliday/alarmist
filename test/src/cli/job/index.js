@@ -6,6 +6,7 @@ import {
 import {
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
+  DEFAULT_SERVICE_OPTION,
 } from '../../../../src/constants';
 import rimraf from 'rimraf';
 import promisify from '../../../../src/utils/promisify';
@@ -38,6 +39,7 @@ describe('cli', () => {
         args,
         workingDir: DEFAULT_WORKING_DIR,
         color: DEFAULT_COLOR_OPTION,
+        service: DEFAULT_SERVICE_OPTION,
       });
     });
   });
