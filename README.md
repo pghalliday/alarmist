@@ -90,7 +90,7 @@ ALARMIST_SERVICE
 
 Options:
     --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
-    --service, -s         Flag the job as a service
+    --service, -s         Flag the job as a service (default: false)
     --force-color, -c     Set the FORCE_COLOR environment variable for the job (default: true)
     --help, -h            Show help
     --version, -v         Show version number
