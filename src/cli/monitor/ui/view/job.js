@@ -3,15 +3,14 @@ import Entry from './entry';
 
 function jobContent(status) {
   const name = status.name;
-  const id = status.id;
-  let message;
   if (status.service) {
     const error = _.isUndefined(status.error) ? 'ended' : status.error;
-    message = _.isUndefined(status.endTime) ? 'ok' : error;
-  } else {
-    const error = _.isUndefined(status.error) ? 'ok' : status.error;
-    message = _.isUndefined(status.endTime) ? 'pending' : error;
+    const message = _.isUndefined(status.endTime) ? 'ok' : error;
+    return ` ${name}: ${message}`;
   }
+  const id = status.id;
+  const error = _.isUndefined(status.error) ? 'ok' : status.error;
+  const message = _.isUndefined(status.endTime) ? 'pending' : error;
   return ` ${name}: run ${id}: ${message}`;
 }
 
