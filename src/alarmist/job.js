@@ -18,13 +18,16 @@ import path from 'path';
 import promisify from '../utils/promisify';
 import {PassThrough} from 'stream';
 import _id from '../utils/id';
+import sanitize from 'sanitize-filename';
 
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
 export async function createJob({name, service, workingDir}) {
   // set up the file reporting
-  const jobDir = path.join(workingDir, JOBS_DIR, name);
+  const jobDir = path.join(workingDir, JOBS_DIR, sanitize(name, {
+    replacement: '__',
+  }));
   const idFile = path.join(jobDir, ID_FILE);
   const id = await _id.getId(idFile);
   const reportDir = path.join(jobDir, '' + id);

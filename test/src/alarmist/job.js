@@ -26,7 +26,13 @@ const primraf = promisify(rimraf);
 const pmkdirp = promisify(mkdirp);
 const preadFile = promisify(readFile);
 
-const name = 'name';
+let name;
+if (process.platform === 'win32') {
+  name = 'cmd:name';
+} else {
+  name = 'cmd/name';
+}
+const sanitizedName = 'cmd__name';
 const service = false;
 const startTime = 1000000;
 const endTime = 2000000;
@@ -37,7 +43,7 @@ const log = Buffer.from('log');
 const successReportDir = path.join(
   WORKING_DIR,
   JOBS_DIR,
-  name,
+  sanitizedName,
   '' + successId,
 );
 const successRunLog = path.join(successReportDir, RUN_LOG);
@@ -46,7 +52,7 @@ const successStatusFile = path.join(successReportDir, STATUS_FILE);
 const failReportDir = path.join(
   WORKING_DIR,
   JOBS_DIR,
-  name,
+  sanitizedName,
   '' + failId,
 );
 const failRunLog = path.join(failReportDir, RUN_LOG);
