@@ -105,6 +105,7 @@ const layout = handleActions({
     const index = _.indexOf(layout.lines, payload);
     return Object.assign({}, layout, {
       selected: index,
+      expanded: true,
     });
   },
   [down]: (layout) => {

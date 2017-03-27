@@ -5,6 +5,7 @@ import {
   up,
   down,
   select,
+  toggleExpanded,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 import {
   MONITOR_LABEL,
@@ -43,16 +44,19 @@ describe('cli', () => {
           });
 
           describe('select', () => {
-            it('should select the entry with the given label', () => {
+            it('should select the entry and expand', () => {
               store.dispatch(select(jobLabel(name)));
-              selected = store.getState().layout.selected;
-              selected.should.eql(1);
+              store.getState().layout.selected.should.eql(1);
+              store.getState().layout.expanded.should.be.true;
+              store.dispatch(toggleExpanded());
               store.dispatch(select(jobLabel(otherName)));
-              selected = store.getState().layout.selected;
-              selected.should.eql(2);
+              store.getState().layout.selected.should.eql(2);
+              store.getState().layout.expanded.should.be.true;
+              store.dispatch(toggleExpanded());
               store.dispatch(select(MONITOR_LABEL));
-              selected = store.getState().layout.selected;
-              selected.should.eql(0);
+              store.getState().layout.selected.should.eql(0);
+              store.getState().layout.expanded.should.be.true;
+              store.dispatch(toggleExpanded());
             });
           });
 
