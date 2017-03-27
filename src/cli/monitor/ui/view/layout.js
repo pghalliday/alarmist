@@ -6,19 +6,27 @@ import {
   RIGHT_POINTER,
   DOWN_POINTER,
 } from './constants';
+import EventEmitter from 'events';
 
-export default class Layout {
+export default class Layout extends EventEmitter {
   constructor(container) {
+    super();
     this.container = container;
     this.entries = {};
     logger.log('appending selected indicator');
     this.selectedIndicator = blessed.text(
       _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
     );
+    this.selectedIndicator.on('click', () => {
+      this.emit('toggleExpanded');
+    });
     this.container.append(this.selectedIndicator);
   }
   append(label, entry) {
     logger.log(`appending ${label}`);
+    entry.on('select', () => {
+      this.emit('select', label);
+    });
     this.entries[label] = entry;
     entry.setParent(this.container);
   }

@@ -7,9 +7,11 @@ import {
   RIGHT_POINTER,
   DOWN_POINTER,
 } from '../../../../../../src/cli/monitor/ui/view/constants';
+import EventEmitter from 'events';
 
-class Entry {
+class Entry extends EventEmitter {
   constructor() {
+    super();
     this.setParent = sinon.spy();
     this.collapse = sinon.spy();
     this.expand = sinon.spy();
@@ -19,6 +21,9 @@ class Entry {
   }
   getHeaderHeight() {
     return 1;
+  }
+  select() {
+    this.emit('select');
   }
   reset() {
     this.setParent.reset();
@@ -86,6 +91,13 @@ describe('cli', () => {
             );
           });
 
+          describe('when the selected indicator is clicked', () => {
+            it('should emit a toggleExpanded event', (done) => {
+              layout.on('toggleExpanded', done);
+              selectedIndicator.click();
+            });
+          });
+
           describe('append', () => {
             before(() => {
               entry1.reset();
@@ -100,6 +112,16 @@ describe('cli', () => {
               entry1.setParent.should.have.been.calledWith(container);
               entry2.setParent.should.have.been.calledWith(container);
               entry3.setParent.should.have.been.calledWith(container);
+            });
+
+            describe('when an entry is selected', () => {
+              it('should emit a select event', (done) => {
+                layout.on('select', (label) => {
+                  label.should.eql(label2);
+                  done();
+                });
+                entry2.select();
+              });
             });
 
             describe('then apply', () => {

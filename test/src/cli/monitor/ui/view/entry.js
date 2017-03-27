@@ -43,6 +43,13 @@ describe('cli', () => {
             helper.box.setContent.should.have.been.calledWith('');
           });
 
+          describe('when the header is clicked', () => {
+            it('should emit a select event', (done) => {
+              entry.on('select', done);
+              helper.text.click();
+            });
+          });
+
           describe('on a "y" keypress', () => {
             before(() => {
               copyPaste.copy.reset();

@@ -6,6 +6,7 @@ import {
   end,
   runStart,
   runEnd,
+  select,
   up,
   down,
   moveUp,
@@ -99,6 +100,12 @@ const layout = handleActions({
       });
     }
     return layout;
+  },
+  [select]: (layout, {payload}) => {
+    const index = _.indexOf(layout.lines, payload);
+    return Object.assign({}, layout, {
+      selected: index,
+    });
   },
   [down]: (layout) => {
     const selected = layout.selected;

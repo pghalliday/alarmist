@@ -4,7 +4,14 @@ import {
   runStart,
   up,
   down,
+  select,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
+import {
+  MONITOR_LABEL,
+} from '../../../../../../src/cli/monitor/ui/constants';
+import {
+  jobLabel,
+} from '../../../../../../src/cli/monitor/ui/helpers';
 
 let selected;
 
@@ -33,6 +40,20 @@ describe('cli', () => {
             store.dispatch(reset());
             store.dispatch(runStart(job));
             store.dispatch(runStart(otherJob));
+          });
+
+          describe('select', () => {
+            it('should select the entry with the given label', () => {
+              store.dispatch(select(jobLabel(name)));
+              selected = store.getState().layout.selected;
+              selected.should.eql(1);
+              store.dispatch(select(jobLabel(otherName)));
+              selected = store.getState().layout.selected;
+              selected.should.eql(2);
+              store.dispatch(select(MONITOR_LABEL));
+              selected = store.getState().layout.selected;
+              selected.should.eql(0);
+            });
           });
 
           describe('down', () => {

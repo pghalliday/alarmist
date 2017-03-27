@@ -10,6 +10,7 @@ import {
   UI_LOG,
 } from '../../../../constants';
 import {
+  select,
   up,
   down,
   moveUp,
@@ -63,6 +64,12 @@ function createView(service, store, workingDir) {
   container.key(['up', 'k'], () => store.dispatch(up()));
   container.key(['down', 'j'], () => store.dispatch(down()));
   const layout = new Layout(container);
+  layout.on('select', (label) => {
+    store.dispatch(select(label));
+  });
+  layout.on('toggleExpanded', () => {
+    store.dispatch(toggleExpanded());
+  });
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
   const jobs = new Jobs(Job, layout);

@@ -16,8 +16,15 @@ const helper = {
 
 blessed.text = sinon.spy((props) => {
   helper.text = _.cloneDeep(props);
+  const handlers = {};
   return Object.assign(helper.text, {
     setContent: sinon.spy(),
+    on: (name, callback) => {
+      handlers[name] = callback;
+    },
+    click: () => {
+      handlers['click']();
+    },
     reset: () => {
       helper.text.setContent.reset();
     },

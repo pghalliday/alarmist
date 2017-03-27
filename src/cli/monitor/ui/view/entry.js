@@ -5,12 +5,17 @@ import {
   HEADER_PROPERTIES,
   LOG_PROPERTIES,
 } from './constants';
+import EventEmitter from 'events';
 
-export default class Entry {
+export default class Entry extends EventEmitter {
   constructor() {
+    super();
     this.scrollOnExpand = true;
     this.expanded = false;
     this.header = blessed.text(_.cloneDeep(HEADER_PROPERTIES));
+    this.header.on('click', () => {
+      this.emit('select');
+    });
     this.log = blessed.box(_.cloneDeep(LOG_PROPERTIES));
     this.log.key(['y'], () => copy(this.log.getText()));
     this.log.key(['S-y'], () => copy(this.log.getContent()));

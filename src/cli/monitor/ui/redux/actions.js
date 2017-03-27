@@ -5,6 +5,7 @@ module.exports = createActions(
   'RUN_START',
   'RUN_END',
   'END',
+  'SELECT',
   'UP',
   'DOWN',
   'MOVE_UP',
