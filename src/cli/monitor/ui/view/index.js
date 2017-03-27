@@ -12,6 +12,8 @@ import {
 import {
   up,
   down,
+  moveUp,
+  moveDown,
   toggleExpanded,
 } from '../redux/actions';
 import {
@@ -32,20 +34,28 @@ function createView(service, store, workingDir) {
   logger.debug = screen.debug.bind(screen);
   logger.log('created');
   screen.title = 'alarmist';
+  screen.on('keypress', (...args) => {
+    logger.debug(args);
+  });
   screen.key(['C-c'], async () => {
     await service.stop();
     process.exit(0);
   });
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const container = blessed.box(CONTAINER_PROPERTIES);
-  screen.on('keypress', (ch, key) => {
-    logger.debug(key);
+  screen.key(['C-up', 'C-k'], () => {
+    container.focus();
+    store.dispatch(moveUp());
   });
-  screen.key(['S-k'], () => {
+  screen.key(['C-down', 'C-j', 'linefeed'], () => {
+    container.focus();
+    store.dispatch(moveDown());
+  });
+  screen.key(['S-up', 'S-k'], () => {
     container.focus();
     store.dispatch(up());
   });
-  screen.key(['S-j'], () => {
+  screen.key(['S-down', 'S-j'], () => {
     container.focus();
     store.dispatch(down());
   });

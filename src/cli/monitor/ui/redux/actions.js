@@ -7,6 +7,8 @@ module.exports = createActions(
   'END',
   'UP',
   'DOWN',
+  'MOVE_UP',
+  'MOVE_DOWN',
   'TOGGLE_EXPANDED',
   'LOG',
   'RUN_LOG',

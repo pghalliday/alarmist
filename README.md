@@ -99,12 +99,13 @@ Options:
 Jobs will appear on first run and can be expanded (one at a time) to display logs
 
 - [CTRL-c] - stop the monitor
-- [up, down, j, k, SHIFT-j, SHIFT-k] -  select a job
+- [up, down, j, k, SHIFT-j, SHIFT-k, SHIFT-up, SHIFT-down] -  select a job
+- [CTRL-j, CTRL-k, CTRL-up, CTRL-down] - move job lines up or down
 - [enter, o] - expand/collapse job logs
   - [up, down, j, k, g, SHIFT-g, CTRL-u, CTRL-d, CTRL-f, CTRL-b] - navigate log when expanded (vi keys)
   - [y] - copy complete log to clipboard without control sequences (no colors)
   - [SHIFT-y] - copy complete log to clipboard with control sequences (colors)
-  - [SHIFT-j, SHIFT-k] - expand next or previous job
+  - [SHIFT-j, SHIFT-k, SHIFT-up, SHIFT-down] - expand next or previous job
 
 All the logs and status files will also be captured in the `.alarmist` working directory with the following structure
 

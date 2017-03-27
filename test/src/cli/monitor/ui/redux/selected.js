@@ -35,7 +35,7 @@ describe('cli', () => {
             store.dispatch(runStart(otherJob));
           });
 
-          describe('move down', () => {
+          describe('down', () => {
             before(() => {
               store.dispatch(down());
               selected = store.getState().layout.selected;
@@ -82,7 +82,7 @@ describe('cli', () => {
                     selected = store.getState().layout.selected;
                   });
 
-                  it('should should reselect the first line', () => {
+                  it('should reselect the first line', () => {
                     selected.should.eql(0);
                   });
 
@@ -92,7 +92,7 @@ describe('cli', () => {
                       selected = store.getState().layout.selected;
                     });
 
-                    it('should should not change selected', () => {
+                    it('should not change selected', () => {
                       selected.should.eql(0);
                     });
                   });

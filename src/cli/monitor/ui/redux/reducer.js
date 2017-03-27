@@ -8,6 +8,8 @@ import {
   runEnd,
   up,
   down,
+  moveUp,
+  moveDown,
   toggleExpanded,
   log,
   runLog,
@@ -113,6 +115,37 @@ const layout = handleActions({
     if (selected > 0) {
       return Object.assign({}, layout, {
         selected: selected - 1,
+      });
+    }
+    return layout;
+  },
+  [moveDown]: (layout) => {
+    const selected = layout.selected;
+    const lines = layout.lines;
+    const maxSelected = layout.lines.length - 1;
+    if (selected < maxSelected) {
+      return Object.assign({}, layout, {
+        selected: selected + 1,
+        lines: lines.slice(0, selected).concat(
+          lines[selected + 1],
+          lines[selected],
+          lines.slice(selected + 2),
+        ),
+      });
+    }
+    return layout;
+  },
+  [moveUp]: (layout) => {
+    const selected = layout.selected;
+    const lines = layout.lines;
+    if (selected > 0) {
+      return Object.assign({}, layout, {
+        selected: selected - 1,
+        lines: lines.slice(0, selected - 1).concat(
+          lines[selected],
+          lines[selected - 1],
+          lines.slice(selected + 1),
+        ),
       });
     }
     return layout;
