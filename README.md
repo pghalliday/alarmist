@@ -107,6 +107,8 @@ Jobs will appear on first run and can be expanded (one at a time) to display log
   - [SHIFT-y] - copy complete log to clipboard with control sequences (colors)
   - [SHIFT-j, SHIFT-k, SHIFT-up, SHIFT-down] - expand next or previous job
 
+If your terminal supports it then the mouse can also be used to select and expand job entries.
+
 All the logs and status files will also be captured in the `.alarmist` working directory with the following structure
 
 ```
