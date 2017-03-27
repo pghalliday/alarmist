@@ -49,6 +49,7 @@ Environment Variables:
 FORCE_COLOR
 ALARMIST_WORKING_DIRECTORY
 ALARMIST_RESET
+ALARMIST_DEBUG
 
 <command>: The command to start the watcher tasks
 <arg>: arguments for the command
@@ -57,6 +58,7 @@ Options:
     --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
     --reset, -r           Reset the working directory on start (default: true)
     --force-color, -c     Set the FORCE_COLOR environment variable for watchers and jobs (default: true)
+    --debug, -d           Enable additional UI debug in the ui.log (default: false)
     --help, -h            Show help
     --version, -v         Show version number
 ```

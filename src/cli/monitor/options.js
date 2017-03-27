@@ -5,8 +5,10 @@ import cliclopts from 'cliclopts';
 import {
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
+  DEBUG_VAR,
   RESET_VAR,
   DEFAULT_WORKING_DIR,
+  DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
@@ -16,6 +18,12 @@ import {
 
 // istanbul ignore next
 const toBool = (value) => value === 'true';
+
+const defaultDebug = optionDefault(
+  DEBUG_VAR,
+  DEFAULT_DEBUG_OPTION,
+  toBool,
+);
 
 const defaultReset = optionDefault(
   RESET_VAR,
@@ -51,6 +59,12 @@ const cliOpts = cliclopts([{
   boolean: true,
   default: defaultColor,
   help: 'Set the FORCE_COLOR environment variable for watchers and jobs',
+}, {
+  name: 'debug',
+  abbr: 'd',
+  boolean: true,
+  default: defaultDebug,
+  help: 'Enable additional UI debug in the ui.log',
 }, {
   name: 'help',
   abbr: 'h',
@@ -94,12 +108,14 @@ export function parse(argv) {
     };
   }
   const args = parsed._.slice(1);
+  const debug = parsed['debug'];
   const color = parsed['force-color'];
   const reset = parsed['reset'];
   const workingDir = parsed['working-dir'];
   return {
     command,
     args,
+    debug,
     color,
     reset,
     workingDir,

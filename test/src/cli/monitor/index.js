@@ -6,6 +6,7 @@ import {
 } from '../../../helpers/constants';
 import {
   DEFAULT_WORKING_DIR,
+  DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
 } from '../../../../src/constants';
@@ -39,6 +40,7 @@ describe('cli', () => {
       alarmist.execMonitor.should.have.been.calledWithMatch({
         command,
         args,
+        debug: DEFAULT_DEBUG_OPTION,
         color: DEFAULT_COLOR_OPTION,
         reset: DEFAULT_RESET_OPTION,
         workingDir: DEFAULT_WORKING_DIR,
@@ -46,7 +48,11 @@ describe('cli', () => {
     });
 
     it('should create a ui', async () => {
-      ui.createUi.should.have.been.calledWith(monitor);
+      ui.createUi.should.have.been.calledWith(
+        monitor,
+        DEFAULT_WORKING_DIR,
+        DEFAULT_DEBUG_OPTION
+      );
     });
   });
 });

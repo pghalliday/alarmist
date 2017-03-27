@@ -25,7 +25,7 @@
     "watch:coverage": "chokidar \"coverage/lcov.info\" -c \"run-s -s alarmist:coverage\"",
     "watch:build": "chokidar \"src/**/*\" -c \"run-s -s alarmist:build\"",
     "watch": "chokidar \"+(src|test)/**/*\" -c \"run-s -s build\"",
-    "start": "node ./bin/monitor.js run-p watch:lint watch:test watch:coverage watch:build",
+    "start": "node ./bin/monitor.js --debug --no-reset run-p watch:lint watch:test watch:coverage watch:build",
     "prepublish": "run-s cmd:build"
   },
   "repository": {

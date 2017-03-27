@@ -1,8 +1,10 @@
 export const WORKING_DIRECTORY_VAR = 'ALARMIST_WORKING_DIRECTORY';
+export const DEBUG_VAR = 'ALARMIST_DEBUG';
 export const FORCE_COLOR_VAR = 'FORCE_COLOR';
 export const SERVICE_VAR = 'ALARMIST_SERVICE';
 export const RESET_VAR = 'ALARMIST_RESET';
 export const DEFAULT_WORKING_DIR = '.alarmist';
+export const DEFAULT_DEBUG_OPTION = false;
 export const DEFAULT_COLOR_OPTION = true;
 export const DEFAULT_SERVICE_OPTION = false;
 export const DEFAULT_RESET_OPTION = true;
@@ -48,6 +50,7 @@ Environment Variables:
 ${FORCE_COLOR_VAR}
 ${WORKING_DIRECTORY_VAR}
 ${RESET_VAR}
+${DEBUG_VAR}
 
 <command>: The command to start the watcher tasks
 <arg>: arguments for the command

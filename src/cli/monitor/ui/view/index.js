@@ -25,17 +25,20 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView(service, store, workingDir) {
+function createView(service, store, workingDir, debug) {
   const screen = blessed.screen({
     smartCSR: true,
     log: path.join(workingDir, UI_LOG),
-    debug: false,
+    debug,
   });
   logger.log = screen.log.bind(screen);
   logger.debug = screen.debug.bind(screen);
   logger.log('created');
   screen.title = 'alarmist';
   screen.on('keypress', (...args) => {
+    logger.debug(args);
+  });
+  screen.on('mouse', (...args) => {
     logger.debug(args);
   });
   screen.key(['C-c'], async () => {

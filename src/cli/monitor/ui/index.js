@@ -3,9 +3,9 @@ import {createService} from './service';
 import {createView} from './view';
 
 // istanbul ignore next
-function createUi(monitor, workingDir) {
+function createUi(monitor, workingDir, debug) {
   const service = createService(monitor, store);
-  createView(service, store, workingDir);
+  createView(service, store, workingDir, debug);
 };
 
 module.exports = {

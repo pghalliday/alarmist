@@ -5,6 +5,7 @@ import {
 import _ from 'lodash';
 import {
   DEFAULT_WORKING_DIR,
+  DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
   NO_COMMAND_ERROR,
@@ -47,6 +48,7 @@ const noOptions = [
 ];
 
 const shortOptions = [
+  '-d',
   '-r',
   '-c',
   '-w',
@@ -57,6 +59,7 @@ const shortOptions = [
 ];
 
 const fullOptions = [
+  '--debug',
   '--reset',
   '--force-color',
   '--working-dir',
@@ -67,6 +70,7 @@ const fullOptions = [
 ];
 
 const negatedOptions = [
+  '--no-debug',
   '--no-reset',
   '--no-force-color',
   '--working-dir',
@@ -163,24 +167,28 @@ describe('cli', () => {
         _.forEach({
           'with no options': {
             argv: noOptions,
+            debug: DEFAULT_DEBUG_OPTION,
             color: DEFAULT_COLOR_OPTION,
             reset: DEFAULT_RESET_OPTION,
             workingDir: DEFAULT_WORKING_DIR,
           },
           'with short options': {
             argv: shortOptions,
+            debug: true,
             color: true,
             reset: true,
             workingDir,
           },
           'with full options': {
             argv: fullOptions,
+            debug: true,
             color: true,
             reset: true,
             workingDir,
           },
           'with negated options': {
             argv: negatedOptions,
+            debug: false,
             color: false,
             reset: false,
             workingDir,
@@ -197,6 +205,10 @@ describe('cli', () => {
 
             it('should set the args', () => {
               options.args.should.eql([arg1, arg2]);
+            });
+
+            it('should set the debug option', () => {
+              options.debug.should.eql(value.debug);
             });
 
             it('should set the color option', () => {

@@ -4,6 +4,7 @@ export const DOWN_POINTER = '\u25bc';
 export const CONTAINER_PROPERTIES = {
   width: '100%',
   height: '100%',
+  autoFocus: false,
 };
 
 export const HEADER_PROPERTIES = {
@@ -13,11 +14,13 @@ export const HEADER_PROPERTIES = {
   style: {
     fg: 'black',
   },
+  autoFocus: false,
 };
 
 export const SELECTED_INDICATOR_PROPERTIES = {
   left: 0,
   height: 1,
+  autoFocus: false,
 };
 
 export const LOG_PROPERTIES = {
@@ -25,6 +28,7 @@ export const LOG_PROPERTIES = {
   width: '100%-3',
   height: 0,
   keys: true,
+  mouse: true,
   vi: true,
   scrollable: true,
   alwaysScroll: true,
@@ -32,10 +36,5 @@ export const LOG_PROPERTIES = {
     ch: ' ',
     inverse: true,
   },
-};
-
-export const TAIL_OPTIONS = {
-  fromBeginning: true,
-  follow: true,
-  useWatchFile: true,
+  autoFocus: false,
 };
