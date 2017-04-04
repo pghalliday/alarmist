@@ -50,10 +50,34 @@ describe('cli', () => {
             });
           });
 
+          describe('when the log is shift clicked', () => {
+            before(() => {
+              copyPaste.copy.reset();
+              helper.box.shiftClick();
+            });
+
+            // eslint-disable-next-line max-len
+            it('should copy text without control sequences to clipboard', () => {
+              copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
+            });
+          });
+
+          describe('when the log is shift right clicked', () => {
+            before(() => {
+              copyPaste.copy.reset();
+              helper.box.shiftRightClick();
+            });
+
+            // eslint-disable-next-line max-len
+            it('should copy text without control sequences to clipboard', () => {
+              copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
+            });
+          });
+
           describe('on a "y" keypress', () => {
             before(() => {
               copyPaste.copy.reset();
-              helper.box.keyHandlers['y']();
+              helper.box.pressKey('y');
             });
 
             // eslint-disable-next-line max-len
@@ -66,7 +90,7 @@ describe('cli', () => {
             before(() => {
               copyPaste.copy.reset();
               // eslint-disable-next-line new-cap
-              helper.box.keyHandlers['S-y']();
+              helper.box.pressKey('S-y');
             });
 
             // eslint-disable-next-line max-len

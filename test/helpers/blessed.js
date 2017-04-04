@@ -33,7 +33,8 @@ blessed.text = sinon.spy((props) => {
 
 blessed.box = sinon.spy((props) => {
   helper.box = _.cloneDeep(props);
-  helper.box.keyHandlers = {};
+  const keyHandlers = {};
+  const handlers = {};
   return Object.assign(helper.box, {
     getContent: sinon.spy(() => TEST_CONTENT),
     getText: sinon.spy(() => TEST_TEXT),
@@ -44,10 +45,30 @@ blessed.box = sinon.spy((props) => {
     hide: sinon.spy(),
     show: sinon.spy(),
     focus: sinon.spy(),
+    on: (name, callback) => {
+      handlers[name] = callback;
+    },
+    shiftClick: () => {
+      handlers['mouse']({
+        button: 'left',
+        shift: true,
+        action: 'mousedown',
+      });
+    },
+    shiftRightClick: () => {
+      handlers['mouse']({
+        button: 'right',
+        shift: true,
+        action: 'mousedown',
+      });
+    },
     key: (keys, handler) => {
       for (let key of keys) {
-        helper.box.keyHandlers[key] = handler;
+        keyHandlers[key] = handler;
       }
+    },
+    pressKey: (key) => {
+      keyHandlers[key]();
     },
     reset: () => {
       helper.box.getContent.reset();
