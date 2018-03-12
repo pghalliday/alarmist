@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import appendBuffer from '../../../utils/append-buffer';
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {
@@ -22,6 +23,8 @@ import {
   jobLabel,
 } from '../helpers';
 
+const MAX_BUFFER_LENGTH = 100000;
+
 const initialMonitor = {
   log: Buffer.alloc(0),
 };
@@ -35,7 +38,7 @@ const monitor = handleActions({
   },
   [log]: (monitor, {payload}) => {
     return Object.assign({}, monitor, {
-      log: Buffer.concat([monitor.log, payload]),
+      log: appendBuffer(MAX_BUFFER_LENGTH, monitor.log, payload),
     });
   },
 }, initialMonitor);
@@ -62,7 +65,7 @@ const jobs = handleActions({
     if (!_.isUndefined(job) && payload.id === job.id) {
       return Object.assign({}, jobs, {
         [name]: Object.assign({}, job, {
-          log: Buffer.concat([job.log, payload.data]),
+          log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
         }),
       });
     }
