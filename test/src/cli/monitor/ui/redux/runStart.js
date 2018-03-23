@@ -11,7 +11,7 @@ import {
 } from '../../../../../../src/cli/monitor/ui/helpers';
 
 let jobs;
-let lines;
+let layoutLines;
 
 const name = 'job name';
 const id = 2;
@@ -23,6 +23,7 @@ const otherName = 'other job name';
 const otherId = 1;
 
 const log = Buffer.alloc(0);
+const lines = [''];
 
 const job = {
   name,
@@ -51,21 +52,25 @@ const otherJob = {
 const oneJob = {
   [name]: Object.assign({}, job, {
     log,
+    lines,
   }),
 };
 
 const oneLaterJob = {
   [name]: Object.assign({}, laterJob, {
     log,
+    lines,
   }),
 };
 
 const twoJobs = {
   [name]: Object.assign({}, job, {
     log,
+    lines,
   }),
   [otherName]: Object.assign({}, otherJob, {
     log,
+    lines,
   }),
 };
 
@@ -80,7 +85,7 @@ describe('cli', () => {
               store.dispatch(runStart(job));
               const state = store.getState();
               jobs = state.jobs;
-              lines = state.layout.lines;
+              layoutLines = state.layout.lines;
             });
 
             it('should add the first job', () => {
@@ -88,7 +93,7 @@ describe('cli', () => {
             });
 
             it('should add to the layout lines', () => {
-              lines.should.eql([
+              layoutLines.should.eql([
                 MONITOR_LABEL,
                 jobLabel(name),
               ]);
@@ -103,7 +108,7 @@ describe('cli', () => {
                 store.dispatch(runStart(otherJob));
                 const state = store.getState();
                 jobs = state.jobs;
-                lines = state.layout.lines;
+                layoutLines = state.layout.lines;
               });
 
               it('should add a second job', () => {
@@ -111,7 +116,7 @@ describe('cli', () => {
               });
 
               it('should add another job to the layout lines', () => {
-                lines.should.eql([
+                layoutLines.should.eql([
                   MONITOR_LABEL,
                   jobLabel(name),
                   jobLabel(otherName),
@@ -127,7 +132,7 @@ describe('cli', () => {
                   store.dispatch(runStart(earlierJob));
                   const state = store.getState();
                   jobs = state.jobs;
-                  lines = state.layout.lines;
+                  layoutLines = state.layout.lines;
                 });
 
                 it('should not change the jobs', () => {
@@ -135,7 +140,7 @@ describe('cli', () => {
                 });
 
                 it('should not change the layout lines', () => {
-                  lines.should.eql([
+                  layoutLines.should.eql([
                     MONITOR_LABEL,
                     jobLabel(name),
                   ]);
@@ -149,7 +154,7 @@ describe('cli', () => {
                   store.dispatch(runStart(laterJob));
                   const state = store.getState();
                   jobs = state.jobs;
-                  lines = state.layout.lines;
+                  layoutLines = state.layout.lines;
                 });
 
                 it('should replace the job', () => {
@@ -157,7 +162,7 @@ describe('cli', () => {
                 });
 
                 it('should not change the layout lines', () => {
-                  lines.should.eql([
+                  layoutLines.should.eql([
                     MONITOR_LABEL,
                     jobLabel(name),
                   ]);

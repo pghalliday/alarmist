@@ -13,12 +13,23 @@ class Job {
     job = this;
   }
 }
+class Metric {
+  constructor() {
+    this.update = sinon.spy();
+    job = this;
+  }
+}
 
 const name = 'name';
+const metric = true;
 const anotherName = 'anotherName';
 
 const status = {
   name,
+};
+const metricStatus = {
+  name,
+  metric,
 };
 const anotherStatus = {
   name: anotherName,
@@ -29,6 +40,9 @@ const updatedStatus = {
 
 const newJob = {
   [name]: status,
+};
+const newMetric = {
+  [name]: metricStatus,
 };
 const anotherNewJob = {
   [name]: status,
@@ -44,20 +58,17 @@ describe('cli', () => {
     describe('ui', () => {
       describe('view', () => {
         describe('Jobs', () => {
-          before(() => {
-            jobs = new Jobs(Job, layout);
-          });
-
           describe('update', () => {
             describe('with a new job', () => {
               before(() => {
+                jobs = new Jobs(Job, Metric, layout);
                 layout.append.reset();
                 job = undefined;
                 jobs.update(newJob);
               });
 
               it('should create a new job', () => {
-                job.should.be.ok;
+                job.should.be.an.instanceOf(Job);
               });
 
               it('should update the new job', () => {
@@ -123,6 +134,33 @@ describe('cli', () => {
                     );
                   });
                 });
+              });
+            });
+
+            describe('with a new metric', () => {
+              before(() => {
+                jobs = new Jobs(Job, Metric, layout);
+                layout.append.reset();
+                job = undefined;
+                jobs.update(newMetric);
+              });
+
+              it('should create a new metric', () => {
+                job.should.be.an.instanceOf(Metric);
+              });
+
+              it('should update the new metric', () => {
+                job.update.should.have.been.calledOnce;
+                job.update.should.have.been.calledWith(
+                  sinon.match.same(metricStatus)
+                );
+              });
+
+              it('should append the metric to the layout', () => {
+                layout.append.should.have.been.calledWith(
+                  jobLabel(name),
+                  job,
+                );
               });
             });
           });

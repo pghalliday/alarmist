@@ -74,25 +74,38 @@ be the default. If the job is started via a watcher started
 by the monitor then the 'ALARMIST_WORKING_DIRECTORY' environment
 variable will have already been set.
 
-A job can also be flagged as a service. Services are processes
+A job can be flagged as a service. Services are processes
 that are not supposed to exit. As such they will be shown as OK
 as long as they are running and error if they exit. The main
 use case is to capture the logs from a long running process, such
 as a web server, separately.
 
-<name>: The name of the job
-<command>: The command to start the job
-<arg>: arguments for the command
+A job can be flagged as a metric. Metrics, like services, are
+processes that are not supposed to exit. Metrics will be rendered
+as a chart with the current value displayed in the header. Metric
+processes should use the following csv standard for console output.
+
+<value>,<status>,<message>\n
+
+value - will be parsed as a float
+status - specifies the color to use for the header (0: green, 1: yellow, 2: red)
+message - the remainder of the line will be appended to the header value
 
 Environment Variables:
 
 FORCE_COLOR
 ALARMIST_WORKING_DIRECTORY
 ALARMIST_SERVICE
+ALARMIST_METRIC
+
+<name>: The name of the job
+<command>: The command to start the job
+<arg>: arguments for the command
 
 Options:
     --working-dir, -w     The directory in which to write logs, etc (default: ".alarmist")
     --service, -s         Flag the job as a service (default: false)
+    --metric, -m          Flag the job as a metric (default: false)
     --force-color, -c     Set the FORCE_COLOR environment variable for the job (default: true)
     --help, -h            Show help
     --version, -v         Show version number

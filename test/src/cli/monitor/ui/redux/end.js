@@ -8,6 +8,7 @@ let monitor;
 
 const error = 'message';
 const log = Buffer.alloc(0);
+const lines = [''];
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -24,6 +25,7 @@ describe('cli', () => {
             monitor.should.eql({
               error,
               log,
+              lines,
             });
           });
         });

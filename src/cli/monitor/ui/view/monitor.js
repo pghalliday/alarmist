@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import Entry from './entry';
+import Log from './log';
 
-export default class Monitor extends Entry {
+export default class Monitor extends Log {
   constructor() {
     super();
     this.type = 'Monitor';

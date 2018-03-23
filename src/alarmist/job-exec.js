@@ -4,11 +4,20 @@ import {
   FORCE_COLOR_VAR,
 } from '../constants';
 
-export async function exec({name, command, args, workingDir, service, color}) {
+export async function exec({
+  name,
+  command,
+  args,
+  workingDir,
+  service,
+  metric,
+  color,
+}) {
   const job = await Job.createJob({
     workingDir,
     name,
     service,
+    metric,
   });
   return await new Promise((resolve) => {
     const proc = spawn(command, args, {

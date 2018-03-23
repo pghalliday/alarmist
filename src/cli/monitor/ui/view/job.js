@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Entry from './entry';
+import Log from './log';
 
 function jobContent(status) {
   const name = status.name;
@@ -22,7 +22,7 @@ function jobBg(status) {
   return _.isUndefined(status.endTime) ? 'yellow' : error;
 }
 
-export default class Job extends Entry {
+export default class Job extends Log {
   constructor() {
     super();
     this.type = 'Job';

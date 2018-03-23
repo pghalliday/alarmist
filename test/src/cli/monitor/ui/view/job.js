@@ -1,5 +1,5 @@
 import Job from '../../../../../../src/cli/monitor/ui/view/job';
-import Entry from '../../../../../../src/cli/monitor/ui/view/entry';
+import Log from '../../../../../../src/cli/monitor/ui/view/log';
 
 let job;
 
@@ -21,8 +21,8 @@ describe('cli', () => {
             sinon.spy(job, 'setLog');
           });
 
-          it('should be an Entry', () => {
-            job.should.be.an.instanceOf(Entry);
+          it('should be a Log', () => {
+            job.should.be.an.instanceOf(Log);
           });
 
           describe('_update', () => {

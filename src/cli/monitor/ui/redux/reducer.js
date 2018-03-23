@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import appendBuffer from '../../../utils/append-buffer';
+import appendLines from '../../../utils/append-lines';
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {
@@ -15,6 +16,7 @@ import {
   toggleExpanded,
   log,
   runLog,
+  resize,
 } from './actions';
 import {
   MONITOR_LABEL,
@@ -24,9 +26,13 @@ import {
 } from '../helpers';
 
 const MAX_BUFFER_LENGTH = 100000;
+const MAX_LINES_LENGTH = 10000;
+const MAX_LINE_LENGTH = 1000;
 
 const initialMonitor = {
   log: Buffer.alloc(0),
+  // always start with 1 incomplete line
+  lines: [''],
 };
 
 const monitor = handleActions({
@@ -39,6 +45,12 @@ const monitor = handleActions({
   [log]: (monitor, {payload}) => {
     return Object.assign({}, monitor, {
       log: appendBuffer(MAX_BUFFER_LENGTH, monitor.log, payload),
+      lines: appendLines(
+        MAX_LINES_LENGTH,
+        MAX_LINE_LENGTH,
+        monitor.lines,
+        payload
+      ),
     });
   },
 }, initialMonitor);
@@ -56,6 +68,8 @@ const jobs = handleActions({
     return Object.assign({}, jobs, {
       [name]: Object.assign({
         log: Buffer.alloc(0),
+        // always start with 1 incomplete line
+        lines: [''],
       }, payload),
     });
   },
@@ -66,6 +80,12 @@ const jobs = handleActions({
       return Object.assign({}, jobs, {
         [name]: Object.assign({}, job, {
           log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
+          lines: appendLines(
+            MAX_LINES_LENGTH,
+            MAX_LINE_LENGTH,
+            job.lines,
+            payload.data
+          ),
         }),
       });
     }
@@ -89,10 +109,18 @@ const initialLayout = {
   ],
   selected: 0,
   expanded: false,
+  width: 0,
+  height: 0,
 };
 
 const layout = handleActions({
   [reset]: () => initialLayout,
+  [resize]: (layout, {payload}) => {
+    return Object.assign({}, layout, {
+      width: payload.width,
+      height: payload.height,
+    });
+  },
   [runStart]: (layout, {payload}) => {
     const entry = jobLabel(payload.name);
     const lines = layout.lines;

@@ -17,7 +17,7 @@ class Entry extends EventEmitter {
     this.expand = sinon.spy();
     this.setTop = sinon.spy();
     this.focus = sinon.spy();
-    this.setLogHeight = sinon.spy();
+    this.setContentHeight = sinon.spy();
   }
   getHeaderHeight() {
     return 1;
@@ -31,7 +31,7 @@ class Entry extends EventEmitter {
     this.expand.reset();
     this.setTop.reset();
     this.focus.reset();
-    this.setLogHeight.reset();
+    this.setContentHeight.reset();
   }
 }
 
@@ -143,13 +143,13 @@ describe('cli', () => {
                   container.focus.should.have.been.calledOnce;
                 });
 
-                it('should preset the log heights', () => {
-                  entry1.setLogHeight.should.have.been.calledWith(7);
-                  entry2.setLogHeight.should.have.been.calledWith(7);
-                  entry3.setLogHeight.should.have.been.calledWith(7);
+                it('should preset the content heights', () => {
+                  entry1.setContentHeight.should.have.been.calledWith(7);
+                  entry2.setContentHeight.should.have.been.calledWith(7);
+                  entry3.setContentHeight.should.have.been.calledWith(7);
                 });
 
-                it('should hide the logs', () => {
+                it('should hide the contents', () => {
                   entry1.collapse.should.have.been.calledOnce;
                   entry2.collapse.should.have.been.calledOnce;
                   entry3.collapse.should.have.been.calledOnce;
@@ -187,23 +187,23 @@ describe('cli', () => {
                   selectedIndicator.content.should.eql(DOWN_POINTER);
                 });
 
-                it('should preset the log heights', () => {
-                  entry1.setLogHeight.should.have.been.calledWith(7);
-                  entry2.setLogHeight.should.have.been.calledWith(7);
-                  entry3.setLogHeight.should.have.been.calledWith(7);
+                it('should preset the content heights', () => {
+                  entry1.setContentHeight.should.have.been.calledWith(7);
+                  entry2.setContentHeight.should.have.been.calledWith(7);
+                  entry3.setContentHeight.should.have.been.calledWith(7);
                 });
 
-                it('should hide the logs', () => {
+                it('should hide the contents', () => {
                   entry1.collapse.should.have.been.calledOnce;
                   entry2.collapse.should.have.been.calledOnce;
                   entry3.collapse.should.have.been.calledOnce;
                 });
 
-                it('should show the expanded log', () => {
+                it('should show the expanded content', () => {
                   entry3.expand.should.have.been.calledOnce;
                 });
 
-                it('should focus the expanded log', () => {
+                it('should focus the expanded content', () => {
                   entry3.focus.should.have.been.calledOnce;
                 });
 

@@ -45,10 +45,12 @@ export default class Layout extends EventEmitter {
       let top = 0;
       for (let label of lines) {
         const entry = this.entries[label];
-        const realLogHeight = this.container.height - totalHeaderHeight;
-        entry.setLogHeight(realLogHeight);
+        // the state starts with height 0, so first we measure the height
+        const height = state.height || this.container.height;
+        const realContentHeight = height - totalHeaderHeight;
+        entry.setContentHeight(realContentHeight);
         entry.collapse();
-        let logHeight = 0;
+        let contentHeight = 0;
         if (label === selected) {
           logger.log(`setting selected indicator top to ${top}`);
           this.selectedIndicator.top = top;
@@ -56,7 +58,7 @@ export default class Layout extends EventEmitter {
             this.selectedIndicator.content = DOWN_POINTER;
             entry.expand();
             entry.focus();
-            logHeight = realLogHeight;
+            contentHeight = realContentHeight;
           } else {
             this.selectedIndicator.content = RIGHT_POINTER;
             this.container.focus();
@@ -65,7 +67,7 @@ export default class Layout extends EventEmitter {
         logger.log(`setting ${label} top to ${top}`);
         entry.setTop(top);
         top += entry.getHeaderHeight();
-        top += logHeight;
+        top += contentHeight;
       }
     }
   }

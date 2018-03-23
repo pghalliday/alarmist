@@ -1,11 +1,9 @@
 import _ from 'lodash';
 import helper from '../../../../../helpers/blessed';
 import blessed from 'blessed';
-import copyPaste from 'copy-paste';
 import Entry from '../../../../../../src/cli/monitor/ui/view/entry';
 import {
   HEADER_PROPERTIES,
-  LOG_PROPERTIES,
 } from '../../../../../../src/cli/monitor/ui/view/constants';
 
 let entry;
@@ -21,81 +19,23 @@ describe('cli', () => {
         describe('Entry', () => {
           before(() => {
             blessed.text.reset();
-            blessed.box.reset();
             entry = new Entry();
             sinon.spy(entry, '_update');
-            sinon.spy(entry, '_setLog');
+            sinon.spy(entry, 'setContentHeight');
+            sinon.spy(entry, '_setContentTop');
+            sinon.spy(entry, 'expand');
+            sinon.spy(entry, 'collapse');
+            sinon.spy(entry, 'focus');
           });
 
           it('should construct the header', () => {
             blessed.text.should.have.been.calledWith(HEADER_PROPERTIES);
           });
 
-          it('should construct the log', () => {
-            blessed.box.should.have.been.calledWith(LOG_PROPERTIES);
-          });
-
-          it('should hide the log', () => {
-            helper.box.hide.should.have.been.calledOnce;
-          });
-
-          it('should clear the log', () => {
-            helper.box.setContent.should.have.been.calledWith('');
-          });
-
           describe('when the header is clicked', () => {
             it('should emit a select event', (done) => {
               entry.on('select', done);
               helper.text.click();
-            });
-          });
-
-          describe('when the log is shift clicked', () => {
-            before(() => {
-              copyPaste.copy.reset();
-              helper.box.shiftClick();
-            });
-
-            // eslint-disable-next-line max-len
-            it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
-            });
-          });
-
-          describe('when the log is shift right clicked', () => {
-            before(() => {
-              copyPaste.copy.reset();
-              helper.box.shiftRightClick();
-            });
-
-            // eslint-disable-next-line max-len
-            it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
-            });
-          });
-
-          describe('on a "y" keypress', () => {
-            before(() => {
-              copyPaste.copy.reset();
-              helper.box.pressKey('y');
-            });
-
-            // eslint-disable-next-line max-len
-            it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
-            });
-          });
-
-          describe('on a "SHIFT-y" keypress', () => {
-            before(() => {
-              copyPaste.copy.reset();
-              // eslint-disable-next-line new-cap
-              helper.box.pressKey('S-y');
-            });
-
-            // eslint-disable-next-line max-len
-            it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
             });
           });
 
@@ -107,10 +47,6 @@ describe('cli', () => {
 
             it('should append the header', () => {
               container.append.should.have.been.calledWith(helper.text);
-            });
-
-            it('should append the log', () => {
-              container.append.should.have.been.calledWith(helper.box);
             });
           });
 
@@ -130,7 +66,7 @@ describe('cli', () => {
                 entry.update(state);
               });
 
-              it('should update the state', () => {
+              it('should not update the state', () => {
                 entry._update.should.not.have.been.called;
               });
             });
@@ -151,70 +87,27 @@ describe('cli', () => {
             });
           });
 
-          describe('clear', () => {
-            before(() => {
-              helper.reset();
-              entry.clear();
-            });
-
-            it('should clear the log box', () => {
-              helper.box.setContent.should.have.been.calledWith('');
-            });
-          });
-
-          describe('_setLog', () => {
-            before(() => {
-              helper.reset();
-              entry._setLog(Buffer.from('log data'));
-            });
-
-            it('should set the log box content', () => {
-              helper.box.setContent.should.have.been.calledWith('log data');
-            });
-          });
-
-          describe('setLog', () => {
-            const buffer = Buffer.from('log data');
-            before(() => {
-              entry.setLog(buffer);
-            });
-
-            it('should set the log box content', () => {
-              entry._setLog.should.have.been.calledWith(buffer);
-            });
-
-            describe('when called with the same buffer', () => {
-              before(() => {
-                entry._setLog.reset();
-                entry.setLog(buffer);
-              });
-
-              it('should not set the log box content', () => {
-                entry._setLog.should.not.have.been.called;
-              });
-            });
-          });
-
           describe('getHeaderHeight', () => {
             it('should return the header height', () => {
               entry.getHeaderHeight().should.eql(HEADER_PROPERTIES.height);
             });
           });
 
-          describe('setLogHeight', () => {
+          describe('setContentHeight', () => {
             before(() => {
-              helper.reset();
-              entry.setLogHeight(10);
+              entry.setContentHeight.reset();
+              entry.setContentHeight(10);
             });
 
-            it('should set the log height', () => {
-              helper.box.height.should.eql(10);
+            it('should set the content height', () => {
+              entry.setContentHeight.should.have.been.calledWith(10);
             });
           });
 
           describe('setTop', () => {
             before(() => {
               helper.reset();
+              entry._setContentTop.reset();
               entry.setTop(10);
             });
 
@@ -222,64 +115,42 @@ describe('cli', () => {
               helper.text.top.should.eql(10);
             });
 
-            it('should set the log top', () => {
-              helper.box.top.should.eql(10 + entry.getHeaderHeight());
+            it('should set the content top', () => {
+              entry._setContentTop.should.have.been.calledWith(
+                10 + entry.getHeaderHeight()
+              );
             });
           });
 
           describe('expand', () => {
             before(() => {
-              helper.reset();
-              helper.lines = [];
+              entry.expand.reset();
               entry.expand();
             });
 
-            it('should show the log', () => {
-              helper.box.show.should.have.been.calledOnce;
+            it('should expand', () => {
+              entry.expand.should.have.been.calledOnce;
+            });
+          });
+
+          describe('then collapse', () => {
+            before(() => {
+              entry.collapse.reset();
+              entry.collapse();
             });
 
-            describe('then expand again', () => {
-              before(() => {
-                helper.reset();
-                entry.expand();
-              });
-
-              it('should do nothing', () => {
-                helper.box.show.should.not.have.been.called;
-              });
-            });
-
-            describe('then collapse', () => {
-              before(() => {
-                helper.reset();
-                entry.collapse();
-              });
-
-              it('should hide the log', () => {
-                helper.box.hide.should.have.been.calledOnce;
-              });
-
-              describe('then collapse again', () => {
-                before(() => {
-                  helper.reset();
-                  entry.collapse();
-                });
-
-                it('should do nothing', () => {
-                  helper.box.hide.should.not.have.been.called;
-                });
-              });
+            it('should hide the entry', () => {
+              entry.collapse.should.have.been.calledOnce;
             });
           });
 
           describe('focus', () => {
             before(() => {
-              helper.reset();
               entry.focus();
             });
 
-            it('should focus the log', () => {
-              helper.box.focus.should.have.been.calledOnce;
+            it('should focus the entry', () => {
+              entry.focus.should.have.been.calledOnce;
             });
           });
         });

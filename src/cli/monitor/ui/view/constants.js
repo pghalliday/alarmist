@@ -38,3 +38,12 @@ export const LOG_PROPERTIES = {
   },
   autoFocus: false,
 };
+
+export const CHART_PROPERTIES = {
+  left: 3,
+  width: '100%-3',
+  height: 0,
+  autoFocus: false,
+};
+
+export const CHART_PADDING = '          ';

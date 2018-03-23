@@ -8,6 +8,8 @@ let monitor;
 
 const data1 = Buffer.from('data1');
 const data2 = Buffer.from('data2');
+const lines1 = ['data1'];
+const allLines = ['data1data2'];
 const allData = Buffer.concat([data1, data2]);
 
 describe('cli', () => {
@@ -24,6 +26,7 @@ describe('cli', () => {
           it('should set the log data', () => {
             monitor.should.eql({
               log: data1,
+              lines: lines1,
             });
           });
 
@@ -36,6 +39,7 @@ describe('cli', () => {
             it('should append the new data', () => {
               monitor.should.eql({
                 log: allData,
+                lines: allLines,
               });
             });
           });

@@ -13,4 +13,5 @@ module.exports = createActions(
   'TOGGLE_EXPANDED',
   'LOG',
   'RUN_LOG',
+  'RESIZE',
 );

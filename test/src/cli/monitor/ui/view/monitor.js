@@ -1,5 +1,5 @@
 import Monitor from '../../../../../../src/cli/monitor/ui/view/monitor';
-import Entry from '../../../../../../src/cli/monitor/ui/view/entry';
+import Log from '../../../../../../src/cli/monitor/ui/view/log';
 
 let monitor;
 let log = Buffer.from('log');
@@ -16,8 +16,8 @@ describe('cli', () => {
             sinon.spy(monitor, 'setLog');
           });
 
-          it('should be an Entry', () => {
-            monitor.should.be.an.instanceOf(Entry);
+          it('should be a Log', () => {
+            monitor.should.be.an.instanceOf(Log);
           });
 
           describe('_update', () => {

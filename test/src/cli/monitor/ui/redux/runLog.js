@@ -13,9 +13,12 @@ const id = 0;
 const unknownId = 1;
 const startTime = 100000;
 const emptyBuffer = Buffer.alloc(0);
-const data1 = Buffer.from('data1');
-const data2 = Buffer.from('data2');
+const emptyLines = [''];
+const data1 = Buffer.from('data1\n');
+const lines1 = ['data1', ''];
+const data2 = Buffer.from('data2\n');
 const allData = Buffer.concat([data1, data2]);
+const allLines = ['data1', 'data2', ''];
 const jobStart = {
   name,
   id,
@@ -65,6 +68,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
+                  lines: emptyLines,
                 },
               });
             });
@@ -83,6 +87,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
+                  lines: emptyLines,
                 },
               });
             });
@@ -101,6 +106,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: data1,
+                  lines: lines1,
                 },
               });
             });
@@ -118,6 +124,7 @@ describe('cli', () => {
                     id,
                     startTime,
                     log: allData,
+                    lines: allLines,
                   },
                 });
               });

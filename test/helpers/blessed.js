@@ -9,8 +9,12 @@ const helper = {
   TEST_CONTENT: TEST_CONTENT,
   TEST_TEXT: TEST_TEXT,
   reset: () => {
-    helper.text.reset();
-    helper.box.reset();
+    if (helper.text) {
+      helper.text.reset();
+    }
+    if (helper.box) {
+      helper.box.reset();
+    }
   },
 };
 

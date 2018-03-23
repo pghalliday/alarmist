@@ -5,11 +5,13 @@ import Layout from './layout';
 import Monitor from './monitor';
 import Jobs from './jobs';
 import Job from './job';
+import Metric from './metric';
 import logger from './logger';
 import {
   UI_LOG,
 } from '../../../../constants';
 import {
+  resize,
   select,
   up,
   down,
@@ -75,7 +77,7 @@ function createView(service, store, workingDir, debug) {
   });
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
-  const jobs = new Jobs(Job, layout);
+  const jobs = new Jobs(Job, Metric, layout);
   const update = () => {
     const state = store.getState();
     monitor.update(state.monitor);
@@ -83,6 +85,15 @@ function createView(service, store, workingDir, debug) {
     layout.apply(state.layout);
     screen.render();
   };
+  screen.on('resize', () => {
+    logger.log('resize');
+    logger.debug('width: ' + screen.width);
+    logger.debug('height: ' + screen.height);
+    store.dispatch(resize({
+      width: screen.width,
+      height: screen.height,
+    }));
+  });
   store.subscribe(update);
   update();
 }

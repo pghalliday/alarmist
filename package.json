@@ -1,6 +1,6 @@
 {
   "name": "alarmist",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
   "bin": {
@@ -20,12 +20,13 @@
     "alarmist:test": "node ./bin/job.js test run-s -s cmd:test",
     "alarmist:coverage": "node ./bin/job.js coverage run-s -s cmd:coverage",
     "alarmist:build": "node ./bin/job.js build run-s -s cmd:build",
+    "alarmist:metric": "node ./bin/job.js --metric metric node test-metric.js",
     "watch:lint": "chokidar \"+(src|test)/**/*\" -c \"run-s -s alarmist:lint\"",
     "watch:test": "chokidar \"+(src|test)/**/*\" -c \"run-s -s alarmist:test\"",
     "watch:coverage": "chokidar \"coverage/lcov.info\" -c \"run-s -s alarmist:coverage\"",
     "watch:build": "chokidar \"src/**/*\" -c \"run-s -s alarmist:build\"",
     "watch": "chokidar \"+(src|test)/**/*\" -c \"run-s -s build\"",
-    "start": "node ./bin/monitor.js --debug --no-reset run-p watch:lint watch:test watch:coverage watch:build",
+    "start": "node ./bin/monitor.js --debug --no-reset run-p watch:lint watch:test watch:coverage watch:build alarmist:metric",
     "prepublish": "run-s cmd:build"
   },
   "repository": {
@@ -63,6 +64,7 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
+    "asciichart": "^1.5.7",
     "babel-polyfill": "^6.22.0",
     "blessed": "^0.1.81",
     "cliclopts": "^1.1.1",

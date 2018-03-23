@@ -15,6 +15,7 @@ const startTime = 100000;
 const endTime = 200000;
 const error = 'message';
 const emptyBuffer = Buffer.alloc(0);
+const emptyLines = [''];
 const jobStart = {
   name,
   id,
@@ -65,6 +66,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
+                  lines: emptyLines,
                 },
               });
             });
@@ -83,6 +85,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
+                  lines: emptyLines,
                 },
               });
             });
@@ -103,6 +106,7 @@ describe('cli', () => {
                   endTime,
                   error,
                   log: emptyBuffer,
+                  lines: emptyLines,
                 },
               });
             });
