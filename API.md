@@ -13,6 +13,7 @@ alarmist.createJob({
   name: 'name',
   workingDirectory: '.alarmist',
   service: false,
+  metric: false,
 })]
 .then(function(job) {
   ...
@@ -43,6 +44,7 @@ alarmist.execJob({
   args: [],
   workingDirectory: '.alarmist',
   service: false,
+  metric: false,
   color: true
 }).then(function() {
   ...
