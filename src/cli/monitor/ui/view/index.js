@@ -78,13 +78,13 @@ function createView(service, store, workingDir, debug) {
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
   const jobs = new Jobs(Job, Metric, layout);
-  const update = () => {
+  const update = _.throttle(() => {
     const state = store.getState();
     monitor.update(state.monitor);
     jobs.update(state.jobs);
     layout.apply(state.layout);
     screen.render();
-  };
+  });
   screen.on('resize', () => {
     logger.log('resize');
     logger.debug('width: ' + screen.width);
