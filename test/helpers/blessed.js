@@ -15,6 +15,9 @@ const helper = {
     if (helper.box) {
       helper.box.reset();
     }
+    if (helper.table) {
+      helper.table.reset();
+    }
   },
 };
 
@@ -84,6 +87,22 @@ blessed.box = sinon.spy((props) => {
       helper.box.hide.reset();
       helper.box.show.reset();
       helper.box.focus.reset();
+    },
+  });
+});
+
+blessed.table = sinon.spy((props) => {
+  helper.table = _.cloneDeep(props);
+  return Object.assign(helper.table, {
+    setData: sinon.spy(),
+    hide: sinon.spy(),
+    show: sinon.spy(),
+    focus: sinon.spy(),
+    reset: () => {
+      helper.table.setData.reset();
+      helper.table.hide.reset();
+      helper.table.show.reset();
+      helper.table.focus.reset();
     },
   });
 });

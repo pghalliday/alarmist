@@ -20,6 +20,10 @@ import {
 } from './actions';
 import {
   MONITOR_LABEL,
+  TYPE_LOG,
+  TYPE_SERVICE,
+  TYPE_METRIC,
+  TYPE_TABLE,
 } from '../constants';
 import {
   jobLabel,
@@ -31,8 +35,26 @@ const MAX_LINE_LENGTH = 1000;
 
 const initialMonitor = {
   log: Buffer.alloc(0),
+};
+
+const initialLog = {
+  type: TYPE_LOG,
+  log: Buffer.alloc(0),
+};
+
+const initialService = {
+  type: TYPE_SERVICE,
+  log: Buffer.alloc(0),
+};
+
+const initialMetric = {
+  type: TYPE_METRIC,
   // always start with 1 incomplete line
   lines: [''],
+};
+
+const initialTable = {
+  type: TYPE_TABLE,
 };
 
 const monitor = handleActions({
@@ -60,17 +82,21 @@ const initialJobs = {};
 const jobs = handleActions({
   [reset]: () => initialJobs,
   [runStart]: (jobs, {payload}) => {
+    let initialState = initialLog;
+    if (payload.service) {
+      initialState = initialService;
+    } else if (payload.table) {
+      initialState = initialTable;
+    } else if (payload.metric) {
+      initialState = initialMetric;
+    }
     const name = payload.name;
     const existing = jobs[name];
     if (!_.isUndefined(existing) && existing.id > payload.id) {
       return jobs;
     }
     return Object.assign({}, jobs, {
-      [name]: Object.assign({
-        log: Buffer.alloc(0),
-        // always start with 1 incomplete line
-        lines: [''],
-      }, payload),
+      [name]: initialState,
     });
   },
   [runLog]: (jobs, {payload}) => {

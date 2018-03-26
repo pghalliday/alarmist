@@ -3,12 +3,14 @@ export const DEBUG_VAR = 'ALARMIST_DEBUG';
 export const FORCE_COLOR_VAR = 'FORCE_COLOR';
 export const SERVICE_VAR = 'ALARMIST_SERVICE';
 export const METRIC_VAR = 'ALARMIST_METRIC';
+export const TABLE_VAR = 'ALARMIST_TABLE';
 export const RESET_VAR = 'ALARMIST_RESET';
 export const DEFAULT_WORKING_DIR = '.alarmist';
 export const DEFAULT_DEBUG_OPTION = false;
 export const DEFAULT_COLOR_OPTION = true;
 export const DEFAULT_SERVICE_OPTION = false;
 export const DEFAULT_METRIC_OPTION = false;
+export const DEFAULT_TABLE_OPTION = false;
 export const DEFAULT_RESET_OPTION = true;
 export const JOB_USAGE_TEXT = `
 Usage: alarmist-job [options] <name> <command> [<arg>...]
@@ -36,12 +38,26 @@ value - will be parsed as a float
 status - specifies the color to use for the header (0: green, 1: yellow, 2: red)
 message - the remainder of the line will be appended to the header value
 
+
+A job can be flagged as a table. Tables, like metrics, are
+processes that are not supposed to exit. Tables will be rendered
+with last highest status value displayed in the header. Table
+processes should use the following csv standard for console output.
+
+<name>,<value>,<status>,<message>\\n
+
+name - the name of the row
+value - the value associeted with the row
+status - specifies the color to use for the row (0: green, 1: yellow, 2: red)
+message - the remainder of the line will be displayed in the row as a message
+
 Environment Variables:
 
 ${FORCE_COLOR_VAR}
 ${WORKING_DIRECTORY_VAR}
 ${SERVICE_VAR}
 ${METRIC_VAR}
+${TABLE_VAR}
 
 <name>: The name of the job
 <command>: The command to start the job

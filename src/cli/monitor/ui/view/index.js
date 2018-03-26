@@ -6,6 +6,7 @@ import Monitor from './monitor';
 import Jobs from './jobs';
 import Job from './job';
 import Metric from './metric';
+import Table from './table';
 import logger from './logger';
 import {
   UI_LOG,
@@ -77,7 +78,7 @@ function createView(service, store, workingDir, debug) {
   });
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
-  const jobs = new Jobs(Job, Metric, layout);
+  const jobs = new Jobs(Job, Metric, Table, layout);
   const update = _.throttle(() => {
     const state = store.getState();
     monitor.update(state.monitor);

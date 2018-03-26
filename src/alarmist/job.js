@@ -23,7 +23,13 @@ import sanitize from 'sanitize-filename';
 const mkdirp = promisify(_mkdirp);
 const writeFile = promisify(_writeFile);
 
-export async function createJob({name, service, metric, workingDir}) {
+export async function createJob({
+  name,
+  service,
+  metric,
+  table,
+  workingDir,
+}) {
   // set up the file reporting
   const jobDir = path.join(workingDir, JOBS_DIR, sanitize(name, {
     replacement: '__',
@@ -37,6 +43,7 @@ export async function createJob({name, service, metric, workingDir}) {
   await writeFile(statusFile, JSON.stringify({
     service,
     metric,
+    table,
     startTime,
   }));
   const log = new PassThrough();
@@ -60,6 +67,7 @@ export async function createJob({name, service, metric, workingDir}) {
     id,
     service,
     metric,
+    table,
     startTime,
   }));
   await controlReady;
@@ -89,6 +97,7 @@ export async function createJob({name, service, metric, workingDir}) {
       await writeFile(statusFile, JSON.stringify({
         service,
         metric,
+        table,
         error: error,
         startTime,
         endTime,

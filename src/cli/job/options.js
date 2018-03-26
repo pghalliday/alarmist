@@ -7,10 +7,12 @@ import {
   FORCE_COLOR_VAR,
   SERVICE_VAR,
   METRIC_VAR,
+  TABLE_VAR,
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
   DEFAULT_SERVICE_OPTION,
   DEFAULT_METRIC_OPTION,
+  DEFAULT_TABLE_OPTION,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
@@ -38,6 +40,12 @@ const defaultMetric = optionDefault(
   toBool,
 );
 
+const defaultTable = optionDefault(
+  TABLE_VAR,
+  DEFAULT_TABLE_OPTION,
+  toBool,
+);
+
 const defaultWorkingDirectory = optionDefault(
   WORKING_DIRECTORY_VAR,
   DEFAULT_WORKING_DIR,
@@ -60,6 +68,12 @@ const cliOpts = cliclopts([{
   boolean: true,
   default: defaultMetric,
   help: 'Flag the job as a metric',
+}, {
+  name: 'table',
+  abbr: 't',
+  boolean: true,
+  default: defaultTable,
+  help: 'Flag the job as a table',
 }, {
   name: 'force-color',
   abbr: 'c',
@@ -117,6 +131,7 @@ export function parse(argv) {
   const args = parsed._.slice(2);
   const service = parsed['service'];
   const metric = parsed['metric'];
+  const table = parsed['table'];
   const color = parsed['force-color'];
   const workingDir = parsed['working-dir'];
   return {
@@ -126,6 +141,7 @@ export function parse(argv) {
     color,
     service,
     metric,
+    table,
     workingDir,
     help: false,
     version: false,

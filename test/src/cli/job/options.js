@@ -8,6 +8,7 @@ import {
   DEFAULT_COLOR_OPTION,
   DEFAULT_SERVICE_OPTION,
   DEFAULT_METRIC_OPTION,
+  DEFAULT_TABLE_OPTION,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
@@ -58,6 +59,7 @@ const shortOptions = [
   '-c',
   '-s',
   '-m',
+  '-t',
   '-w',
   workingDir,
   name,
@@ -70,6 +72,7 @@ const fullOptions = [
   '--force-color',
   '--service',
   '--metric',
+  '--table',
   '--working-dir',
   workingDir,
   name,
@@ -82,6 +85,7 @@ const negatedOptions = [
   '--no-force-color',
   '--no-service',
   '--no-metric',
+  '--no-table',
   '--working-dir',
   workingDir,
   name,
@@ -185,6 +189,7 @@ describe('cli', () => {
             color: DEFAULT_COLOR_OPTION,
             service: DEFAULT_SERVICE_OPTION,
             metric: DEFAULT_METRIC_OPTION,
+            table: DEFAULT_TABLE_OPTION,
             workingDir: DEFAULT_WORKING_DIR,
           },
           'with short options': {
@@ -192,6 +197,7 @@ describe('cli', () => {
             color: true,
             service: true,
             metric: true,
+            table: true,
             workingDir,
           },
           'with full options': {
@@ -199,6 +205,7 @@ describe('cli', () => {
             color: true,
             service: true,
             metric: true,
+            table: true,
             workingDir,
           },
           'with negated options': {
@@ -206,6 +213,7 @@ describe('cli', () => {
             color: false,
             service: false,
             metric: false,
+            table: false,
             workingDir,
           },
         }, (value, key) => {
@@ -236,6 +244,10 @@ describe('cli', () => {
 
             it('should set the metric option', () => {
               options.metric.should.eql(value.metric);
+            });
+
+            it('should set the table option', () => {
+              options.table.should.eql(value.table);
             });
 
             it('should set the working directory', () => {

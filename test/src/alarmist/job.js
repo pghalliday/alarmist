@@ -35,6 +35,7 @@ if (process.platform === 'win32') {
 const sanitizedName = 'cmd__name';
 const service = false;
 const metric = false;
+const table = false;
 const startTime = 1000000;
 const endTime = 2000000;
 const successId = 1;
@@ -128,12 +129,12 @@ describe('alarmist', () => {
       );
       sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
       successJob = await createJob(
-        {name, service, metric, workingDir: WORKING_DIR}
+        {name, service, metric, table, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
       sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
       failJob = await createJob(
-        {name, service, metric, workingDir: WORKING_DIR}
+        {name, service, metric, table, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
       Date.now.restore();
@@ -154,12 +155,14 @@ describe('alarmist', () => {
       JSON.parse(status[0]).should.eql({
         service,
         metric,
+        table,
         startTime,
       });
       status = await preadFile(failStatusFile);
       JSON.parse(status[0]).should.eql({
         service,
         metric,
+        table,
         startTime,
       });
     });
@@ -170,6 +173,7 @@ describe('alarmist', () => {
         id: successId,
         service,
         metric,
+        table,
         startTime,
       });
       failStart.should.eql({
@@ -177,6 +181,7 @@ describe('alarmist', () => {
         id: failId,
         service,
         metric,
+        table,
         startTime,
       });
     });
@@ -216,6 +221,7 @@ describe('alarmist', () => {
           JSON.parse(status[0]).should.eql({
             service,
             metric,
+            table,
             endTime,
             startTime,
           });
@@ -255,6 +261,7 @@ describe('alarmist', () => {
           JSON.parse(status[0]).should.eql({
             service,
             metric,
+            table,
             endTime,
             startTime,
             error: 'message',

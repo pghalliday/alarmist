@@ -47,3 +47,10 @@ export const CHART_PROPERTIES = {
 };
 
 export const CHART_PADDING = '          ';
+
+export const TABLE_PROPERTIES = {
+  left: 3,
+  width: '100%-3',
+  height: 0,
+  autoFocus: false,
+};

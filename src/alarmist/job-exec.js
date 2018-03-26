@@ -11,6 +11,7 @@ export async function exec({
   workingDir,
   service,
   metric,
+  table,
   color,
 }) {
   const job = await Job.createJob({
@@ -18,6 +19,7 @@ export async function exec({
     name,
     service,
     metric,
+    table,
   });
   return await new Promise((resolve) => {
     const proc = spawn(command, args, {

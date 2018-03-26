@@ -31,6 +31,7 @@ const workingDir = 'working dir';
 const color = false;
 const service = true;
 const metric = true;
+const table = true;
 const successCode = 0;
 const failCode = 1;
 const stdout = Buffer.from('stdout');
@@ -87,6 +88,7 @@ describe('alarmist', () => {
           color,
           service,
           metric,
+          table,
         });
         [processStdout, processStderr] = flush();
       });
@@ -101,6 +103,7 @@ describe('alarmist', () => {
           workingDir,
           service,
           metric,
+          table,
         });
       });
 
@@ -144,6 +147,7 @@ describe('alarmist', () => {
           color,
           service,
           metric,
+          table,
         });
         [processStdout, processStderr] = flush();
       });
@@ -158,6 +162,7 @@ describe('alarmist', () => {
           workingDir,
           service,
           metric,
+          table,
         });
       });
 
