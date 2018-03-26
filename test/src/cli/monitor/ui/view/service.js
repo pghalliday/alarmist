@@ -1,7 +1,7 @@
-import Job from '../../../../../../src/cli/monitor/ui/view/job';
+import Service from '../../../../../../src/cli/monitor/ui/view/service';
 import Log from '../../../../../../src/cli/monitor/ui/view/log';
 
-let job;
+let service;
 
 const name = 'name';
 const id = 0;
@@ -14,23 +14,23 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('view', () => {
-        describe('Job', () => {
+        describe('Service', () => {
           before(() => {
-            job = new Job();
-            sinon.spy(job, 'setHeader');
-            sinon.spy(job, 'setLog');
+            service = new Service();
+            sinon.spy(service, 'setHeader');
+            sinon.spy(service, 'setLog');
           });
 
           it('should be a Log', () => {
-            job.should.be.an.instanceOf(Log);
+            service.should.be.an.instanceOf(Log);
           });
 
           describe('_update', () => {
             describe('without an end time', () => {
               before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
+                service.setHeader.reset();
+                service.setLog.reset();
+                service.update({
                   name,
                   id,
                   startTime,
@@ -39,22 +39,22 @@ describe('cli', () => {
               });
 
               it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: pending`,
-                  'yellow',
+                service.setHeader.should.have.been.calledWith(
+                  ` ${name}: ok`,
+                  'green',
                 );
               });
 
               it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
+                service.setLog.should.have.been.calledWith(log);
               });
             });
 
             describe('with an end time', () => {
               before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
+                service.setHeader.reset();
+                service.setLog.reset();
+                service.update({
                   name,
                   id,
                   startTime,
@@ -64,22 +64,22 @@ describe('cli', () => {
               });
 
               it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: ok`,
-                  'green',
+                service.setHeader.should.have.been.calledWith(
+                  ` ${name}: ended`,
+                  'red',
                 );
               });
 
               it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
+                service.setLog.should.have.been.calledWith(log);
               });
             });
 
             describe('with an error', () => {
               before(() => {
-                job.setHeader.reset();
-                job.setLog.reset();
-                job.update({
+                service.setHeader.reset();
+                service.setLog.reset();
+                service.update({
                   name,
                   id,
                   startTime,
@@ -90,14 +90,14 @@ describe('cli', () => {
               });
 
               it('should set the header', () => {
-                job.setHeader.should.have.been.calledWith(
-                  ` ${name}: run ${id}: ${error}`,
+                service.setHeader.should.have.been.calledWith(
+                  ` ${name}: ${error}`,
                   'red',
                 );
               });
 
               it('should set the log', () => {
-                job.setLog.should.have.been.calledWith(log);
+                service.setLog.should.have.been.calledWith(log);
               });
             });
           });

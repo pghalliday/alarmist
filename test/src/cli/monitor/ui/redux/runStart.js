@@ -5,6 +5,10 @@ import {
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 import {
   MONITOR_LABEL,
+  TYPE_JOB,
+  TYPE_SERVICE,
+  TYPE_METRIC,
+  TYPE_TABLE,
 } from '../../../../../../src/cli/monitor/ui/constants';
 import {
   jobLabel,
@@ -24,6 +28,30 @@ const otherId = 1;
 
 const log = Buffer.alloc(0);
 const lines = [''];
+
+const table = {
+  name,
+  id,
+  startTime,
+  service: true,
+  metric: true,
+  table: true,
+};
+
+const metric = {
+  name,
+  id,
+  startTime,
+  service: true,
+  metric: true,
+};
+
+const service = {
+  name,
+  id,
+  startTime,
+  service: true,
+};
 
 const job = {
   name,
@@ -49,28 +77,48 @@ const otherJob = {
   startTime,
 };
 
+const oneTable = {
+  [name]: Object.assign({}, table, {
+    type: TYPE_TABLE,
+  }),
+};
+
+const oneMetric = {
+  [name]: Object.assign({}, metric, {
+    type: TYPE_METRIC,
+    lines,
+  }),
+};
+
+const oneService = {
+  [name]: Object.assign({}, service, {
+    type: TYPE_SERVICE,
+    log,
+  }),
+};
+
 const oneJob = {
   [name]: Object.assign({}, job, {
+    type: TYPE_JOB,
     log,
-    lines,
   }),
 };
 
 const oneLaterJob = {
   [name]: Object.assign({}, laterJob, {
+    type: TYPE_JOB,
     log,
-    lines,
   }),
 };
 
 const twoJobs = {
   [name]: Object.assign({}, job, {
+    type: TYPE_JOB,
     log,
-    lines,
   }),
   [otherName]: Object.assign({}, otherJob, {
+    type: TYPE_JOB,
     log,
-    lines,
   }),
 };
 
@@ -79,6 +127,69 @@ describe('cli', () => {
     describe('ui', () => {
       describe('redux', () => {
         describe('runStart', () => {
+          describe('for a table', () => {
+            before(() => {
+              store.dispatch(reset());
+              store.dispatch(runStart(table));
+              const state = store.getState();
+              jobs = state.jobs;
+              layoutLines = state.layout.lines;
+            });
+
+            it('should add the table', () => {
+              jobs.should.eql(oneTable);
+            });
+
+            it('should add to the layout lines', () => {
+              layoutLines.should.eql([
+                MONITOR_LABEL,
+                jobLabel(name),
+              ]);
+            });
+          });
+
+          describe('for a metric', () => {
+            before(() => {
+              store.dispatch(reset());
+              store.dispatch(runStart(metric));
+              const state = store.getState();
+              jobs = state.jobs;
+              layoutLines = state.layout.lines;
+            });
+
+            it('should add the metric', () => {
+              jobs.should.eql(oneMetric);
+            });
+
+            it('should add to the layout lines', () => {
+              layoutLines.should.eql([
+                MONITOR_LABEL,
+                jobLabel(name),
+              ]);
+            });
+          });
+
+          describe('for a service', () => {
+            before(() => {
+              store.dispatch(reset());
+              store.dispatch(runStart(service));
+              const state = store.getState();
+              jobs = state.jobs;
+              layoutLines = state.layout.lines;
+            });
+
+            it('should add the service', () => {
+              jobs.should.eql(oneService);
+            });
+
+            it('should add to the layout lines', () => {
+              layoutLines.should.eql([
+                MONITOR_LABEL,
+                jobLabel(name),
+              ]);
+            });
+          });
+
           describe('with an empty state', () => {
             before(() => {
               store.dispatch(reset());

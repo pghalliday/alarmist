@@ -4,7 +4,6 @@ import Log from './log';
 export default class Monitor extends Log {
   constructor() {
     super();
-    this.type = 'Monitor';
   }
   _update(state) {
     if (_.isUndefined(state.error)) {

@@ -20,7 +20,7 @@ import {
 } from './actions';
 import {
   MONITOR_LABEL,
-  TYPE_LOG,
+  TYPE_JOB,
   TYPE_SERVICE,
   TYPE_METRIC,
   TYPE_TABLE,
@@ -37,8 +37,8 @@ const initialMonitor = {
   log: Buffer.alloc(0),
 };
 
-const initialLog = {
-  type: TYPE_LOG,
+const initialJob = {
+  type: TYPE_JOB,
   log: Buffer.alloc(0),
 };
 
@@ -67,12 +67,6 @@ const monitor = handleActions({
   [log]: (monitor, {payload}) => {
     return Object.assign({}, monitor, {
       log: appendBuffer(MAX_BUFFER_LENGTH, monitor.log, payload),
-      lines: appendLines(
-        MAX_LINES_LENGTH,
-        MAX_LINE_LENGTH,
-        monitor.lines,
-        payload
-      ),
     });
   },
 }, initialMonitor);
@@ -82,13 +76,13 @@ const initialJobs = {};
 const jobs = handleActions({
   [reset]: () => initialJobs,
   [runStart]: (jobs, {payload}) => {
-    let initialState = initialLog;
-    if (payload.service) {
-      initialState = initialService;
-    } else if (payload.table) {
+    let initialState = initialJob;
+    if (payload.table) {
       initialState = initialTable;
     } else if (payload.metric) {
       initialState = initialMetric;
+    } else if (payload.service) {
+      initialState = initialService;
     }
     const name = payload.name;
     const existing = jobs[name];
@@ -96,24 +90,38 @@ const jobs = handleActions({
       return jobs;
     }
     return Object.assign({}, jobs, {
-      [name]: initialState,
+      [name]: Object.assign({}, payload, initialState),
     });
   },
   [runLog]: (jobs, {payload}) => {
     const name = payload.name;
     const job = jobs[name];
     if (!_.isUndefined(job) && payload.id === job.id) {
-      return Object.assign({}, jobs, {
-        [name]: Object.assign({}, job, {
-          log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
-          lines: appendLines(
-            MAX_LINES_LENGTH,
-            MAX_LINE_LENGTH,
-            job.lines,
-            payload.data
-          ),
-        }),
-      });
+      switch (job.type) {
+        case TYPE_JOB:
+        case TYPE_SERVICE:
+          return Object.assign({}, jobs, {
+            [name]: Object.assign({}, job, {
+              log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
+            }),
+          });
+        case TYPE_METRIC:
+          return Object.assign({}, jobs, {
+            [name]: Object.assign({}, job, {
+              lines: appendLines(
+                MAX_LINES_LENGTH,
+                MAX_LINE_LENGTH,
+                job.lines,
+                payload.data
+              ),
+            }),
+          });
+        case TYPE_TABLE:
+          return Object.assign({}, jobs, {
+            [name]: Object.assign({}, job, {
+            }),
+          });
+      }
     }
     return jobs;
   },

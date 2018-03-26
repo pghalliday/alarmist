@@ -4,6 +4,9 @@ import {
   runStart,
   runEnd,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
+import {
+  TYPE_JOB,
+} from '../../../../../../src/cli/monitor/ui/constants';
 
 let jobs;
 
@@ -15,7 +18,6 @@ const startTime = 100000;
 const endTime = 200000;
 const error = 'message';
 const emptyBuffer = Buffer.alloc(0);
-const emptyLines = [''];
 const jobStart = {
   name,
   id,
@@ -66,7 +68,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
-                  lines: emptyLines,
+                  type: TYPE_JOB,
                 },
               });
             });
@@ -85,7 +87,7 @@ describe('cli', () => {
                   id,
                   startTime,
                   log: emptyBuffer,
-                  lines: emptyLines,
+                  type: TYPE_JOB,
                 },
               });
             });
@@ -106,7 +108,7 @@ describe('cli', () => {
                   endTime,
                   error,
                   log: emptyBuffer,
-                  lines: emptyLines,
+                  type: TYPE_JOB,
                 },
               });
             });

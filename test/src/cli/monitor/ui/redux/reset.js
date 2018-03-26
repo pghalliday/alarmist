@@ -5,7 +5,6 @@ import {
 
 let state;
 const emptyBuffer = Buffer.alloc(0);
-const emptyLines = [''];
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -21,7 +20,6 @@ describe('cli', () => {
             state.should.eql({
               monitor: {
                 log: emptyBuffer,
-                lines: emptyLines,
               },
               jobs: {},
               layout: {

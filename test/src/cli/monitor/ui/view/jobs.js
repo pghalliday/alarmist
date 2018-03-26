@@ -1,5 +1,11 @@
 import Jobs from '../../../../../../src/cli/monitor/ui/view/jobs';
 import {jobLabel} from '../../../../../../src/cli/monitor/ui/helpers';
+import {
+  TYPE_JOB,
+  TYPE_SERVICE,
+  TYPE_TABLE,
+  TYPE_METRIC,
+} from '../../../../../../src/cli/monitor/ui/constants';
 
 let jobs;
 const layout = {
@@ -25,31 +31,34 @@ class Table {
     job = this;
   }
 }
+class Service {
+  constructor() {
+    this.update = sinon.spy();
+    job = this;
+  }
+}
 
 const name = 'name';
-const service = true;
-const metric = true;
-const table = true;
 const anotherName = 'anotherName';
 
 const status = {
+  type: TYPE_JOB,
   name,
 };
 const metricStatus = {
+  type: TYPE_METRIC,
   name,
-  service,
-  metric,
 };
 const tableStatus = {
+  type: TYPE_TABLE,
   name,
-  service,
-  metric,
-  table,
 };
 const anotherStatus = {
+  type: TYPE_SERVICE,
   name: anotherName,
 };
 const updatedStatus = {
+  type: TYPE_SERVICE,
   name: anotherName,
 };
 
@@ -79,7 +88,13 @@ describe('cli', () => {
           describe('update', () => {
             describe('with a new job', () => {
               before(() => {
-                jobs = new Jobs(Job, Metric, Table, layout);
+                jobs = new Jobs({
+                  Job,
+                  Metric,
+                  Table,
+                  Service,
+                  layout,
+                });
                 layout.append.reset();
                 job = undefined;
                 jobs.update(newJob);
@@ -110,8 +125,8 @@ describe('cli', () => {
                   jobs.update(anotherNewJob);
                 });
 
-                it('should create a new job', () => {
-                  job.should.be.ok;
+                it('should create a new service', () => {
+                  job.should.be.an.instanceOf(Service);
                 });
 
                 it('should update the new job', () => {
@@ -157,7 +172,7 @@ describe('cli', () => {
 
             describe('with a new metric', () => {
               before(() => {
-                jobs = new Jobs(Job, Metric, Table, layout);
+                jobs = new Jobs({Job, Metric, Table, Service, layout});
                 layout.append.reset();
                 job = undefined;
                 jobs.update(newMetric);
@@ -184,7 +199,7 @@ describe('cli', () => {
 
             describe('with a new table', () => {
               before(() => {
-                jobs = new Jobs(Job, Metric, Table, layout);
+                jobs = new Jobs({Job, Metric, Table, Service, layout});
                 layout.append.reset();
                 job = undefined;
                 jobs.update(newTable);
