@@ -25,8 +25,8 @@ export async function createMonitor({reset, workingDir}) {
   // istanbul ignore else
   if (reset) {
     await rimraf(workingDir);
-    await mkdirp(workingDir);
   }
+  await mkdirp(workingDir);
   // set up streams for logging the watcher process
   const log = new PassThrough();
   const logStream = createWriteStream(monitorLog);
