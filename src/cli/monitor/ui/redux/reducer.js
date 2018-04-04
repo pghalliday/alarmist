@@ -168,9 +168,10 @@ const layout = handleActions({
   },
   [select]: (layout, {payload}) => {
     const index = _.indexOf(layout.lines, payload);
+    const changed = index !== layout.selected;
     return Object.assign({}, layout, {
       selected: index,
-      expanded: true,
+      expanded: changed || !layout.expanded,
     });
   },
   [down]: (layout) => {

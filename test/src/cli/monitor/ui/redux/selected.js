@@ -44,24 +44,38 @@ describe('cli', () => {
           });
 
           describe('select', () => {
-            it('should select the entry and expand', () => {
-              store.dispatch(select(jobLabel(name)));
-              store.getState().layout.selected.should.eql(1);
-              store.getState().layout.expanded.should.be.true;
-              store.dispatch(toggleExpanded());
-              store.dispatch(select(jobLabel(otherName)));
-              store.getState().layout.selected.should.eql(2);
-              store.getState().layout.expanded.should.be.true;
-              store.dispatch(toggleExpanded());
-              store.dispatch(select(MONITOR_LABEL));
-              store.getState().layout.selected.should.eql(0);
-              store.getState().layout.expanded.should.be.true;
-              store.dispatch(toggleExpanded());
+            describe('with a different entry', () => {
+              it('should select the entry and expand', () => {
+                store.dispatch(select(jobLabel(name)));
+                store.getState().layout.selected.should.eql(1);
+                store.getState().layout.expanded.should.be.true;
+                store.dispatch(toggleExpanded());
+                store.dispatch(select(jobLabel(otherName)));
+                store.getState().layout.selected.should.eql(2);
+                store.getState().layout.expanded.should.be.true;
+                store.dispatch(toggleExpanded());
+                store.dispatch(select(MONITOR_LABEL));
+                store.getState().layout.selected.should.eql(0);
+                store.getState().layout.expanded.should.be.true;
+                store.dispatch(toggleExpanded());
+              });
+            });
+
+            describe('with the same entry', () => {
+              it('should toggle expansion', () => {
+                store.dispatch(select(jobLabel(name)));
+                const expanded = store.getState().layout.expanded;
+                store.dispatch(select(jobLabel(name)));
+                store.getState().layout.expanded.should.eql(!expanded);
+                store.dispatch(select(jobLabel(name)));
+                store.getState().layout.expanded.should.eql(expanded);
+              });
             });
           });
 
           describe('down', () => {
             before(() => {
+              store.dispatch(select(MONITOR_LABEL));
               store.dispatch(down());
               selected = store.getState().layout.selected;
             });
