@@ -4,6 +4,10 @@ const fs = require('fs');
 process.stdout.write(process.argv[2]);
 process.stderr.write(process.argv[3]);
 fs.writeFileSync(
+  `${constants.WORKING_DIR}/${appconstants.CONFIG_FILE_VAR}`,
+  process.env[appconstants.CONFIG_FILE_VAR]
+);
+fs.writeFileSync(
   `${constants.WORKING_DIR}/${appconstants.WORKING_DIRECTORY_VAR}`,
   process.env[appconstants.WORKING_DIRECTORY_VAR]
 );

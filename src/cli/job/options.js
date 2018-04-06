@@ -3,17 +3,17 @@ import optionDefault from '../utils/option-default';
 import _ from 'lodash';
 import cliclopts from 'cliclopts';
 import {
+  CONFIG_FILE_VAR,
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
-  SERVICE_VAR,
-  METRIC_VAR,
-  TABLE_VAR,
+  TYPE_VAR,
+  DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_COLOR_OPTION,
-  DEFAULT_SERVICE_OPTION,
-  DEFAULT_METRIC_OPTION,
-  DEFAULT_TABLE_OPTION,
+  DEFAULT_TYPE_OPTION,
+  MULTIPLE_CONFIG_FILES_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
+  MULTIPLE_TYPES_ERROR,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
   JOB_USAGE_TEXT,
@@ -28,22 +28,14 @@ const defaultColor = optionDefault(
   toBool,
 );
 
-const defaultService = optionDefault(
-  SERVICE_VAR,
-  DEFAULT_SERVICE_OPTION,
-  toBool,
+const defaultType = optionDefault(
+  TYPE_VAR,
+  DEFAULT_TYPE_OPTION,
 );
 
-const defaultMetric = optionDefault(
-  METRIC_VAR,
-  DEFAULT_METRIC_OPTION,
-  toBool,
-);
-
-const defaultTable = optionDefault(
-  TABLE_VAR,
-  DEFAULT_TABLE_OPTION,
-  toBool,
+const defaultConfigFile = optionDefault(
+  CONFIG_FILE_VAR,
+  DEFAULT_CONFIG_FILE,
 );
 
 const defaultWorkingDirectory = optionDefault(
@@ -52,31 +44,23 @@ const defaultWorkingDirectory = optionDefault(
 );
 
 const cliOpts = cliclopts([{
+  name: 'config-file',
+  abbr: 'c',
+  default: defaultConfigFile,
+  help: 'The config file to load options from if present',
+}, {
   name: 'working-dir',
   abbr: 'w',
   default: defaultWorkingDirectory,
   help: 'The directory in which to write logs, etc',
 }, {
-  name: 'service',
-  abbr: 's',
-  boolean: true,
-  default: defaultService,
-  help: 'Flag the job as a service',
-}, {
-  name: 'metric',
-  abbr: 'm',
-  boolean: true,
-  default: defaultMetric,
-  help: 'Flag the job as a metric',
-}, {
-  name: 'table',
+  name: 'type',
   abbr: 't',
-  boolean: true,
-  default: defaultTable,
-  help: 'Flag the job as a table',
+  default: defaultType,
+  help: 'The type of the job',
 }, {
   name: 'force-color',
-  abbr: 'c',
+  abbr: 'f',
   boolean: true,
   default: defaultColor,
   help: 'Set the FORCE_COLOR environment variable for the job',
@@ -111,9 +95,19 @@ export function parse(argv) {
       help: true,
     };
   }
+  if (parsed['config-file'] instanceof Array) {
+    return {
+      error: MULTIPLE_CONFIG_FILES_ERROR,
+    };
+  }
   if (parsed['working-dir'] instanceof Array) {
     return {
       error: MULTIPLE_WORKING_DIRECTORIES_ERROR,
+    };
+  }
+  if (parsed['type'] instanceof Array) {
+    return {
+      error: MULTIPLE_TYPES_ERROR,
     };
   }
   const name = parsed._[0];
@@ -129,20 +123,18 @@ export function parse(argv) {
     };
   }
   const args = parsed._.slice(2);
-  const service = parsed['service'];
-  const metric = parsed['metric'];
-  const table = parsed['table'];
+  const type = parsed['type'];
   const color = parsed['force-color'];
   const workingDir = parsed['working-dir'];
+  const configFile = parsed['config-file'];
   return {
     name,
     command,
     args,
     color,
-    service,
-    metric,
-    table,
+    type,
     workingDir,
+    configFile,
     help: false,
     version: false,
   };

@@ -12,6 +12,7 @@ import {
   readFile,
 } from 'fs';
 import {
+  CONFIG_FILE_VAR,
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
 } from '../../../src/constants';
@@ -27,6 +28,7 @@ const exitCode = 0;
 const stdout = Buffer.from('stdout');
 const stderr = Buffer.from('stderr');
 const all = Buffer.concat([stdout, stderr]);
+const configFile = 'config file';
 const workingDir = 'working dir';
 const reset = false;
 const color = false;
@@ -90,6 +92,7 @@ describe('alarmist', function() {
           execMonitor = await exec({
             command,
             args: exitingArgs,
+            configFile,
             workingDir,
             reset,
             color,
@@ -103,9 +106,17 @@ describe('alarmist', function() {
 
       it('should create a monitor', () => {
         Monitor.createMonitor.should.have.been.calledWith({
+          configFile,
           workingDir,
           reset,
         });
+      });
+
+      it('should set the ALARMIST_CONFIG_FILE variable', async () => {
+        const envVar = await preadFile(
+          path.join(WORKING_DIR, CONFIG_FILE_VAR)
+        );
+        envVar[0].toString().should.eql(configFile);
       });
 
       it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {
@@ -155,6 +166,7 @@ describe('alarmist', function() {
         execMonitor = await exec({
           command,
           args: livingArgs,
+          configFile,
           workingDir,
           reset,
           color,
@@ -168,9 +180,17 @@ describe('alarmist', function() {
 
       it('should create a monitor', () => {
         Monitor.createMonitor.should.have.been.calledWith({
+          configFile,
           workingDir,
           reset,
         });
+      });
+
+      it('should set the ALARMIST_CONFIG_FILE variable', async () => {
+        const envVar = await preadFile(
+          path.join(WORKING_DIR, CONFIG_FILE_VAR)
+        );
+        envVar[0].toString().should.eql(configFile);
       });
 
       it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {

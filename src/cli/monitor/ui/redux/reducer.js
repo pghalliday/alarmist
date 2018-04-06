@@ -105,6 +105,7 @@ const jobs = handleActions({
               log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
             }),
           });
+        case TYPE_TABLE:
         case TYPE_METRIC:
           return Object.assign({}, jobs, {
             [name]: Object.assign({}, job, {
@@ -114,11 +115,6 @@ const jobs = handleActions({
                 job.lines,
                 payload.data
               ),
-            }),
-          });
-        case TYPE_TABLE:
-          return Object.assign({}, jobs, {
-            [name]: Object.assign({}, job, {
             }),
           });
       }

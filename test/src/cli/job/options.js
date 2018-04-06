@@ -5,17 +5,20 @@ import {
 import _ from 'lodash';
 import {
   DEFAULT_WORKING_DIR,
+  DEFAULT_CONFIG_FILE,
   DEFAULT_COLOR_OPTION,
-  DEFAULT_SERVICE_OPTION,
-  DEFAULT_METRIC_OPTION,
-  DEFAULT_TABLE_OPTION,
+  DEFAULT_TYPE_OPTION,
   NO_NAME_ERROR,
   NO_COMMAND_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
+  MULTIPLE_CONFIG_FILES_ERROR,
+  MULTIPLE_TYPES_ERROR,
   JOB_USAGE_TEXT,
 } from '../../../../src/constants';
 
+const configFile = 'config file';
 const workingDir = 'working dir';
+const type = 'type';
 const name = 'name';
 const command = 'command';
 const arg1 = '--arg1';
@@ -56,10 +59,11 @@ const noOptions = [
 ];
 
 const shortOptions = [
-  '-c',
-  '-s',
-  '-m',
+  '-f',
   '-t',
+  type,
+  '-c',
+  configFile,
   '-w',
   workingDir,
   name,
@@ -70,9 +74,10 @@ const shortOptions = [
 
 const fullOptions = [
   '--force-color',
-  '--service',
-  '--metric',
-  '--table',
+  '--type',
+  type,
+  '--config-file',
+  configFile,
   '--working-dir',
   workingDir,
   name,
@@ -83,11 +88,34 @@ const fullOptions = [
 
 const negatedOptions = [
   '--no-force-color',
-  '--no-service',
-  '--no-metric',
-  '--no-table',
+  '--type',
+  type,
+  '--config-file',
+  configFile,
   '--working-dir',
   workingDir,
+  name,
+  command,
+  arg1,
+  arg2,
+];
+
+const types = [
+  '--type',
+  type,
+  '--type',
+  type,
+  name,
+  command,
+  arg1,
+  arg2,
+];
+
+const configFiles = [
+  '--config-file',
+  configFile,
+  '--config-file',
+  configFile,
   name,
   command,
   arg1,
@@ -128,9 +156,17 @@ describe('cli', () => {
             argv: noCommand,
             error: NO_COMMAND_ERROR,
           },
+          'with multiple config files specified': {
+            argv: configFiles,
+            error: MULTIPLE_CONFIG_FILES_ERROR,
+          },
           'with multiple working directories specified': {
             argv: workingDirectories,
             error: MULTIPLE_WORKING_DIRECTORIES_ERROR,
+          },
+          'with multiple types specified': {
+            argv: types,
+            error: MULTIPLE_TYPES_ERROR,
           },
         }, (value, key) => {
           describe(key, () => {
@@ -187,33 +223,29 @@ describe('cli', () => {
           'with no options': {
             argv: noOptions,
             color: DEFAULT_COLOR_OPTION,
-            service: DEFAULT_SERVICE_OPTION,
-            metric: DEFAULT_METRIC_OPTION,
-            table: DEFAULT_TABLE_OPTION,
+            type: DEFAULT_TYPE_OPTION,
+            configFile: DEFAULT_CONFIG_FILE,
             workingDir: DEFAULT_WORKING_DIR,
           },
           'with short options': {
             argv: shortOptions,
             color: true,
-            service: true,
-            metric: true,
-            table: true,
+            type,
+            configFile,
             workingDir,
           },
           'with full options': {
             argv: fullOptions,
             color: true,
-            service: true,
-            metric: true,
-            table: true,
+            type,
+            configFile,
             workingDir,
           },
           'with negated options': {
             argv: negatedOptions,
             color: false,
-            service: false,
-            metric: false,
-            table: false,
+            type,
+            configFile,
             workingDir,
           },
         }, (value, key) => {
@@ -238,16 +270,12 @@ describe('cli', () => {
               options.color.should.eql(value.color);
             });
 
-            it('should set the service option', () => {
-              options.service.should.eql(value.service);
+            it('should set the type option', () => {
+              options.type.should.eql(value.type);
             });
 
-            it('should set the metric option', () => {
-              options.metric.should.eql(value.metric);
-            });
-
-            it('should set the table option', () => {
-              options.table.should.eql(value.table);
+            it('should set the config file', () => {
+              options.configFile.should.eql(value.configFile);
             });
 
             it('should set the working directory', () => {

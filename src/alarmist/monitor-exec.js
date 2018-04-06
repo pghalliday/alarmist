@@ -1,6 +1,7 @@
 import * as Monitor from './monitor';
 import spawn from 'cross-spawn';
 import {
+  CONFIG_FILE_VAR,
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
 } from '../constants';
@@ -9,13 +10,22 @@ import {
 // way to kill children and grandchildren, etc
 import kill from 'tree-kill';
 
-export async function exec({command, args, reset, color, workingDir}) {
+export async function exec({
+  command,
+  args,
+  reset,
+  color,
+  configFile,
+  workingDir,
+}) {
   const monitor = await Monitor.createMonitor({
     reset,
+    configFile,
     workingDir,
   });
   const proc = spawn(command, args, {
     env: Object.assign({}, process.env, {
+      [CONFIG_FILE_VAR]: configFile,
       [WORKING_DIRECTORY_VAR]: workingDir,
       [FORCE_COLOR_VAR]: color,
     }),

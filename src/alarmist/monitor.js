@@ -19,7 +19,7 @@ import _ from 'lodash';
 const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
-export async function createMonitor({reset, workingDir}) {
+export async function createMonitor({reset, configFile, workingDir}) {
   const monitorLog = path.join(workingDir, MONITOR_LOG);
   const monitor = new EventEmitter();
   // istanbul ignore else

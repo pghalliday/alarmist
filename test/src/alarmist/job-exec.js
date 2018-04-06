@@ -28,10 +28,9 @@ const preadFile = promisify(readFile);
 
 const name = 'name';
 const workingDir = 'working dir';
+const configFile = 'config-file';
 const color = false;
-const service = true;
-const metric = true;
-const table = true;
+const type = 'type';
 const successCode = 0;
 const failCode = 1;
 const stdout = Buffer.from('stdout');
@@ -84,11 +83,10 @@ describe('alarmist', () => {
           name,
           command,
           args: successArgs,
+          configFile,
           workingDir,
           color,
-          service,
-          metric,
-          table,
+          type,
         });
         [processStdout, processStderr] = flush();
       });
@@ -100,10 +98,9 @@ describe('alarmist', () => {
       it('should create a job', () => {
         Job.createJob.should.have.been.calledWith({
           name,
+          configFile,
           workingDir,
-          service,
-          metric,
-          table,
+          type,
         });
       });
 
@@ -143,11 +140,10 @@ describe('alarmist', () => {
           name,
           command,
           args: failArgs,
+          configFile,
           workingDir,
           color,
-          service,
-          metric,
-          table,
+          type,
         });
         [processStdout, processStderr] = flush();
       });
@@ -159,10 +155,9 @@ describe('alarmist', () => {
       it('should create a job', () => {
         Job.createJob.should.have.been.calledWith({
           name,
+          configFile,
           workingDir,
-          service,
-          metric,
-          table,
+          type,
         });
       });
 

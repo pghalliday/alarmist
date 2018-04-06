@@ -25,8 +25,10 @@ const exitCode = 0;
 
 const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
+const configFile = path.join('test', 'types', 'config.js');
+const workingDir = WORKING_DIR;
 const name = 'job name';
-const service = false;
+const type = 'type';
 const id = 1;
 const startTime = 100000;
 const endTime = 200000;
@@ -34,7 +36,7 @@ const endTime = 200000;
 const startEvent = {
   name,
   id,
-  service,
+  type,
   startTime,
 };
 
@@ -46,7 +48,7 @@ const endMessage = {
 const endEvent = {
   name,
   id,
-  service,
+  type,
   startTime,
   endTime,
   exitCode,
@@ -72,8 +74,24 @@ describe('alarmist', () => {
       await rimraf(WORKING_DIR);
       monitor = await createMonitor({
         reset: true,
-        workingDir: WORKING_DIR,
+        configFile,
+        workingDir,
       });
+    });
+
+    it('should register the log type', async () => {
+      // TODO
+      await monitor.close();
+    });
+
+    it('should register the service type', async () => {
+      // TODO
+      await monitor.close();
+    });
+
+    it('should register the types from the config file', async () => {
+      // TODO
+      await monitor.close();
     });
 
     it('should open a log stream', async () => {

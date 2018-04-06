@@ -33,9 +33,7 @@ if (process.platform === 'win32') {
   name = 'cmd/name';
 }
 const sanitizedName = 'cmd__name';
-const service = false;
-const metric = false;
-const table = false;
+const type = 'type';
 const startTime = 1000000;
 const endTime = 2000000;
 const successId = 1;
@@ -129,12 +127,12 @@ describe('alarmist', () => {
       );
       sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
       successJob = await createJob(
-        {name, service, metric, table, workingDir: WORKING_DIR}
+        {name, type, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
       sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
       failJob = await createJob(
-        {name, service, metric, table, workingDir: WORKING_DIR}
+        {name, type, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
       Date.now.restore();
@@ -153,16 +151,12 @@ describe('alarmist', () => {
     it('should save the status', async () => {
       let status = await preadFile(successStatusFile);
       JSON.parse(status[0]).should.eql({
-        service,
-        metric,
-        table,
+        type,
         startTime,
       });
       status = await preadFile(failStatusFile);
       JSON.parse(status[0]).should.eql({
-        service,
-        metric,
-        table,
+        type,
         startTime,
       });
     });
@@ -171,17 +165,13 @@ describe('alarmist', () => {
       successStart.should.eql({
         name,
         id: successId,
-        service,
-        metric,
-        table,
+        type,
         startTime,
       });
       failStart.should.eql({
         name,
         id: failId,
-        service,
-        metric,
-        table,
+        type,
         startTime,
       });
     });
@@ -219,9 +209,7 @@ describe('alarmist', () => {
         it('should save the status', async () => {
           const status = await preadFile(successStatusFile);
           JSON.parse(status[0]).should.eql({
-            service,
-            metric,
-            table,
+            type,
             endTime,
             startTime,
           });
@@ -259,9 +247,7 @@ describe('alarmist', () => {
         it('should save the status', async () => {
           const status = await preadFile(failStatusFile);
           JSON.parse(status[0]).should.eql({
-            service,
-            metric,
-            table,
+            type,
             endTime,
             startTime,
             error: 'message',

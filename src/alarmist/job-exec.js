@@ -8,18 +8,16 @@ export async function exec({
   name,
   command,
   args,
+  configFile,
   workingDir,
-  service,
-  metric,
-  table,
+  type,
   color,
 }) {
   const job = await Job.createJob({
+    configFile,
     workingDir,
     name,
-    service,
-    metric,
-    table,
+    type,
   });
   return await new Promise((resolve) => {
     const proc = spawn(command, args, {

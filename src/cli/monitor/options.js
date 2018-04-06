@@ -3,15 +3,18 @@ import optionDefault from '../utils/option-default';
 import _ from 'lodash';
 import cliclopts from 'cliclopts';
 import {
+  CONFIG_FILE_VAR,
   WORKING_DIRECTORY_VAR,
   FORCE_COLOR_VAR,
   DEBUG_VAR,
   RESET_VAR,
+  DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
+  MULTIPLE_CONFIG_FILES_ERROR,
   NO_COMMAND_ERROR,
   MONITOR_USAGE_TEXT,
 } from '../../constants';
@@ -37,12 +40,22 @@ const defaultColor = optionDefault(
   toBool,
 );
 
+const defaultConfigFile = optionDefault(
+  CONFIG_FILE_VAR,
+  DEFAULT_CONFIG_FILE,
+);
+
 const defaultWorkingDirectory = optionDefault(
   WORKING_DIRECTORY_VAR,
   DEFAULT_WORKING_DIR,
 );
 
 const cliOpts = cliclopts([{
+  name: 'config-file',
+  abbr: 'c',
+  default: defaultConfigFile,
+  help: 'The config file to load options from if present',
+}, {
   name: 'working-dir',
   abbr: 'w',
   default: defaultWorkingDirectory,
@@ -55,7 +68,7 @@ const cliOpts = cliclopts([{
   help: 'Reset the working directory on start',
 }, {
   name: 'force-color',
-  abbr: 'c',
+  abbr: 'f',
   boolean: true,
   default: defaultColor,
   help: 'Set the FORCE_COLOR environment variable for watchers and jobs',
@@ -97,6 +110,11 @@ export function parse(argv) {
       help: true,
     };
   }
+  if (parsed['config-file'] instanceof Array) {
+    return {
+      error: MULTIPLE_CONFIG_FILES_ERROR,
+    };
+  }
   if (parsed['working-dir'] instanceof Array) {
     return {
       error: MULTIPLE_WORKING_DIRECTORIES_ERROR,
@@ -111,6 +129,7 @@ export function parse(argv) {
   const debug = parsed['debug'];
   const color = parsed['force-color'];
   const reset = parsed['reset'];
+  const configFile = parsed['config-file'];
   const workingDir = parsed['working-dir'];
   return {
     command,
@@ -118,6 +137,7 @@ export function parse(argv) {
     debug,
     color,
     reset,
+    configFile,
     workingDir,
     help: false,
     version: false,

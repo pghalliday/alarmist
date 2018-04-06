@@ -4,16 +4,19 @@ import {
 } from '../../../../src/cli/monitor/options';
 import _ from 'lodash';
 import {
+  DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
   NO_COMMAND_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
+  MULTIPLE_CONFIG_FILES_ERROR,
   MONITOR_USAGE_TEXT,
 } from '../../../../src/constants';
 
 const workingDir = 'working dir';
+const configFile = 'config file';
 const command = 'command';
 const arg1 = '--arg1';
 const arg2 = '--arg2';
@@ -50,7 +53,9 @@ const noOptions = [
 const shortOptions = [
   '-d',
   '-r',
+  '-f',
   '-c',
+  configFile,
   '-w',
   workingDir,
   command,
@@ -62,6 +67,8 @@ const fullOptions = [
   '--debug',
   '--reset',
   '--force-color',
+  '--config-file',
+  configFile,
   '--working-dir',
   workingDir,
   command,
@@ -73,6 +80,8 @@ const negatedOptions = [
   '--no-debug',
   '--no-reset',
   '--no-force-color',
+  '--config-file',
+  configFile,
   '--working-dir',
   workingDir,
   command,
@@ -85,6 +94,16 @@ const workingDirectories = [
   workingDir,
   '--working-dir',
   workingDir,
+  command,
+  arg1,
+  arg2,
+];
+
+const configFiles = [
+  '--config-file',
+  configFile,
+  '--config-file',
+  configFile,
   command,
   arg1,
   arg2,
@@ -109,9 +128,13 @@ describe('cli', () => {
             argv: noCommand,
             error: NO_COMMAND_ERROR,
           },
-          'with no multiple working directories specified': {
+          'with multiple working directories specified': {
             argv: workingDirectories,
             error: MULTIPLE_WORKING_DIRECTORIES_ERROR,
+          },
+          'with multiple config files specified': {
+            argv: configFiles,
+            error: MULTIPLE_CONFIG_FILES_ERROR,
           },
         }, (value, key) => {
           describe(key, () => {
@@ -171,6 +194,7 @@ describe('cli', () => {
             color: DEFAULT_COLOR_OPTION,
             reset: DEFAULT_RESET_OPTION,
             workingDir: DEFAULT_WORKING_DIR,
+            configFile: DEFAULT_CONFIG_FILE,
           },
           'with short options': {
             argv: shortOptions,
@@ -178,6 +202,7 @@ describe('cli', () => {
             color: true,
             reset: true,
             workingDir,
+            configFile,
           },
           'with full options': {
             argv: fullOptions,
@@ -185,6 +210,7 @@ describe('cli', () => {
             color: true,
             reset: true,
             workingDir,
+            configFile,
           },
           'with negated options': {
             argv: negatedOptions,
@@ -192,6 +218,7 @@ describe('cli', () => {
             color: false,
             reset: false,
             workingDir,
+            configFile,
           },
         }, (value, key) => {
           describe(key, () => {
@@ -221,6 +248,10 @@ describe('cli', () => {
 
             it('should set the working directory', () => {
               options.workingDir.should.eql(value.workingDir);
+            });
+
+            it('should set the config file', () => {
+              options.configFile.should.eql(value.configFile);
             });
 
             it('should set the help flag to false', () => {

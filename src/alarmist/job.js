@@ -25,9 +25,7 @@ const writeFile = promisify(_writeFile);
 
 export async function createJob({
   name,
-  service,
-  metric,
-  table,
+  type,
   workingDir,
 }) {
   // set up the file reporting
@@ -41,9 +39,7 @@ export async function createJob({
   const startTime = Date.now();
   await mkdirp(reportDir);
   await writeFile(statusFile, JSON.stringify({
-    service,
-    metric,
-    table,
+    type,
     startTime,
   }));
   const log = new PassThrough();
@@ -65,9 +61,7 @@ export async function createJob({
   controlConnection.write(JSON.stringify({
     name,
     id,
-    service,
-    metric,
-    table,
+    type,
     startTime,
   }));
   await controlReady;
@@ -95,9 +89,7 @@ export async function createJob({
       log.end();
       await logStreamEnded;
       await writeFile(statusFile, JSON.stringify({
-        service,
-        metric,
-        table,
+        type,
         error: error,
         startTime,
         endTime,

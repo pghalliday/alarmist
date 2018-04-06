@@ -5,7 +5,7 @@ import {
   runEnd,
   runLog,
   log,
-} from './redux/actions';
+} from '../redux/actions';
 
 export function createService(monitor, store) {
   const onEnd = (code) => {
