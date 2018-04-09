@@ -1,10 +1,11 @@
-import store from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
   log,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 
 let monitor;
+let store;
 
 const data1 = Buffer.from('data1');
 const data2 = Buffer.from('data2');
@@ -16,6 +17,7 @@ describe('cli', () => {
       describe('redux', () => {
         describe('log', () => {
           before(() => {
+            store = createStore({});
             store.dispatch(reset());
             store.dispatch(log(data1));
             monitor = store.getState().monitor;

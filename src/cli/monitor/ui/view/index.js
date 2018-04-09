@@ -4,10 +4,6 @@ import blessed from 'blessed';
 import Layout from './layout';
 import Monitor from './monitor';
 import Jobs from './jobs';
-import Job from './job';
-import Metric from './metric';
-import Table from './table';
-import Service from './service';
 import logger from './logger';
 import {
   UI_LOG,
@@ -29,7 +25,7 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView(service, store, workingDir, debug) {
+function createView({service, store, workingDir, debug, types}) {
   const screen = blessed.screen({
     smartCSR: true,
     log: path.join(workingDir, UI_LOG),
@@ -79,7 +75,7 @@ function createView(service, store, workingDir, debug) {
   });
   const monitor = new Monitor();
   layout.append(MONITOR_LABEL, monitor);
-  const jobs = new Jobs({Job, Metric, Table, Service, layout});
+  const jobs = new Jobs({types, layout});
   const update = _.throttle(() => {
     const state = store.getState();
     monitor.update(state.monitor);

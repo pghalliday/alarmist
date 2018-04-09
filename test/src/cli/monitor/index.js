@@ -5,6 +5,7 @@ import {
   WORKING_DIR,
 } from '../../../helpers/constants';
 import {
+  DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
@@ -48,11 +49,12 @@ describe('cli', () => {
     });
 
     it('should create a ui', async () => {
-      ui.createUi.should.have.been.calledWith(
+      ui.createUi.should.have.been.calledWithMatch({
         monitor,
-        DEFAULT_WORKING_DIR,
-        DEFAULT_DEBUG_OPTION
-      );
+        configFile: DEFAULT_CONFIG_FILE,
+        workingDir: DEFAULT_WORKING_DIR,
+        debug: DEFAULT_DEBUG_OPTION,
+      });
     });
   });
 });

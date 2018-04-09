@@ -24,7 +24,7 @@ module.exports = function cli(argv) {
     process.exit(1);
   }
   return alarmist.execMonitor(opts)
-  .then((monitor) => ui.createUi(monitor, opts.workingDir, opts.debug))
+  .then((monitor) => ui.createUi(Object.assign({}, opts, {monitor})))
   .catch(
     // istanbul ignore next
     (error) => {

@@ -1,4 +1,4 @@
-import store from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
   resize,
@@ -13,6 +13,7 @@ describe('cli', () => {
       describe('redux', () => {
         describe('resize', () => {
           before(() => {
+            const store = createStore({});
             store.dispatch(reset());
             store.dispatch(resize({
               width: 100,

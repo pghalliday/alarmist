@@ -1,11 +1,5 @@
 import Jobs from '../../../../../../src/cli/monitor/ui/view/jobs';
 import {jobLabel} from '../../../../../../src/cli/monitor/ui/helpers';
-import {
-  TYPE_JOB,
-  TYPE_SERVICE,
-  TYPE_TABLE,
-  TYPE_METRIC,
-} from '../../../../../../src/cli/monitor/ui/constants';
 
 let jobs;
 const layout = {
@@ -13,63 +7,40 @@ const layout = {
 };
 let job;
 let lastJob;
-class Job {
-  constructor() {
+class Type {
+  constructor(name) {
     this.update = sinon.spy();
+    this.name = name;
     job = this;
   }
 }
-class Metric {
-  constructor() {
-    this.update = sinon.spy();
-    job = this;
-  }
-}
-class Table {
-  constructor() {
-    this.update = sinon.spy();
-    job = this;
-  }
-}
-class Service {
-  constructor() {
-    this.update = sinon.spy();
-    job = this;
-  }
-}
+const types = {
+  type: {
+    createView: (name) => {
+      return new Type(name);
+    },
+  },
+};
 
+const type = 'type';
 const name = 'name';
 const anotherName = 'anotherName';
 
 const status = {
-  type: TYPE_JOB,
-  name,
-};
-const metricStatus = {
-  type: TYPE_METRIC,
-  name,
-};
-const tableStatus = {
-  type: TYPE_TABLE,
+  type,
   name,
 };
 const anotherStatus = {
-  type: TYPE_SERVICE,
+  type,
   name: anotherName,
 };
 const updatedStatus = {
-  type: TYPE_SERVICE,
+  type,
   name: anotherName,
 };
 
 const newJob = {
   [name]: status,
-};
-const newMetric = {
-  [name]: metricStatus,
-};
-const newTable = {
-  [name]: tableStatus,
 };
 const anotherNewJob = {
   [name]: status,
@@ -89,10 +60,7 @@ describe('cli', () => {
             describe('with a new job', () => {
               before(() => {
                 jobs = new Jobs({
-                  Job,
-                  Metric,
-                  Table,
-                  Service,
+                  types,
                   layout,
                 });
                 layout.append.reset();
@@ -101,7 +69,8 @@ describe('cli', () => {
               });
 
               it('should create a new job', () => {
-                job.should.be.an.instanceOf(Job);
+                job.should.be.an.instanceOf(Type);
+                job.name.should.eql(name);
               });
 
               it('should update the new job', () => {
@@ -125,8 +94,9 @@ describe('cli', () => {
                   jobs.update(anotherNewJob);
                 });
 
-                it('should create a new service', () => {
-                  job.should.be.an.instanceOf(Service);
+                it('should create a new job', () => {
+                  job.should.be.an.instanceOf(Type);
+                  job.name.should.eql(anotherName);
                 });
 
                 it('should update the new job', () => {
@@ -167,60 +137,6 @@ describe('cli', () => {
                     );
                   });
                 });
-              });
-            });
-
-            describe('with a new metric', () => {
-              before(() => {
-                jobs = new Jobs({Job, Metric, Table, Service, layout});
-                layout.append.reset();
-                job = undefined;
-                jobs.update(newMetric);
-              });
-
-              it('should create a new metric', () => {
-                job.should.be.an.instanceOf(Metric);
-              });
-
-              it('should update the new metric', () => {
-                job.update.should.have.been.calledOnce;
-                job.update.should.have.been.calledWith(
-                  sinon.match.same(metricStatus)
-                );
-              });
-
-              it('should append the metric to the layout', () => {
-                layout.append.should.have.been.calledWith(
-                  jobLabel(name),
-                  job,
-                );
-              });
-            });
-
-            describe('with a new table', () => {
-              before(() => {
-                jobs = new Jobs({Job, Metric, Table, Service, layout});
-                layout.append.reset();
-                job = undefined;
-                jobs.update(newTable);
-              });
-
-              it('should create a new table', () => {
-                job.should.be.an.instanceOf(Table);
-              });
-
-              it('should update the new table', () => {
-                job.update.should.have.been.calledOnce;
-                job.update.should.have.been.calledWith(
-                  sinon.match.same(tableStatus)
-                );
-              });
-
-              it('should append the table to the layout', () => {
-                layout.append.should.have.been.calledWith(
-                  jobLabel(name),
-                  job,
-                );
               });
             });
           });

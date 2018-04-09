@@ -1,28 +1,29 @@
 import _ from 'lodash';
 import {
   end,
-  runStart,
-  runEnd,
-  runLog,
   log,
 } from '../redux/actions';
 
-export function createService(monitor, store) {
+export function createService({monitor, store, types}) {
+  const createRunAction = (name) => (status) => {
+    const type = types[status.type];
+    if (type) {
+      type.service[name](status);
+    } else {
+      // TODO: log unknown type error
+    }
+  };
+
   const onEnd = (code) => {
     store.dispatch(end(code));
   };
-  const onRunStart = (status) => {
-    store.dispatch(runStart(status));
-  };
-  const onRunEnd = (status) => {
-    store.dispatch(runEnd(status));
-  };
-  const onRunLog = (logData) => {
-    store.dispatch(runLog(logData));
-  };
+  const onRunStart = createRunAction('start');
+  const onRunEnd = createRunAction('end');
+  const onRunLog = createRunAction('log');
   const onLog = (data) => {
     store.dispatch(log(data));
   };
+
   monitor.on('end', onEnd);
   monitor.on('run-start', onRunStart);
   monitor.on('run-end', onRunEnd);

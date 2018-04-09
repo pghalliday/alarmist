@@ -1,4 +1,4 @@
-import store from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
   runStart,
@@ -12,6 +12,7 @@ import {
   jobLabel,
 } from '../../../../../../src/cli/monitor/ui/helpers';
 
+let store;
 let selected;
 let lines;
 
@@ -37,6 +38,7 @@ describe('cli', () => {
       describe('redux', () => {
         describe('with 3 lines and the first selected', () => {
           before(() => {
+            store = createStore({});
             store.dispatch(reset());
             store.dispatch(runStart(job));
             store.dispatch(runStart(otherJob));

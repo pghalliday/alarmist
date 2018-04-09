@@ -1,4 +1,4 @@
-import store from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
   end,
@@ -15,6 +15,7 @@ describe('cli', () => {
       describe('redux', () => {
         describe('end', () => {
           before(() => {
+            const store = createStore({});
             store.dispatch(reset());
             store.dispatch(end(error));
             monitor = store.getState().monitor;

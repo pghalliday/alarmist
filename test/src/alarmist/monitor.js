@@ -25,7 +25,7 @@ const exitCode = 0;
 
 const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
-const configFile = path.join('test', 'types', 'config.js');
+const configFile = 'config file';
 const workingDir = WORKING_DIR;
 const name = 'job name';
 const type = 'type';
@@ -77,21 +77,6 @@ describe('alarmist', () => {
         configFile,
         workingDir,
       });
-    });
-
-    it('should register the log type', async () => {
-      // TODO
-      await monitor.close();
-    });
-
-    it('should register the service type', async () => {
-      // TODO
-      await monitor.close();
-    });
-
-    it('should register the types from the config file', async () => {
-      // TODO
-      await monitor.close();
     });
 
     it('should open a log stream', async () => {

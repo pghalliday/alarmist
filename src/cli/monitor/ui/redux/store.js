@@ -1,4 +1,6 @@
-import {createStore} from 'redux';
-import reducer from './reducer';
+import {createStore as reduxCreateStore} from 'redux';
+import {createReducer} from './reducer';
 
-export default createStore(reducer);
+export function createStore(types) {
+  return reduxCreateStore(createReducer(types));
+}
