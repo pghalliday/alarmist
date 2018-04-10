@@ -3,7 +3,7 @@ import {
   taskStart,
   taskLog,
   taskEnd,
-} from './actions';
+} from './reducer';
 
 class TaskService extends Service {
   start(status) {

@@ -7,7 +7,7 @@ import {
   taskStart,
   taskLog,
   taskEnd,
-} from '../../../../../../../src/cli/monitor/ui/types/task/actions';
+} from '../../../../../../../src/cli/monitor/ui/types/task/reducer';
 
 let service;
 let store;

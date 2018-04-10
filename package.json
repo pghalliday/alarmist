@@ -76,6 +76,7 @@
     "mkdirp": "^0.5.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
+    "reselect": "^3.0.1",
     "rimraf": "^2.5.4",
     "sanitize-filename": "^1.6.1",
     "simple-json-doc-stream": "^1.0.0",
