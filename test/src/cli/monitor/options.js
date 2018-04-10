@@ -9,12 +9,15 @@ import {
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
+  DEFAULT_MONITOR_NAME,
   NO_COMMAND_ERROR,
+  MULTIPLE_NAMES_ERROR,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
   MULTIPLE_CONFIG_FILES_ERROR,
   MONITOR_USAGE_TEXT,
 } from '../../../../src/constants';
 
+const name = 'name';
 const workingDir = 'working dir';
 const configFile = 'config file';
 const command = 'command';
@@ -54,6 +57,8 @@ const shortOptions = [
   '-d',
   '-r',
   '-f',
+  '-n',
+  name,
   '-c',
   configFile,
   '-w',
@@ -67,6 +72,8 @@ const fullOptions = [
   '--debug',
   '--reset',
   '--force-color',
+  '--name',
+  name,
   '--config-file',
   configFile,
   '--working-dir',
@@ -80,10 +87,22 @@ const negatedOptions = [
   '--no-debug',
   '--no-reset',
   '--no-force-color',
+  '--name',
+  name,
   '--config-file',
   configFile,
   '--working-dir',
   workingDir,
+  command,
+  arg1,
+  arg2,
+];
+
+const names = [
+  '--name',
+  name,
+  '--name',
+  name,
   command,
   arg1,
   arg2,
@@ -127,6 +146,10 @@ describe('cli', () => {
           'with no command': {
             argv: noCommand,
             error: NO_COMMAND_ERROR,
+          },
+          'with multiple names specified': {
+            argv: names,
+            error: MULTIPLE_NAMES_ERROR,
           },
           'with multiple working directories specified': {
             argv: workingDirectories,
@@ -195,6 +218,7 @@ describe('cli', () => {
             reset: DEFAULT_RESET_OPTION,
             workingDir: DEFAULT_WORKING_DIR,
             configFile: DEFAULT_CONFIG_FILE,
+            name: DEFAULT_MONITOR_NAME,
           },
           'with short options': {
             argv: shortOptions,
@@ -203,6 +227,7 @@ describe('cli', () => {
             reset: true,
             workingDir,
             configFile,
+            name,
           },
           'with full options': {
             argv: fullOptions,
@@ -211,6 +236,7 @@ describe('cli', () => {
             reset: true,
             workingDir,
             configFile,
+            name,
           },
           'with negated options': {
             argv: negatedOptions,
@@ -219,6 +245,7 @@ describe('cli', () => {
             reset: false,
             workingDir,
             configFile,
+            name,
           },
         }, (value, key) => {
           describe(key, () => {
@@ -244,6 +271,10 @@ describe('cli', () => {
 
             it('should set the reset option', () => {
               options.reset.should.eql(value.reset);
+            });
+
+            it('should set the name', () => {
+              options.name.should.eql(value.name);
             });
 
             it('should set the working directory', () => {

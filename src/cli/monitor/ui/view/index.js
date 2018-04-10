@@ -2,8 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import blessed from 'blessed';
 import Layout from './layout';
-import Monitor from './monitor';
-import Jobs from './jobs';
+import Entries from './entries';
 import logger from './logger';
 import {
   UI_LOG,
@@ -17,9 +16,6 @@ import {
   moveDown,
   toggleExpanded,
 } from '../redux/actions';
-import {
-  MONITOR_LABEL,
-} from '../constants';
 import {
   CONTAINER_PROPERTIES,
 } from './constants';
@@ -73,13 +69,10 @@ function createView({service, store, workingDir, debug, types}) {
   layout.on('toggleExpanded', () => {
     store.dispatch(toggleExpanded());
   });
-  const monitor = new Monitor();
-  layout.append(MONITOR_LABEL, monitor);
-  const jobs = new Jobs({types, layout});
+  const entries = new Entries({types, layout});
   const update = _.throttle(() => {
     const state = store.getState();
-    monitor.update(state.monitor);
-    jobs.update(state.jobs);
+    entries.update(state.entries);
     layout.apply(state.layout);
     screen.render();
   });

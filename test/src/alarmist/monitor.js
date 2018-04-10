@@ -21,12 +21,13 @@ const rimraf = promisify(_rimraf);
 const readFile = promisify(_readFile);
 
 const log = Buffer.from('log');
-const exitCode = 0;
+const error = 'error';
 
 const monitorLog = path.join(WORKING_DIR, MONITOR_LOG);
 
 const configFile = 'config file';
 const workingDir = WORKING_DIR;
+const monitorName = 'monitor name';
 const name = 'job name';
 const type = 'type';
 const id = 1;
@@ -42,7 +43,7 @@ const startEvent = {
 
 const endMessage = {
   endTime,
-  exitCode,
+  error,
 };
 
 const endEvent = {
@@ -51,12 +52,13 @@ const endEvent = {
   type,
   startTime,
   endTime,
-  exitCode,
+  error,
 };
 
 const beginMessage = {
   name,
   id,
+  type,
 };
 
 const logData = 'log data';
@@ -64,6 +66,7 @@ const logData = 'log data';
 const logEvent = {
   name,
   id,
+  type,
   data: Buffer.from(logData),
 };
 
@@ -76,12 +79,31 @@ describe('alarmist', () => {
         reset: true,
         configFile,
         workingDir,
+        name: monitorName,
       });
     });
 
     it('should open a log stream', async () => {
       monitor.log.should.be.ok;
       await monitor.close();
+    });
+
+    describe('#start', () => {
+      let event;
+      beforeEach((done) => {
+        monitor.on('start', (_event) => {
+          event = _event;
+          done();
+        });
+        monitor.start();
+      });
+
+      it('should emit a start event', () => {
+        event.name.should.eql(monitorName);
+        event.id.should.eql(0);
+        event.startTime.should.be.ok;
+        event.type.should.eql('service');
+      });
     });
 
     describe('should open a control socket', () => {
@@ -104,7 +126,7 @@ describe('alarmist', () => {
         let ready;
         beforeEach((done) => {
           controlConnection.write(JSON.stringify(startEvent));
-          monitor.on('run-start', (_event) => {
+          monitor.on('start', (_event) => {
             event = _event;
           });
           controlConnection.once('data', (_ready) => {
@@ -124,7 +146,7 @@ describe('alarmist', () => {
         describe('and then recieves an end message', () => {
           beforeEach((done) => {
             controlConnection.write(JSON.stringify(endMessage));
-            monitor.on('run-end', (_event) => {
+            monitor.on('end', (_event) => {
               event = _event;
               done();
             });
@@ -166,7 +188,7 @@ describe('alarmist', () => {
           let event;
           beforeEach((done) => {
             logConnection.write(logData);
-            monitor.on('run-log', (_event) => {
+            monitor.on('log', (_event) => {
               event = _event;
               done();
             });
@@ -180,6 +202,7 @@ describe('alarmist', () => {
     });
 
     describe('#end', () => {
+      let event;
       let exitEvent;
       let receivedLog;
       beforeEach(async () => {
@@ -193,7 +216,11 @@ describe('alarmist', () => {
           monitor.log.on('data', (data) => {
             receivedLog = Buffer.concat([receivedLog, data]);
           });
+          monitor.on('log', (_event) => {
+            event = _event;
+          });
           monitor.log.write(log);
+          monitor.start();
           monitor.end('message');
         });
         await monitor.close();
@@ -204,12 +231,26 @@ describe('alarmist', () => {
         _log[0].should.eql(log);
       });
 
+      it('should emit a log event', () => {
+        event.should.eql({
+          name: monitorName,
+          id: 0,
+          type: 'service',
+          data: log,
+        });
+      });
+
       it('should allow log stream to be read', async () => {
         receivedLog.should.eql(log);
       });
 
       it('should emit an end event', async () => {
-        exitEvent.should.eql('message');
+        exitEvent.name.should.eql(monitorName);
+        exitEvent.id.should.eql(0);
+        exitEvent.type.should.eql('service');
+        exitEvent.startTime.should.be.ok;
+        exitEvent.endTime.should.be.ok;
+        exitEvent.error.should.eql('message');
       });
     });
 

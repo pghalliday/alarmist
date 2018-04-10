@@ -2,8 +2,8 @@ import {createStore} from './redux/store';
 import {createService} from './service';
 import {createView} from './view';
 
-import exec from './types/log';
-import spawn from './types/service';
+import task from './types/task';
+import service from './types/service';
 
 import loadConfigFile from '../../../utils/load-config-file';
 import modulePath from '../../../utils/module-path';
@@ -11,7 +11,7 @@ import modulePath from '../../../utils/module-path';
 // istanbul ignore next
 function createUi({monitor, configFile, workingDir, debug}) {
   const types = {
-    log,
+    task,
     service,
   };
   loadConfigFile(configFile).then((config) => {

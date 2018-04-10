@@ -19,7 +19,10 @@ import _ from 'lodash';
 const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
-export async function createMonitor({reset, workingDir}) {
+const type = 'service';
+const id = 0;
+
+export async function createMonitor({reset, name, workingDir}) {
   const monitorLog = path.join(workingDir, MONITOR_LOG);
   const monitor = new EventEmitter();
   // istanbul ignore else
@@ -42,10 +45,10 @@ export async function createMonitor({reset, workingDir}) {
   const controlServer = createServer((client) => {
     client.once('data', (data) => {
       const start = JSON.parse(data);
-      monitor.emit('run-start', start);
+      monitor.emit('start', start);
       client.once('data', (data) => {
         const end = JSON.parse(data);
-        monitor.emit('run-end', Object.assign({}, start, end));
+        monitor.emit('end', Object.assign({}, start, end));
       });
       client.write(READY_RESPONSE);
     });
@@ -59,7 +62,7 @@ export async function createMonitor({reset, workingDir}) {
     client.once('data', (data) => {
       const begin = JSON.parse(data);
       client.on('data', (data) => {
-        monitor.emit('run-log', Object.assign({}, begin, {
+        monitor.emit('log', Object.assign({}, begin, {
           data,
         }));
       });
@@ -70,7 +73,16 @@ export async function createMonitor({reset, workingDir}) {
   const logClose = promisify(logServer.close.bind(logServer));
   const logSocket = await getLogSocket(workingDir, true);
   await logListen(logSocket);
+  log.on('data', (data) => {
+    monitor.emit('log', {
+      name,
+      id,
+      type,
+      data,
+    });
+  });
   // expose the monitor properties and methods
+  monitor.log = log;
   monitor.close = async () => {
     if (!_.isUndefined(monitor.cleanup)) {
       await monitor.cleanup();
@@ -79,10 +91,24 @@ export async function createMonitor({reset, workingDir}) {
     await controlClose();
     await logClose();
   };
-  monitor.log = log;
+  let start;
+  monitor.start = () => {
+    const startTime = Date.now();
+    start = {
+      name,
+      id,
+      type,
+      startTime,
+    };
+    monitor.emit('start', start);
+  };
   monitor.end = async (error) => {
     await endLogStream();
-    monitor.emit('end', error);
+    const endTime = Date.now();
+    monitor.emit('end', Object.assign({}, start, {
+      endTime,
+      error,
+    }));
   };
   return monitor;
 }

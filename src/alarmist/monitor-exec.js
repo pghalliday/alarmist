@@ -17,11 +17,13 @@ export async function exec({
   color,
   configFile,
   workingDir,
+  name,
 }) {
   const monitor = await Monitor.createMonitor({
     reset,
     configFile,
     workingDir,
+    name,
   });
   const proc = spawn(command, args, {
     env: Object.assign({}, process.env, {

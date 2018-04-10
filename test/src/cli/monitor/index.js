@@ -5,6 +5,7 @@ import {
   WORKING_DIR,
 } from '../../../helpers/constants';
 import {
+  DEFAULT_MONITOR_NAME,
   DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_DEBUG_OPTION,
@@ -45,6 +46,7 @@ describe('cli', () => {
         color: DEFAULT_COLOR_OPTION,
         reset: DEFAULT_RESET_OPTION,
         workingDir: DEFAULT_WORKING_DIR,
+        name: DEFAULT_MONITOR_NAME,
       });
     });
 

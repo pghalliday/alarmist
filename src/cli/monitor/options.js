@@ -8,13 +8,16 @@ import {
   FORCE_COLOR_VAR,
   DEBUG_VAR,
   RESET_VAR,
+  MONITOR_NAME_VAR,
   DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
+  DEFAULT_MONITOR_NAME,
   MULTIPLE_WORKING_DIRECTORIES_ERROR,
   MULTIPLE_CONFIG_FILES_ERROR,
+  MULTIPLE_NAMES_ERROR,
   NO_COMMAND_ERROR,
   MONITOR_USAGE_TEXT,
 } from '../../constants';
@@ -50,6 +53,11 @@ const defaultWorkingDirectory = optionDefault(
   DEFAULT_WORKING_DIR,
 );
 
+const defaultName = optionDefault(
+  MONITOR_NAME_VAR,
+  DEFAULT_MONITOR_NAME,
+);
+
 const cliOpts = cliclopts([{
   name: 'config-file',
   abbr: 'c',
@@ -60,6 +68,11 @@ const cliOpts = cliclopts([{
   abbr: 'w',
   default: defaultWorkingDirectory,
   help: 'The directory in which to write logs, etc',
+}, {
+  name: 'name',
+  abbr: 'n',
+  default: defaultName,
+  help: 'The unique name of the monitor job',
 }, {
   name: 'reset',
   abbr: 'r',
@@ -120,6 +133,11 @@ export function parse(argv) {
       error: MULTIPLE_WORKING_DIRECTORIES_ERROR,
     };
   }
+  if (parsed['name'] instanceof Array) {
+    return {
+      error: MULTIPLE_NAMES_ERROR,
+    };
+  }
   if (_.isUndefined(command)) {
     return {
       error: NO_COMMAND_ERROR,
@@ -131,6 +149,7 @@ export function parse(argv) {
   const reset = parsed['reset'];
   const configFile = parsed['config-file'];
   const workingDir = parsed['working-dir'];
+  const name = parsed['name'];
   return {
     command,
     args,
@@ -139,6 +158,7 @@ export function parse(argv) {
     reset,
     configFile,
     workingDir,
+    name,
     help: false,
     version: false,
   };

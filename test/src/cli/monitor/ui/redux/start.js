@@ -2,17 +2,11 @@ import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {handleActions} from 'redux-actions';
 import {
   reset,
-  runStart,
+  start,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
-import {
-  MONITOR_LABEL,
-} from '../../../../../../src/cli/monitor/ui/constants';
-import {
-  jobLabel,
-} from '../../../../../../src/cli/monitor/ui/helpers';
 
 let store;
-let jobs;
+let entries;
 let layoutLines;
 
 let spys = {};
@@ -21,7 +15,7 @@ const types = {
     createReducer: (name) => {
       spys[name] = sinon.spy((state) => state);
       return handleActions({
-        [runStart]: spys[name],
+        [start]: spys[name],
       }, {
         name,
       });
@@ -29,43 +23,43 @@ const types = {
   },
 };
 
-const name = 'job name';
+const name = 'entry name';
 const type = 'type';
 const id = 2;
 const startTime = 100000;
 const laterId = 3;
 
-const otherName = 'other job name';
+const otherName = 'other entry name';
 const otherId = 1;
 
-const job = {
+const entry = {
   name,
   type,
   id,
   startTime,
 };
 
-const laterJob = {
+const laterEntry = {
   name,
   type,
   id: laterId,
   startTime,
 };
 
-const otherJob = {
+const otherEntry = {
   name: otherName,
   type,
   id: otherId,
   startTime,
 };
 
-const oneJob = {
+const oneEntry = {
   [name]: {
     name,
   },
 };
 
-const twoJobs = {
+const twoEntries = {
   [name]: {
     name,
   },
@@ -78,26 +72,25 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('redux', () => {
-        describe('runStart', () => {
+        describe('start', () => {
           describe('with an empty state', () => {
             before(() => {
               spys = {};
               store = createStore(types);
               store.dispatch(reset());
-              store.dispatch(runStart(job));
+              store.dispatch(start(entry));
               const state = store.getState();
-              jobs = state.jobs;
+              entries = state.entries;
               layoutLines = state.layout.lines;
             });
 
-            it('should add the first job', () => {
-              jobs.should.eql(oneJob);
+            it('should add the first entry', () => {
+              entries.should.eql(oneEntry);
             });
 
             it('should add to the layout lines', () => {
               layoutLines.should.eql([
-                MONITOR_LABEL,
-                jobLabel(name),
+                name,
               ]);
             });
 
@@ -106,32 +99,31 @@ describe('cli', () => {
               spys[name].should.have.been.calledWithMatch({
                 name,
               }, {
-                payload: job,
+                payload: entry,
               });
             });
           });
 
-          describe('with an existing job', () => {
-            describe('and a new job name', () => {
+          describe('with an existing entry', () => {
+            describe('and a new entry name', () => {
               before(() => {
                 spys = {};
                 store.dispatch(reset());
-                store.dispatch(runStart(job));
-                store.dispatch(runStart(otherJob));
+                store.dispatch(start(entry));
+                store.dispatch(start(otherEntry));
                 const state = store.getState();
-                jobs = state.jobs;
+                entries = state.entries;
                 layoutLines = state.layout.lines;
               });
 
-              it('should add a second job', () => {
-                jobs.should.eql(twoJobs);
+              it('should add a second entry', () => {
+                entries.should.eql(twoEntries);
               });
 
-              it('should add another job to the layout lines', () => {
+              it('should add another entry to the layout lines', () => {
                 layoutLines.should.eql([
-                  MONITOR_LABEL,
-                  jobLabel(name),
-                  jobLabel(otherName),
+                  name,
+                  otherName,
                 ]);
               });
 
@@ -140,40 +132,39 @@ describe('cli', () => {
                 spys[name].should.have.been.calledWithMatch({
                   name,
                 }, {
-                  payload: job,
+                  payload: entry,
                 });
                 spys[name].should.have.been.calledWithMatch({
                   name,
                 }, {
-                  payload: otherJob,
+                  payload: otherEntry,
                 });
                 spys[otherName].should.have.been.calledWithMatch({
                   name: otherName,
                 }, {
-                  payload: otherJob,
+                  payload: otherEntry,
                 });
               });
             });
 
-            describe('and the same job name', () => {
+            describe('and the same entry name', () => {
               before(() => {
                 spys = {};
                 store.dispatch(reset());
-                store.dispatch(runStart(job));
-                store.dispatch(runStart(laterJob));
+                store.dispatch(start(entry));
+                store.dispatch(start(laterEntry));
                 const state = store.getState();
-                jobs = state.jobs;
+                entries = state.entries;
                 layoutLines = state.layout.lines;
               });
 
-              it('should not add a second job', () => {
-                jobs.should.eql(oneJob);
+              it('should not add a second entry', () => {
+                entries.should.eql(oneEntry);
               });
 
-              it('should not add another job to the layout lines', () => {
+              it('should not add another entry to the layout lines', () => {
                 layoutLines.should.eql([
-                  MONITOR_LABEL,
-                  jobLabel(name),
+                  name,
                 ]);
               });
 
@@ -182,12 +173,12 @@ describe('cli', () => {
                 spys[name].should.have.been.calledWithMatch({
                   name,
                 }, {
-                  payload: job,
+                  payload: entry,
                 });
                 spys[name].should.have.been.calledWithMatch({
                   name,
                 }, {
-                  payload: laterJob,
+                  payload: laterEntry,
                 });
               });
             });

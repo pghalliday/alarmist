@@ -78,6 +78,7 @@ export async function createJob({
   logConnection.write(JSON.stringify({
     name,
     id,
+    type,
   }));
   await logReady;
   log.pipe(logConnection);
@@ -96,7 +97,7 @@ export async function createJob({
       }));
       await logEnded;
       controlConnection.end(JSON.stringify({
-        error: error,
+        error,
         endTime,
       }));
       await controlEnded;

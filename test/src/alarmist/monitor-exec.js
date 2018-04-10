@@ -30,6 +30,7 @@ const stderr = Buffer.from('stderr');
 const all = Buffer.concat([stdout, stderr]);
 const configFile = 'config file';
 const workingDir = 'working dir';
+const name = 'name';
 const reset = false;
 const color = false;
 const command = 'node';
@@ -94,6 +95,7 @@ describe('alarmist', function() {
             args: exitingArgs,
             configFile,
             workingDir,
+            name,
             reset,
             color,
           });
@@ -108,6 +110,7 @@ describe('alarmist', function() {
         Monitor.createMonitor.should.have.been.calledWith({
           configFile,
           workingDir,
+          name,
           reset,
         });
       });
@@ -168,6 +171,7 @@ describe('alarmist', function() {
           args: livingArgs,
           configFile,
           workingDir,
+          name,
           reset,
           color,
         });
@@ -182,6 +186,7 @@ describe('alarmist', function() {
         Monitor.createMonitor.should.have.been.calledWith({
           configFile,
           workingDir,
+          name,
           reset,
         });
       });

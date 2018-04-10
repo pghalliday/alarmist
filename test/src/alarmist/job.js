@@ -179,10 +179,12 @@ describe('alarmist', () => {
     it('should begin the log', async () => {
       successBegin.should.eql({
         name,
+        type,
         id: successId,
       });
       failBegin.should.eql({
         name,
+        type,
         id: failId,
       });
     });

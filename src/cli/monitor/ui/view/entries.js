@@ -1,34 +1,33 @@
 import _ from 'lodash';
-import {jobLabel} from '../helpers';
 
-export default class Jobs {
+export default class Entries {
   constructor({
     types,
     layout,
   }) {
     this.types = types;
     this.layout = layout;
-    this.jobs = {};
+    this.entries = {};
   }
   update(state) {
     _.forOwn(state, (status, name) => {
-      const existing = this.jobs[name];
+      const existing = this.entries[name];
       if (_.isUndefined(existing)) {
         const type = this.types[status.type];
         if (type) {
-          const job = type.createView(name);
-          this.jobs[name] = {
-            job: job,
+          const entry = type.createView(name);
+          this.entries[name] = {
+            entry: entry,
             status: status,
           };
-          this.layout.append(jobLabel(name), job);
-          job.update(status);
+          this.layout.append(name, entry);
+          entry.update(status);
         } else {
           // TODO: log unknown type error
         }
       } else {
         if (status !== existing.status) {
-          existing.job.update(status);
+          existing.entry.update(status);
         }
       }
     });

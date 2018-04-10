@@ -4,7 +4,6 @@ import {
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 
 let state;
-const emptyBuffer = Buffer.alloc(0);
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -19,14 +18,9 @@ describe('cli', () => {
 
           it('should restore the initial state', () => {
             state.should.eql({
-              monitor: {
-                log: emptyBuffer,
-              },
-              jobs: {},
+              entries: {},
               layout: {
-                lines: [
-                  'monitor',
-                ],
+                lines: [],
                 selected: 0,
                 expanded: false,
                 width: 0,

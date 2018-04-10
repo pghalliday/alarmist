@@ -24,7 +24,10 @@ module.exports = function cli(argv) {
     process.exit(1);
   }
   return alarmist.execMonitor(opts)
-  .then((monitor) => ui.createUi(Object.assign({}, opts, {monitor})))
+  .then((monitor) => {
+    ui.createUi(Object.assign({}, opts, {monitor}));
+    monitor.start();
+  })
   .catch(
     // istanbul ignore next
     (error) => {

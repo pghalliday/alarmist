@@ -1,99 +1,94 @@
 import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
-  runStart,
+  start,
   up,
   down,
   select,
   toggleExpanded,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
-import {
-  MONITOR_LABEL,
-} from '../../../../../../src/cli/monitor/ui/constants';
-import {
-  jobLabel,
-} from '../../../../../../src/cli/monitor/ui/helpers';
 
 let store;
 let selected;
 
-const name = 'job name';
-const id = 2;
+const id = 0;
+const type = 'type';
 
-const otherName = 'other job name';
-const otherId = 1;
+const firstName = 'first name';
+const secondName = 'second name';
+const thirdName = 'third name';
 
-const job = {
-  name,
+const firstEntry = {
+  name: firstName,
   id,
+  type,
 };
 
-const otherJob = {
-  name: otherName,
-  id: otherId,
+const secondEntry = {
+  name: secondName,
+  id,
+  type,
+};
+
+const thirdEntry = {
+  name: thirdName,
+  id,
+  type,
 };
 
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('redux', () => {
-        describe('with 3 lines and the first selected', () => {
-          before(() => {
-            store = createStore({});
-            store.dispatch(reset());
-            store.dispatch(runStart(job));
-            store.dispatch(runStart(otherJob));
-          });
-
-          describe('select', () => {
-            describe('with a different entry', () => {
-              it('should select the entry and expand', () => {
-                store.dispatch(select(jobLabel(name)));
-                store.getState().layout.selected.should.eql(1);
-                store.getState().layout.expanded.should.be.true;
-                store.dispatch(toggleExpanded());
-                store.dispatch(select(jobLabel(otherName)));
-                store.getState().layout.selected.should.eql(2);
-                store.getState().layout.expanded.should.be.true;
-                store.dispatch(toggleExpanded());
-                store.dispatch(select(MONITOR_LABEL));
-                store.getState().layout.selected.should.eql(0);
-                store.getState().layout.expanded.should.be.true;
-                store.dispatch(toggleExpanded());
-              });
-            });
-
-            describe('with the same entry', () => {
-              it('should toggle expansion', () => {
-                store.dispatch(select(jobLabel(name)));
-                const expanded = store.getState().layout.expanded;
-                store.dispatch(select(jobLabel(name)));
-                store.getState().layout.expanded.should.eql(!expanded);
-                store.dispatch(select(jobLabel(name)));
-                store.getState().layout.expanded.should.eql(expanded);
-              });
-            });
-          });
-
-          describe('down', () => {
+        describe('selected', () => {
+          describe('with 3 lines and the first selected', () => {
             before(() => {
-              store.dispatch(select(MONITOR_LABEL));
-              store.dispatch(down());
-              selected = store.getState().layout.selected;
+              store = createStore({});
+              store.dispatch(reset());
+              store.dispatch(start(firstEntry));
+              store.dispatch(start(secondEntry));
+              store.dispatch(start(thirdEntry));
             });
 
-            it('should select the second line', () => {
-              selected.should.eql(1);
+            describe('select', () => {
+              describe('with a different entry', () => {
+                it('should select the entry and expand', () => {
+                  store.dispatch(select(secondName));
+                  store.getState().layout.selected.should.eql(1);
+                  store.getState().layout.expanded.should.be.true;
+                  store.dispatch(toggleExpanded());
+                  store.dispatch(select(thirdName));
+                  store.getState().layout.selected.should.eql(2);
+                  store.getState().layout.expanded.should.be.true;
+                  store.dispatch(toggleExpanded());
+                  store.dispatch(select(firstName));
+                  store.getState().layout.selected.should.eql(0);
+                  store.getState().layout.expanded.should.be.true;
+                  store.dispatch(toggleExpanded());
+                });
+              });
+
+              describe('with the same entry', () => {
+                it('should toggle expansion', () => {
+                  store.dispatch(select(firstName));
+                  const expanded = store.getState().layout.expanded;
+                  store.dispatch(select(firstName));
+                  store.getState().layout.expanded.should.eql(!expanded);
+                  store.dispatch(select(firstName));
+                  store.getState().layout.expanded.should.eql(expanded);
+                });
+              });
             });
 
-            describe('then down again', () => {
+            describe('down', () => {
               before(() => {
+                store.dispatch(select(firstName));
                 store.dispatch(down());
                 selected = store.getState().layout.selected;
               });
 
-              it('should select the third line', () => {
-                selected.should.eql(2);
+              it('should select the second line', () => {
+                selected.should.eql(1);
               });
 
               describe('then down again', () => {
@@ -102,29 +97,29 @@ describe('cli', () => {
                   selected = store.getState().layout.selected;
                 });
 
-                it('should not change selected', () => {
+                it('should select the third line', () => {
                   selected.should.eql(2);
                 });
-              });
 
-              describe('then up', () => {
-                before(() => {
-                  store.dispatch(up());
-                  selected = store.getState().layout.selected;
+                describe('then down again', () => {
+                  before(() => {
+                    store.dispatch(down());
+                    selected = store.getState().layout.selected;
+                  });
+
+                  it('should not change selected', () => {
+                    selected.should.eql(2);
+                  });
                 });
 
-                it('should reselect the second line', () => {
-                  selected.should.eql(1);
-                });
-
-                describe('then up again', () => {
+                describe('then up', () => {
                   before(() => {
                     store.dispatch(up());
                     selected = store.getState().layout.selected;
                   });
 
-                  it('should reselect the first line', () => {
-                    selected.should.eql(0);
+                  it('should reselect the second line', () => {
+                    selected.should.eql(1);
                   });
 
                   describe('then up again', () => {
@@ -133,8 +128,19 @@ describe('cli', () => {
                       selected = store.getState().layout.selected;
                     });
 
-                    it('should not change selected', () => {
+                    it('should reselect the first line', () => {
                       selected.should.eql(0);
+                    });
+
+                    describe('then up again', () => {
+                      before(() => {
+                        store.dispatch(up());
+                        selected = store.getState().layout.selected;
+                      });
+
+                      it('should not change selected', () => {
+                        selected.should.eql(0);
+                      });
                     });
                   });
                 });

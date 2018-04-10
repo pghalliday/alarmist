@@ -1,67 +1,55 @@
 import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
 import {
   reset,
-  runStart,
+  start,
   moveUp,
   moveDown,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
-import {
-  MONITOR_LABEL,
-} from '../../../../../../src/cli/monitor/ui/constants';
-import {
-  jobLabel,
-} from '../../../../../../src/cli/monitor/ui/helpers';
 
 let store;
 let selected;
 let lines;
 
-const name = 'job name';
-const id = 2;
+const id = 0;
+const type = 'type';
 
-const otherName = 'other job name';
-const otherId = 1;
+const firstName = 'first name';
+const secondName = 'second name';
+const thirdName = 'third name';
 
-const job = {
-  name,
+const firstEntry = {
+  name: firstName,
   id,
+  type,
 };
 
-const otherJob = {
-  name: otherName,
-  id: otherId,
+const secondEntry = {
+  name: secondName,
+  id,
+  type,
+};
+
+const thirdEntry = {
+  name: thirdName,
+  id,
+  type,
 };
 
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('redux', () => {
-        describe('with 3 lines and the first selected', () => {
-          before(() => {
-            store = createStore({});
-            store.dispatch(reset());
-            store.dispatch(runStart(job));
-            store.dispatch(runStart(otherJob));
-          });
-
-          describe('move down', () => {
+        describe('positions', () => {
+          describe('with 3 lines and the first selected', () => {
             before(() => {
-              store.dispatch(moveDown());
-              const layout = store.getState().layout;
-              selected = layout.selected;
-              lines = layout.lines;
+              store = createStore({});
+              store.dispatch(reset());
+              store.dispatch(start(firstEntry));
+              store.dispatch(start(secondEntry));
+              store.dispatch(start(thirdEntry));
             });
 
-            it('should swap the first and second lines', () => {
-              selected.should.eql(1);
-              lines.should.eql([
-                jobLabel(name),
-                MONITOR_LABEL,
-                jobLabel(otherName),
-              ]);
-            });
-
-            describe('then down again', () => {
+            describe('move down', () => {
               before(() => {
                 store.dispatch(moveDown());
                 const layout = store.getState().layout;
@@ -69,12 +57,12 @@ describe('cli', () => {
                 lines = layout.lines;
               });
 
-              it('should swap the second and third lines', () => {
-                selected.should.eql(2);
+              it('should swap the first and second lines', () => {
+                selected.should.eql(1);
                 lines.should.eql([
-                  jobLabel(name),
-                  jobLabel(otherName),
-                  MONITOR_LABEL,
+                  secondName,
+                  firstName,
+                  thirdName,
                 ]);
               });
 
@@ -86,34 +74,34 @@ describe('cli', () => {
                   lines = layout.lines;
                 });
 
-                it('should not change anything', () => {
+                it('should swap the second and third lines', () => {
                   selected.should.eql(2);
                   lines.should.eql([
-                    jobLabel(name),
-                    jobLabel(otherName),
-                    MONITOR_LABEL,
-                  ]);
-                });
-              });
-
-              describe('then up', () => {
-                before(() => {
-                  store.dispatch(moveUp());
-                  const layout = store.getState().layout;
-                  selected = layout.selected;
-                  lines = layout.lines;
-                });
-
-                it('should swap the second and third lines back', () => {
-                  selected.should.eql(1);
-                  lines.should.eql([
-                    jobLabel(name),
-                    MONITOR_LABEL,
-                    jobLabel(otherName),
+                    secondName,
+                    thirdName,
+                    firstName,
                   ]);
                 });
 
-                describe('then up again', () => {
+                describe('then down again', () => {
+                  before(() => {
+                    store.dispatch(moveDown());
+                    const layout = store.getState().layout;
+                    selected = layout.selected;
+                    lines = layout.lines;
+                  });
+
+                  it('should not change anything', () => {
+                    selected.should.eql(2);
+                    lines.should.eql([
+                      secondName,
+                      thirdName,
+                      firstName,
+                    ]);
+                  });
+                });
+
+                describe('then up', () => {
                   before(() => {
                     store.dispatch(moveUp());
                     const layout = store.getState().layout;
@@ -121,12 +109,12 @@ describe('cli', () => {
                     lines = layout.lines;
                   });
 
-                  it('should swap the first and second lines back', () => {
-                    selected.should.eql(0);
+                  it('should swap the second and third lines back', () => {
+                    selected.should.eql(1);
                     lines.should.eql([
-                      MONITOR_LABEL,
-                      jobLabel(name),
-                      jobLabel(otherName),
+                      secondName,
+                      firstName,
+                      thirdName,
                     ]);
                   });
 
@@ -138,13 +126,31 @@ describe('cli', () => {
                       lines = layout.lines;
                     });
 
-                    it('should not change anything', () => {
+                    it('should swap the first and second lines back', () => {
                       selected.should.eql(0);
                       lines.should.eql([
-                        MONITOR_LABEL,
-                        jobLabel(name),
-                        jobLabel(otherName),
+                        firstName,
+                        secondName,
+                        thirdName,
                       ]);
+                    });
+
+                    describe('then up again', () => {
+                      before(() => {
+                        store.dispatch(moveUp());
+                        const layout = store.getState().layout;
+                        selected = layout.selected;
+                        lines = layout.lines;
+                      });
+
+                      it('should not change anything', () => {
+                        selected.should.eql(0);
+                        lines.should.eql([
+                          firstName,
+                          secondName,
+                          thirdName,
+                        ]);
+                      });
                     });
                   });
                 });

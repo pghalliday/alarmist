@@ -1,15 +1,17 @@
 export const CONFIG_FILE_VAR = 'ALARMIST_CONFIG_FILE';
 export const WORKING_DIRECTORY_VAR = 'ALARMIST_WORKING_DIRECTORY';
+export const MONITOR_NAME_VAR = 'ALARMIST_MONITOR_NAME';
 export const DEBUG_VAR = 'ALARMIST_DEBUG';
 export const FORCE_COLOR_VAR = 'FORCE_COLOR';
 export const TYPE_VAR = 'ALARMIST_TYPE';
 export const RESET_VAR = 'ALARMIST_RESET';
 export const DEFAULT_CONFIG_FILE = '.alarmist.js';
+export const DEFAULT_MONITOR_NAME = 'name';
 export const DEFAULT_WORKING_DIR = '.alarmist';
 export const DEFAULT_DEBUG_OPTION = false;
 export const DEFAULT_COLOR_OPTION = true;
 export const DEFAULT_METRIC_OPTION = false;
-export const DEFAULT_TYPE_OPTION = 'log';
+export const DEFAULT_TYPE_OPTION = 'task';
 export const DEFAULT_RESET_OPTION = true;
 export const JOB_USAGE_TEXT = `
 Usage: alarmist-job [options] <name> <command> [<arg>...]
@@ -60,6 +62,8 @@ Options:
 export const MULTIPLE_WORKING_DIRECTORIES_ERROR = 'Working directory specified multiple times';
 // eslint-disable-next-line max-len
 export const MULTIPLE_CONFIG_FILES_ERROR = 'Config file specified multiple times';
+// eslint-disable-next-line max-len
+export const MULTIPLE_NAMES_ERROR = 'Name specified multiple times';
 // eslint-disable-next-line max-len
 export const MULTIPLE_TYPES_ERROR = 'Type specified multiple times';
 export const NO_COMMAND_ERROR = 'Command not specified';

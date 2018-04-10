@@ -22,12 +22,12 @@ export default class Layout extends EventEmitter {
     });
     this.container.append(this.selectedIndicator);
   }
-  append(label, entry) {
-    logger.log(`appending ${label}`);
+  append(name, entry) {
+    logger.log(`appending ${name}`);
     entry.on('select', () => {
-      this.emit('select', label);
+      this.emit('select', name);
     });
-    this.entries[label] = entry;
+    this.entries[name] = entry;
     entry.setParent(this.container);
   }
   apply(state) {
@@ -43,15 +43,15 @@ export default class Layout extends EventEmitter {
         0
       );
       let top = 0;
-      for (let label of lines) {
-        const entry = this.entries[label];
+      for (let name of lines) {
+        const entry = this.entries[name];
         // the state starts with height 0, so first we measure the height
         const height = state.height || this.container.height;
         const realContentHeight = height - totalHeaderHeight;
         entry.setContentHeight(realContentHeight);
         entry.collapse();
         let contentHeight = 0;
-        if (label === selected) {
+        if (name === selected) {
           logger.log(`setting selected indicator top to ${top}`);
           this.selectedIndicator.top = top;
           if (state.expanded) {
@@ -64,7 +64,7 @@ export default class Layout extends EventEmitter {
             this.container.focus();
           }
         }
-        logger.log(`setting ${label} top to ${top}`);
+        logger.log(`setting ${name} top to ${top}`);
         entry.setTop(top);
         top += entry.getHeaderHeight();
         top += contentHeight;

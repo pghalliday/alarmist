@@ -1,51 +1,20 @@
 import _ from 'lodash';
-import appendBuffer from '../../../utils/append-buffer';
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {
   reset,
-  end,
-  runStart,
+  start,
   select,
   up,
   down,
   moveUp,
   moveDown,
   toggleExpanded,
-  log,
   resize,
 } from './actions';
-import {
-  MONITOR_LABEL,
-} from '../constants';
-import {
-  jobLabel,
-} from '../helpers';
-
-const MAX_BUFFER_LENGTH = 100000;
-
-const initialMonitor = {
-  log: Buffer.alloc(0),
-};
-
-const monitor = handleActions({
-  [reset]: () => initialMonitor,
-  [end]: (monitor, {payload}) => {
-    return Object.assign({}, monitor, {
-      error: payload,
-    });
-  },
-  [log]: (monitor, {payload}) => {
-    return Object.assign({}, monitor, {
-      log: appendBuffer(MAX_BUFFER_LENGTH, monitor.log, payload),
-    });
-  },
-}, initialMonitor);
 
 const initialLayout = {
-  lines: [
-    MONITOR_LABEL,
-  ],
+  lines: [],
   selected: 0,
   expanded: false,
   width: 0,
@@ -60,13 +29,13 @@ const layout = handleActions({
       height: payload.height,
     });
   },
-  [runStart]: (layout, {payload}) => {
-    const entry = jobLabel(payload.name);
+  [start]: (layout, {payload}) => {
+    const name = payload.name;
     const lines = layout.lines;
-    const index = _.indexOf(lines, entry);
+    const index = _.indexOf(lines, name);
     if (index === -1) {
       return Object.assign({}, layout, {
-        lines: lines.concat([entry]),
+        lines: lines.concat([name]),
       });
     }
     return layout;
@@ -137,37 +106,36 @@ const layout = handleActions({
 }, initialLayout);
 
 export function createReducer(types) {
-  const initialJobs = {};
-  let jobReducers = {};
-  let jobsReducer = combineReducers(jobReducers);
-  const jobsRootReducer = handleActions({
+  const initialEntries = {};
+  let entryReducers = {};
+  let entriesReducer = combineReducers(entryReducers);
+  const entriesRootReducer = handleActions({
     [reset]: () => {
-      jobReducers = {};
-      jobsReducer = combineReducers(jobReducers);
-      return initialJobs;
+      entryReducers = {};
+      entriesReducer = combineReducers(entryReducers);
+      return initialEntries;
     },
-    [runStart]: (jobs, {payload}) => {
+    [start]: (entries, {payload}) => {
       const name = payload.name;
-      if (!jobReducers[name]) {
+      if (!entryReducers[name]) {
         const type = types[payload.type];
         if (type) {
-          jobReducers[name] = type.createReducer(name);
-          jobsReducer = combineReducers(jobReducers);
+          entryReducers[name] = type.createReducer(name);
+          entriesReducer = combineReducers(entryReducers);
         } else {
           // TODO: log an unknown type error
         }
       }
-      return jobs;
+      return entries;
     },
-  }, initialJobs);
-  const jobs = (state, action) => {
-    const newState = jobsRootReducer(state, action);
-    return jobsReducer(newState, action);
+  }, initialEntries);
+  const entries = (state, action) => {
+    const newState = entriesRootReducer(state, action);
+    return entriesReducer(newState, action);
   };
 
   return combineReducers({
-    monitor,
-    jobs,
+    entries,
     layout,
   });
 }
