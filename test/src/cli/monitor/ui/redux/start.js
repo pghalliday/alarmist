@@ -1,4 +1,6 @@
-import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from 'redux';
+// eslint-disable-next-line max-len
+import {createReducer} from '../../../../../../src/cli/monitor/ui/redux/reducer';
 import {handleActions} from 'redux-actions';
 import {
   reset,
@@ -68,6 +70,13 @@ const twoEntries = {
   },
 };
 
+const width = 200;
+const height = 100;
+const screen = {
+  width,
+  height,
+};
+
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
@@ -76,7 +85,7 @@ describe('cli', () => {
           describe('with an empty state', () => {
             before(() => {
               spys = {};
-              store = createStore(types);
+              store = createStore(createReducer(types, screen));
               store.dispatch(reset());
               store.dispatch(start(entry));
               const state = store.getState();

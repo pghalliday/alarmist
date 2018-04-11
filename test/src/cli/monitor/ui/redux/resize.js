@@ -1,11 +1,20 @@
-import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from 'redux';
+// eslint-disable-next-line max-len
+import {createReducer} from '../../../../../../src/cli/monitor/ui/redux/reducer';
 import {
   reset,
   resize,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 
-let width;
-let height;
+let newWidth;
+let newHeight;
+
+const width = 200;
+const height = 100;
+const screen = {
+  width,
+  height,
+};
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -13,22 +22,22 @@ describe('cli', () => {
       describe('redux', () => {
         describe('resize', () => {
           before(() => {
-            const store = createStore({});
+            const store = createStore(createReducer({}, screen));
             store.dispatch(reset());
             store.dispatch(resize({
               width: 100,
               height: 50,
             }));
-            width = store.getState().layout.width;
-            height = store.getState().layout.height;
+            newWidth = store.getState().layout.width;
+            newHeight = store.getState().layout.height;
           });
 
           it('should set the width', () => {
-            width.should.eql(100);
+            newWidth.should.eql(100);
           });
 
           it('should set the height', () => {
-            height.should.eql(50);
+            newHeight.should.eql(50);
           });
         });
       });

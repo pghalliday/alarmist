@@ -1,8 +1,7 @@
 // eslint-disable-next-line max-len
 import createService from '../../../../../../../src/cli/monitor/ui/types/task/service';
-import {
-  start,
-} from '../../../../../../../src/cli/monitor/ui/redux/actions';
+// eslint-disable-next-line max-len
+import Service from '../../../../../../../src/cli/monitor/ui/types/common/service';
 import {
   taskStart,
   taskLog,
@@ -24,11 +23,20 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('base', () => {
-          describe('Service', () => {
+        describe('service', () => {
+          describe('createService', () => {
             beforeEach(() => {
               store = new Store();
               service = createService(store);
+              sinon.stub(Service.prototype, 'start');
+            });
+
+            afterEach(() => {
+              Service.prototype.start.restore();
+            });
+
+            it('should be a Service', () => {
+              service.should.be.an.instanceof(Service);
             });
 
             describe('#start', () => {
@@ -36,8 +44,8 @@ describe('cli', () => {
                 service.start(payload);
               });
 
-              it('should dispatch a start action', () => {
-                store.dispatch.should.have.been.calledWith(start(payload));
+              it('should start for super class', () => {
+                Service.prototype.start.should.have.been.called;
               });
 
               it('should dispatch a task start action', () => {

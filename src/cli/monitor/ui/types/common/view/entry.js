@@ -50,10 +50,13 @@ export default class Entry extends EventEmitter {
     }
     return false;
   }
+  // istanbul ignore next
   collapse() {
   }
+  // istanbul ignore next
   expand() {
   }
+  // istanbul ignore next
   focus() {
   }
 }

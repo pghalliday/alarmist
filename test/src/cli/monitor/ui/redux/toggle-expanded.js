@@ -1,4 +1,6 @@
-import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from 'redux';
+// eslint-disable-next-line max-len
+import {createReducer} from '../../../../../../src/cli/monitor/ui/redux/reducer';
 import {
   reset,
   toggleExpanded,
@@ -7,13 +9,20 @@ import {
 let store;
 let expanded;
 
+const width = 200;
+const height = 100;
+const screen = {
+  width,
+  height,
+};
+
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('redux', () => {
         describe('toggleExpanded', () => {
           before(() => {
-            store = createStore({});
+            store = createStore(createReducer({}, screen));
             store.dispatch(reset());
             store.dispatch(toggleExpanded());
             expanded = store.getState().layout.expanded;

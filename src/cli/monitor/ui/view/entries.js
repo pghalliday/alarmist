@@ -1,3 +1,4 @@
+import logger from '../../logger';
 import _ from 'lodash';
 
 export default class Entries {
@@ -14,6 +15,7 @@ export default class Entries {
       const existing = this.entries[name];
       if (_.isUndefined(existing)) {
         const type = this.types[status.type];
+        // istanbul ignore else
         if (type) {
           const entry = type.createView(name);
           this.entries[name] = {
@@ -21,9 +23,8 @@ export default class Entries {
             status: status,
           };
           this.layout.append(name, entry);
-          entry.update(status);
         } else {
-          // TODO: log unknown type error
+          logger.log(`No view available for this type of entry: ${type}`);
         }
       } else {
         if (status !== existing.status) {

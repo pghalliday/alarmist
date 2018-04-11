@@ -1,11 +1,21 @@
+import blessed from 'blessed';
+import path from 'path';
 import alarmist from '../../';
+import logger from './logger';
 import ui from './ui';
 import {
   help,
   parse,
 } from './options';
+import {
+  CLI_LOG,
+} from '../../constants';
+import mkdirp from 'mkdirp';
+import promisify from '../../utils/promisify';
 
-module.exports = function cli(argv) {
+const pmkdirp = promisify(mkdirp);
+
+module.exports = async function cli(argv) {
   const opts = parse(argv);
   // istanbul ignore next
   if (opts.version) {
@@ -23,15 +33,27 @@ module.exports = function cli(argv) {
     process.stdout.write(help());
     process.exit(1);
   }
-  return alarmist.execMonitor(opts)
-  .then((monitor) => {
-    ui.createUi(Object.assign({}, opts, {monitor}));
+  await pmkdirp(opts.workingDir);
+  const screen = blessed.screen({
+    smartCSR: true,
+    log: path.join(opts.workingDir, CLI_LOG),
+    debug: opts.debug,
+  });
+  logger.log = screen.log.bind(screen);
+  logger.debug = screen.debug.bind(screen);
+  logger.log('created');
+  try {
+    const monitor = await alarmist.createMonitor(opts);
+    await ui.createUi(Object.assign({}, opts, {
+      screen,
+      monitor,
+    }));
     monitor.start();
-  })
-  .catch(
+    alarmist.execMonitor(Object.assign({}, opts, {
+      monitor,
+    }));
+  } catch (error) {
     // istanbul ignore next
-    (error) => {
-      console.error(error.stack);
-    }
-  );
+    console.error(error.stack);
+  }
 };

@@ -14,6 +14,3 @@ import './blessed';
 
 // override the copy-paste functions
 import './copy-paste';
-
-// override logger functions
-import './logger';

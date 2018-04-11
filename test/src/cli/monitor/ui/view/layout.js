@@ -1,4 +1,3 @@
-import logger from '../../../../../../src/cli/monitor/ui/view/logger';
 import blessed from 'blessed';
 import helper from '../../../../../helpers/blessed';
 import Layout from '../../../../../../src/cli/monitor/ui/view/layout';
@@ -164,17 +163,6 @@ describe('cli', () => {
                   entry1.collapse.should.have.been.calledOnce;
                   entry2.collapse.should.have.been.calledOnce;
                   entry3.collapse.should.have.been.calledOnce;
-                });
-
-                describe('then apply with the same state', () => {
-                  before(() => {
-                    logger.log.reset();
-                    layout.apply(notExpandedState);
-                  });
-
-                  it('should do nothing', () => {
-                    logger.log.should.not.have.been.called;
-                  });
                 });
               });
 

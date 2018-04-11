@@ -4,10 +4,14 @@ import _ from 'lodash';
 
 const TEST_CONTENT = 'test content';
 const TEST_TEXT = 'test text';
+const TEST_WIDTH = 200;
+const TEST_HEIGHT = 100;
 
 const helper = {
   TEST_CONTENT: TEST_CONTENT,
   TEST_TEXT: TEST_TEXT,
+  TEST_WIDTH: TEST_WIDTH,
+  TEST_HEIGHT: TEST_HEIGHT,
   reset: () => {
     if (helper.text) {
       helper.text.reset();
@@ -15,11 +19,28 @@ const helper = {
     if (helper.box) {
       helper.box.reset();
     }
-    if (helper.table) {
-      helper.table.reset();
+    if (helper.screen) {
+      helper.screen.reset();
     }
   },
 };
+
+blessed.screen = sinon.spy((props) => {
+  helper.screen = Object.assign({}, {
+  }, _.cloneDeep(props));
+  return Object.assign(helper.screen, {
+    width: TEST_WIDTH,
+    height: TEST_HEIGHT,
+    log: sinon.spy(),
+    debug: sinon.spy(),
+    reset: () => {
+      helper.screen.width = TEST_WIDTH;
+      helper.screen.height = TEST_HEIGHT;
+      helper.screen.log.reset();
+      helper.screen.debug.reset();
+    },
+  });
+});
 
 blessed.text = sinon.spy((props) => {
   helper.text = Object.assign({}, {
@@ -99,22 +120,6 @@ blessed.box = sinon.spy((props) => {
       helper.box.hide.reset();
       helper.box.show.reset();
       helper.box.focus.reset();
-    },
-  });
-});
-
-blessed.table = sinon.spy((props) => {
-  helper.table = _.cloneDeep(props);
-  return Object.assign(helper.table, {
-    setData: sinon.spy(),
-    hide: sinon.spy(),
-    show: sinon.spy(),
-    focus: sinon.spy(),
-    reset: () => {
-      helper.table.setData.reset();
-      helper.table.hide.reset();
-      helper.table.show.reset();
-      helper.table.focus.reset();
     },
   });
 });

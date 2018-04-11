@@ -20,7 +20,7 @@ const mkdirp = promisify(_mkdirp);
 const rimraf = promisify(_rimraf);
 
 const type = 'service';
-const id = 0;
+const id = 1;
 
 export async function createMonitor({reset, name, workingDir}) {
   const monitorLog = path.join(workingDir, MONITOR_LOG);

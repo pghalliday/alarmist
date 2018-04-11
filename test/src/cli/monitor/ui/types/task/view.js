@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-len
 import createView from '../../../../../../../src/cli/monitor/ui/types/task/view';
 import Log from '../../../../../../../src/cli/monitor/ui/types/common/view/log';
 

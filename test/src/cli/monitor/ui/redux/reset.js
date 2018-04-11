@@ -1,9 +1,18 @@
-import {createStore} from '../../../../../../src/cli/monitor/ui/redux/store';
+import {createStore} from 'redux';
+// eslint-disable-next-line max-len
+import {createReducer} from '../../../../../../src/cli/monitor/ui/redux/reducer';
 import {
   reset,
 } from '../../../../../../src/cli/monitor/ui/redux/actions';
 
 let state;
+
+const width = 200;
+const height = 100;
+const screen = {
+  width,
+  height,
+};
 
 describe('cli', () => {
   describe('monitor', () => {
@@ -11,7 +20,7 @@ describe('cli', () => {
       describe('redux', () => {
         describe('reset', () => {
           before(() => {
-            const store = createStore({});
+            const store = createStore(createReducer({}, screen));
             store.dispatch(reset());
             state = store.getState();
           });
@@ -23,8 +32,8 @@ describe('cli', () => {
                 lines: [],
                 selected: 0,
                 expanded: false,
-                width: 0,
-                height: 0,
+                width,
+                height,
               },
             });
           });

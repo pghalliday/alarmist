@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import logger from './logger';
+import logger from '../../logger';
 import blessed from 'blessed';
 import {
   SELECTED_INDICATOR_PROPERTIES,
@@ -36,6 +36,7 @@ export default class Layout extends EventEmitter {
     entry.setParent(this.container);
   }
   apply(state) {
+    // istanbul ignore else
     if (state !== this.lastState) {
       this.lastState = state;
       const lines = state.lines;

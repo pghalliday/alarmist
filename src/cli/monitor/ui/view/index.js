@@ -1,12 +1,8 @@
 import _ from 'lodash';
-import path from 'path';
 import blessed from 'blessed';
 import Layout from './layout';
 import Entries from './entries';
-import logger from './logger';
-import {
-  UI_LOG,
-} from '../../../../constants';
+import logger from '../../logger';
 import {
   resize,
   select,
@@ -21,15 +17,7 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView({service, store, workingDir, debug, types}) {
-  const screen = blessed.screen({
-    smartCSR: true,
-    log: path.join(workingDir, UI_LOG),
-    debug,
-  });
-  logger.log = screen.log.bind(screen);
-  logger.debug = screen.debug.bind(screen);
-  logger.log('created');
+function createView({screen, service, store, types}) {
   screen.title = 'alarmist';
   screen.on('keypress', (...args) => {
     logger.debug(args);

@@ -1,5 +1,8 @@
+import path from 'path';
 import monitorCli from '../../../../src/cli/monitor';
 import alarmist from '../../../../src';
+import blessed from 'blessed';
+import helper from '../../../helpers/blessed';
 import ui from '../../../../src/cli/monitor/ui';
 import {
   WORKING_DIR,
@@ -11,6 +14,7 @@ import {
   DEFAULT_DEBUG_OPTION,
   DEFAULT_COLOR_OPTION,
   DEFAULT_RESET_OPTION,
+  CLI_LOG,
 } from '../../../../src/constants';
 import rimraf from 'rimraf';
 import promisify from '../../../../src/utils/promisify';
@@ -23,11 +27,16 @@ const args = [
   'arg2',
 ];
 const argv = [command].concat(args);
-const monitor = 'monitor';
+const monitor = {
+  start: sinon.spy(),
+};
 
 describe('cli', () => {
   describe('monitor', () => {
     before(async () => {
+      helper.reset();
+      blessed.screen.reset();
+      monitor.start.reset();
       sinon.stub(ui, 'createUi');
       sinon.stub(alarmist, 'execMonitor', () => Promise.resolve(monitor));
       await primraf(WORKING_DIR);
@@ -38,7 +47,7 @@ describe('cli', () => {
       alarmist.execMonitor.restore();
     });
 
-    it('should create a monitor', async () => {
+    it('should create a monitor', () => {
       alarmist.execMonitor.should.have.been.calledWithMatch({
         command,
         args,
@@ -50,12 +59,24 @@ describe('cli', () => {
       });
     });
 
-    it('should create a ui', async () => {
+    it('should start the monitor', () => {
+      monitor.start.should.have.been.called;
+    });
+
+    it('should create the screen', () => {
+      blessed.screen.should.have.been.calledWith({
+        smartCSR: true,
+        log: path.join(DEFAULT_WORKING_DIR, CLI_LOG),
+        debug: DEFAULT_DEBUG_OPTION,
+      });
+    });
+
+    it('should create a ui', () => {
       ui.createUi.should.have.been.calledWithMatch({
+        screen: helper.screen,
         monitor,
         configFile: DEFAULT_CONFIG_FILE,
         workingDir: DEFAULT_WORKING_DIR,
-        debug: DEFAULT_DEBUG_OPTION,
       });
     });
   });
