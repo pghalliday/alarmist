@@ -74,7 +74,7 @@ export const logSelector = (state) => state.log;
 
 export default function createReducer(name) {
   return handleActions({
-    [taskStart]: (state, payload) => check(gt, state, payload, () => {
+    [taskStart]: (state, {payload}) => check(gt, state, payload, () => {
       return Object.assign({}, state, {
         id: payload.id,
         log: EMPTY_BUFFER,
@@ -82,12 +82,12 @@ export default function createReducer(name) {
         error: undefined,
       });
     }),
-    [taskLog]: (state, payload) => check(eq, state, payload, () => {
+    [taskLog]: (state, {payload}) => check(eq, state, payload, () => {
       return Object.assign({}, state, {
         log: appendBuffer(MAX_LOG_SIZE, state.log, payload.data),
       });
     }),
-    [taskEnd]: (state, payload) => check(eq, state, payload, () => {
+    [taskEnd]: (state, {payload}) => check(eq, state, payload, () => {
       return Object.assign({}, state, {
         running: false,
         error: payload.error,
