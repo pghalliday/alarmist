@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-len
-import Service from '../../../../../../../src/cli/monitor/ui/types/base/service';
+import Service from '../../../../../../../src/cli/monitor/ui/types/common/service';
 import {
   start,
 } from '../../../../../../../src/cli/monitor/ui/redux/actions';
@@ -19,7 +19,7 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('base', () => {
+        describe('common', () => {
           describe('Service', () => {
             beforeEach(() => {
               store = new Store();

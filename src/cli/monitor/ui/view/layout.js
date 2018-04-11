@@ -9,7 +9,7 @@ import {
 } from './constants';
 import {
   HEADER_HEIGHT,
-} from '../types/base/view/constants';
+} from '../types/common/view/constants';
 import EventEmitter from 'events';
 
 export default class Layout extends EventEmitter {

@@ -1,4 +1,4 @@
-import Service from '../base/service';
+import Service from '../common/service';
 import {
   taskStart,
   taskLog,

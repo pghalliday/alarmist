@@ -2,13 +2,13 @@ import _ from 'lodash';
 import helper from '../../../../../../../helpers/blessed';
 import blessed from 'blessed';
 import copyPaste from 'copy-paste';
-import Log from '../../../../../../../../src/cli/monitor/ui/types/base/view/log';
-import Entry from '../../../../../../../../src/cli/monitor/ui/types/base/view/entry';
+import Log from '../../../../../../../../src/cli/monitor/ui/types/common/view/log';
+import Entry from '../../../../../../../../src/cli/monitor/ui/types/common/view/entry';
 import {
   LOG_PROPERTIES,
   HEADER_HEIGHT,
   LOG_INDENT,
-} from '../../../../../../../../src/cli/monitor/ui/types/base/view/constants';
+} from '../../../../../../../../src/cli/monitor/ui/types/common/view/constants';
 
 let log;
 let layoutReturn = true;
@@ -36,7 +36,7 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('base', () => {
+        describe('common', () => {
           describe('view', () => {
             describe('Log', () => {
               before(() => {

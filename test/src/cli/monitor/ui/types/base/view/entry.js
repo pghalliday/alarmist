@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import helper from '../../../../../../../helpers/blessed';
 import blessed from 'blessed';
-import Entry from '../../../../../../../../src/cli/monitor/ui/types/base/view/entry';
+import Entry from '../../../../../../../../src/cli/monitor/ui/types/common/view/entry';
 import {
   HEADER_HEIGHT,
-} from '../../../../../../../../src/cli/monitor/ui/types/base/view/constants';
+} from '../../../../../../../../src/cli/monitor/ui/types/common/view/constants';
 
 const top = 'top';
 const left = 'left';
@@ -35,7 +35,7 @@ describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('base', () => {
+        describe('common', () => {
           describe('view', () => {
             describe('Entry', () => {
               before(() => {
