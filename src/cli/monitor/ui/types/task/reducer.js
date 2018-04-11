@@ -20,14 +20,6 @@ export const {
 const EMPTY_BUFFER = Buffer.alloc(0);
 const MAX_LOG_SIZE = 100000;
 
-const initialState = (name) => ({
-  name,
-  id: 0,
-  running: false,
-  log: EMPTY_BUFFER,
-  error: undefined,
-});
-
 const gt = (a, b) => a > b;
 const eq = (a, b) => a === b;
 function check(op, state, payload, callback) {
@@ -42,37 +34,52 @@ function headerText(name, id, message) {
   return `${name}: run ${id}: ${message}`;
 }
 
-const idSelector = (state) => state.id;
-const nameSelector = (state) => state.name;
-const runningSelector = (state) => state.running;
-const errorSelector = (state) => state.error;
-export const headerSelector = createSelector(
-  nameSelector,
-  idSelector,
-  runningSelector,
-  errorSelector,
-  (name, id, running, error) => {
-    if (running) {
-      return {
-        text: headerText(name, id, 'running'),
-        bgcolor: 'yellow',
-      };
-    }
-    if (error) {
-      return {
-        text: headerText(name, id, error),
-        bgcolor: 'red',
-      };
-    }
-    return {
-      text: headerText(name, id, 'ok'),
-      bgcolor: 'green',
-    };
-  },
-);
-export const logSelector = (state) => state.log;
-
 export default function createReducer(name) {
+  const idSelector = (state) => state.id;
+  const nameSelector = (state) => state.name;
+  const runningSelector = (state) => state.running;
+  const errorSelector = (state) => state.error;
+  const headerSelector = createSelector(
+    nameSelector,
+    idSelector,
+    runningSelector,
+    errorSelector,
+    (name, id, running, error) => {
+      if (running) {
+        return {
+          text: headerText(name, id, 'running'),
+          bgcolor: 'yellow',
+          fgcolor: 'black',
+        };
+      }
+      if (error) {
+        return {
+          text: headerText(name, id, error),
+          bgcolor: 'red',
+          fgcolor: 'black',
+        };
+      }
+      return {
+        text: headerText(name, id, 'ok'),
+        bgcolor: 'green',
+        fgcolor: 'black',
+      };
+    },
+  );
+  const logSelector = (state) => state.log;
+
+  const INITIAL_STATE = {
+    name,
+    id: 0,
+    running: false,
+    log: EMPTY_BUFFER,
+    error: undefined,
+    selectors: {
+      header: headerSelector,
+      log: logSelector,
+    },
+  };
+
   return handleActions({
     [taskStart]: (state, {payload}) => check(gt, state, payload, () => {
       return Object.assign({}, state, {
@@ -93,5 +100,5 @@ export default function createReducer(name) {
         error: payload.error,
       });
     }),
-  }, initialState(name));
+  }, INITIAL_STATE);
 }

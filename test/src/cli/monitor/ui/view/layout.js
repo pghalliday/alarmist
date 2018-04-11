@@ -13,31 +13,27 @@ class Entry extends EventEmitter {
   constructor() {
     super();
     this.setParent = sinon.spy();
+    this.layout = sinon.spy();
     this.collapse = sinon.spy();
     this.expand = sinon.spy();
-    this.setTop = sinon.spy();
     this.focus = sinon.spy();
-    this.setContentHeight = sinon.spy();
-  }
-  getHeaderHeight() {
-    return 1;
   }
   select() {
     this.emit('select');
   }
   reset() {
     this.setParent.reset();
+    this.layout.reset();
     this.collapse.reset();
     this.expand.reset();
-    this.setTop.reset();
     this.focus.reset();
-    this.setContentHeight.reset();
   }
 }
 
 let layout;
 const container = {
   append: sinon.spy(),
+  width: 100,
   height: 10,
   focus: sinon.spy(),
 };
@@ -143,23 +139,31 @@ describe('cli', () => {
                   container.focus.should.have.been.calledOnce;
                 });
 
-                it('should preset the content heights', () => {
-                  entry1.setContentHeight.should.have.been.calledWith(7);
-                  entry2.setContentHeight.should.have.been.calledWith(7);
-                  entry3.setContentHeight.should.have.been.calledWith(7);
+                it('should layout the entries', () => {
+                  entry2.layout.should.have.been.calledWith({
+                    top: 0,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
+                  entry3.layout.should.have.been.calledWith({
+                    top: 1,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
+                  entry1.layout.should.have.been.calledWith({
+                    top: 2,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
                 });
 
                 it('should hide the contents', () => {
                   entry1.collapse.should.have.been.calledOnce;
                   entry2.collapse.should.have.been.calledOnce;
                   entry3.collapse.should.have.been.calledOnce;
-                });
-
-                it('should calculate the top positions', () => {
-                  entry2.setTop.should.have.been.calledWith(0);
-                  entry3.setTop.should.have.been.calledWith(1);
-                  entry1.setTop.should.have.been.calledWith(2);
-                  selectedIndicator.top.should.eql(1);
                 });
 
                 describe('then apply with the same state', () => {
@@ -187,16 +191,30 @@ describe('cli', () => {
                   selectedIndicator.content.should.eql(DOWN_POINTER);
                 });
 
-                it('should preset the content heights', () => {
-                  entry1.setContentHeight.should.have.been.calledWith(7);
-                  entry2.setContentHeight.should.have.been.calledWith(7);
-                  entry3.setContentHeight.should.have.been.calledWith(7);
+                it('should layout the entries', () => {
+                  entry2.layout.should.have.been.calledWith({
+                    top: 0,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
+                  entry3.layout.should.have.been.calledWith({
+                    top: 1,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
+                  entry1.layout.should.have.been.calledWith({
+                    top: 9,
+                    left: 2,
+                    width: 98,
+                    height: 8,
+                  });
                 });
 
                 it('should hide the contents', () => {
                   entry1.collapse.should.have.been.calledOnce;
                   entry2.collapse.should.have.been.calledOnce;
-                  entry3.collapse.should.have.been.calledOnce;
                 });
 
                 it('should show the expanded content', () => {
@@ -205,13 +223,6 @@ describe('cli', () => {
 
                 it('should focus the expanded content', () => {
                   entry3.focus.should.have.been.calledOnce;
-                });
-
-                it('should calculate the top positions', () => {
-                  entry2.setTop.should.have.been.calledWith(0);
-                  entry3.setTop.should.have.been.calledWith(1);
-                  entry1.setTop.should.have.been.calledWith(9);
-                  selectedIndicator.top.should.eql(1);
                 });
               });
             });

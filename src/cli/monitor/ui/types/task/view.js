@@ -1,2 +1,2 @@
-export default function createView() {
+export default function createView(name) {
 }

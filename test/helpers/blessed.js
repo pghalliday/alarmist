@@ -22,7 +22,9 @@ const helper = {
 };
 
 blessed.text = sinon.spy((props) => {
-  helper.text = _.cloneDeep(props);
+  helper.text = Object.assign({}, {
+    style: {},
+  }, _.cloneDeep(props));
   const handlers = {};
   return Object.assign(helper.text, {
     setContent: sinon.spy(),
@@ -34,6 +36,12 @@ blessed.text = sinon.spy((props) => {
     },
     reset: () => {
       helper.text.setContent.reset();
+      delete helper.text.top;
+      delete helper.text.left;
+      delete helper.text.width;
+      delete helper.text.height;
+      delete helper.text.style.bg;
+      delete helper.text.style.fg;
     },
   });
 });
@@ -78,6 +86,10 @@ blessed.box = sinon.spy((props) => {
       keyHandlers[key]();
     },
     reset: () => {
+      delete helper.box.top;
+      delete helper.box.left;
+      delete helper.box.width;
+      delete helper.box.height;
       helper.box.getContent.reset();
       helper.box.getText.reset();
       helper.box.setContent.reset();

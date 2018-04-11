@@ -2,14 +2,13 @@ import createReducer, {
   taskStart,
   taskLog,
   taskEnd,
-  logSelector,
-  headerSelector,
 } from '../../../../../../../src/cli/monitor/ui/types/task/reducer';
 import {
   createStore,
 } from 'redux';
 
 let store;
+let state;
 const name = 'name';
 const unknown = 'unknown';
 const id = 1;
@@ -26,20 +25,22 @@ describe('cli', () => {
     describe('ui', () => {
       describe('types', () => {
         describe('task', () => {
-          describe.only('reducer', () => {
+          describe('reducer', () => {
             beforeEach(() => {
               store = createStore(createReducer(name));
+              state = store.getState();
             });
 
             describe('initial state', () => {
               it('should have an empty log', () => {
-                logSelector(store.getState()).should.eql(EMPTY_BUFFER);
+                state.selectors.log(state).should.eql(EMPTY_BUFFER);
               });
 
               it('should have an initial header', () => {
-                headerSelector(store.getState()).should.eql({
+                state.selectors.header(state).should.eql({
                   text: `${name}: run 0: ok`,
                   bgcolor: 'green',
+                  fgcolor: 'black',
                 });
               });
             });
@@ -51,12 +52,14 @@ describe('cli', () => {
                   id,
                   startTime,
                 }));
+                state = store.getState();
               });
 
               it('should not update the header', () => {
-                headerSelector(store.getState()).should.eql({
+                state.selectors.header(state).should.eql({
                   text: `${name}: run 0: ok`,
                   bgcolor: 'green',
+                  fgcolor: 'black',
                 });
               });
             });
@@ -68,12 +71,14 @@ describe('cli', () => {
                   id: 0,
                   startTime,
                 }));
+                state = store.getState();
               });
 
               it('should not update the header', () => {
-                headerSelector(store.getState()).should.eql({
+                state.selectors.header(state).should.eql({
                   text: `${name}: run 0: ok`,
                   bgcolor: 'green',
+                  fgcolor: 'black',
                 });
               });
             });
@@ -85,12 +90,14 @@ describe('cli', () => {
                   id,
                   startTime,
                 }));
+                state = store.getState();
               });
 
               it('should update the header', () => {
-                headerSelector(store.getState()).should.eql({
+                state.selectors.header(state).should.eql({
                   text: `${name}: run ${id}: running`,
                   bgcolor: 'yellow',
+                  fgcolor: 'black',
                 });
               });
 
@@ -102,10 +109,11 @@ describe('cli', () => {
                       id,
                       logData1,
                     }));
+                    state = store.getState();
                   });
 
                   it('should not update the log', () => {
-                    logSelector(store.getState()).should.eql(EMPTY_BUFFER);
+                    state.selectors.log(state).should.eql(EMPTY_BUFFER);
                   });
                 });
 
@@ -116,10 +124,11 @@ describe('cli', () => {
                       id: 0,
                       logData1,
                     }));
+                    state = store.getState();
                   });
 
                   it('should not update the log', () => {
-                    logSelector(store.getState()).should.eql(EMPTY_BUFFER);
+                    state.selectors.log(state).should.eql(EMPTY_BUFFER);
                   });
                 });
 
@@ -130,10 +139,11 @@ describe('cli', () => {
                       id,
                       data: logData1,
                     }));
+                    state = store.getState();
                   });
 
                   it('should update the log', () => {
-                    logSelector(store.getState()).should.eql(logData1);
+                    state.selectors.log(state).should.eql(logData1);
                   });
 
                   describe('then log some more data', () => {
@@ -143,10 +153,11 @@ describe('cli', () => {
                         id,
                         data: logData2,
                       }));
+                      state = store.getState();
                     });
 
                     it('should update the log', () => {
-                      logSelector(store.getState()).should.eql(Buffer.concat([
+                      state.selectors.log(state).should.eql(Buffer.concat([
                         logData1,
                         logData2,
                       ]));
@@ -160,12 +171,14 @@ describe('cli', () => {
                             id,
                             endTime,
                           }));
+                          state = store.getState();
                         });
 
                         it('should not update the header', () => {
-                          headerSelector(store.getState()).should.eql({
+                          state.selectors.header(state).should.eql({
                             text: `${name}: run ${id}: running`,
                             bgcolor: 'yellow',
+                            fgcolor: 'black',
                           });
                         });
                       });
@@ -177,12 +190,14 @@ describe('cli', () => {
                             id: 0,
                             endTime,
                           }));
+                          state = store.getState();
                         });
 
                         it('should not update the header', () => {
-                          headerSelector(store.getState()).should.eql({
+                          state.selectors.header(state).should.eql({
                             text: `${name}: run ${id}: running`,
                             bgcolor: 'yellow',
+                            fgcolor: 'black',
                           });
                         });
                       });
@@ -195,12 +210,14 @@ describe('cli', () => {
                               id,
                               endTime,
                             }));
+                            state = store.getState();
                           });
 
                           it('should update the header', () => {
-                            headerSelector(store.getState()).should.eql({
+                            state.selectors.header(state).should.eql({
                               text: `${name}: run ${id}: ok`,
                               bgcolor: 'green',
+                              fgcolor: 'black',
                             });
                           });
                         });
@@ -213,12 +230,14 @@ describe('cli', () => {
                               endTime,
                               error,
                             }));
+                            state = store.getState();
                           });
 
                           it('should update the header', () => {
-                            headerSelector(store.getState()).should.eql({
+                            state.selectors.header(state).should.eql({
                               text: `${name}: run ${id}: ${error}`,
                               bgcolor: 'red',
+                              fgcolor: 'black',
                             });
                           });
                         });

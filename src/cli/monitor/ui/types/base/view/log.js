@@ -3,6 +3,8 @@ import {copy} from 'copy-paste';
 import blessed from 'blessed';
 import {
   LOG_PROPERTIES,
+  HEADER_HEIGHT,
+  LOG_INDENT,
 } from './constants';
 import Entry from './entry';
 
@@ -31,13 +33,20 @@ export default class Log extends Entry {
     this.log.hide();
     this.clear();
   }
-  _setContentParent(container) {
+  setParent(container) {
+    super.setParent(container);
     container.append(this.log);
-  }
-  _update() {
   }
   clear() {
     this.log.setContent('');
+  }
+  update(state) {
+    super.update(state);
+    const logData = state.selectors.log(state);
+    if (this.logData !== logData) {
+      this.logData = logData;
+      this._setLog(logData);
+    }
   }
   // istanbul ignore next
   _setLog(data) {
@@ -64,20 +73,17 @@ export default class Log extends Entry {
       }
     }
   }
-  setLog(data) {
-    if (data !== this.logData) {
-      this.logData = data;
-      this._setLog(data);
+  layout(rect) {
+    if (super.layout(rect)) {
+      this.log.height = rect.height - HEADER_HEIGHT;
+      this.log.top = rect.top + HEADER_HEIGHT;
+      this.log.width = rect.width - LOG_INDENT;
+      this.log.left = rect.left + LOG_INDENT;
     }
-  }
-  setContentHeight(height) {
-    this.log.height = height;
-  }
-  _setContentTop(top) {
-    this.log.top = top;
   }
   // istanbul ignore next
   collapse() {
+    super.collapse();
     if (this.expanded) {
       const height = this.log.height;
       const lineCount = this.log.getLines().length;
@@ -92,6 +98,7 @@ export default class Log extends Entry {
   }
   // istanbul ignore next
   expand() {
+    super.expand();
     if (!this.expanded) {
       this.log.show();
       this.expanded = true;
@@ -105,6 +112,7 @@ export default class Log extends Entry {
     }
   }
   focus() {
+    super.focus();
     this.log.focus();
   }
 }

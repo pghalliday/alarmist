@@ -5,7 +5,11 @@ import {
   SELECTED_INDICATOR_PROPERTIES,
   RIGHT_POINTER,
   DOWN_POINTER,
+  ENTRY_INDENT,
 } from './constants';
+import {
+  HEADER_HEIGHT,
+} from '../types/base/view/constants';
 import EventEmitter from 'events';
 
 export default class Layout extends EventEmitter {
@@ -13,6 +17,7 @@ export default class Layout extends EventEmitter {
     super();
     this.container = container;
     this.entries = {};
+    this.rectSelectors = {};
     logger.log('appending selected indicator');
     this.selectedIndicator = blessed.text(
       _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
@@ -35,39 +40,42 @@ export default class Layout extends EventEmitter {
       this.lastState = state;
       const lines = state.lines;
       const selected = lines[state.selected];
-      const totalHeaderHeight = _.reduce(
-        this.entries,
-        (total, entry) => {
-          return total + entry.getHeaderHeight();
-        },
-        0
-      );
+      const totalHeaderHeight = lines.length * HEADER_HEIGHT;
       let top = 0;
       for (let name of lines) {
         const entry = this.entries[name];
-        // the state starts with height 0, so first we measure the height
+        // the state starts with height and width 0
         const height = state.height || this.container.height;
-        const realContentHeight = height - totalHeaderHeight;
-        entry.setContentHeight(realContentHeight);
-        entry.collapse();
-        let contentHeight = 0;
+        const width = state.width || this.container.width;
+        const contentHeight = height - totalHeaderHeight;
+        let topIncrement = HEADER_HEIGHT;
         if (name === selected) {
           logger.log(`setting selected indicator top to ${top}`);
           this.selectedIndicator.top = top;
           if (state.expanded) {
-            this.selectedIndicator.content = DOWN_POINTER;
+            topIncrement += contentHeight;
             entry.expand();
+            this.selectedIndicator.content = DOWN_POINTER;
             entry.focus();
-            contentHeight = realContentHeight;
           } else {
+            entry.collapse();
             this.selectedIndicator.content = RIGHT_POINTER;
             this.container.focus();
           }
+        } else {
+          entry.collapse();
         }
-        logger.log(`setting ${name} top to ${top}`);
-        entry.setTop(top);
-        top += entry.getHeaderHeight();
-        top += contentHeight;
+        // use a selector so that we get the same rect
+        // object if the rect has not changed
+        const rect = {
+          top,
+          left: ENTRY_INDENT,
+          width: width - ENTRY_INDENT,
+          height: contentHeight + HEADER_HEIGHT,
+        };
+        logger.log(`setting ${name} to ${rect}`);
+        entry.layout(rect);
+        top += topIncrement;
       }
     }
   }
