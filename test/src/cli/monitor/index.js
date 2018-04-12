@@ -20,7 +20,9 @@ const args = [
   'arg2',
 ];
 const argv = [command].concat(args);
-const monitor = 'monitor';
+const monitor = {
+  close: sinon.spy(),
+};
 
 describe('cli', () => {
   describe('monitor', () => {

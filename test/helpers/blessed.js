@@ -33,11 +33,15 @@ blessed.screen = sinon.spy((props) => {
     height: TEST_HEIGHT,
     log: sinon.spy(),
     debug: sinon.spy(),
+    destroy: sinon.spy(),
+    key: sinon.spy(),
     reset: () => {
       helper.screen.width = TEST_WIDTH;
       helper.screen.height = TEST_HEIGHT;
       helper.screen.log.reset();
       helper.screen.debug.reset();
+      helper.screen.destroy.reset();
+      helper.screen.key.reset();
     },
   });
 });

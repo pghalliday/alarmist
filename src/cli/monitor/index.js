@@ -2,6 +2,7 @@ import blessed from 'blessed';
 import path from 'path';
 import alarmist from '../../';
 import logger from './logger';
+import cleanup from './cleanup';
 import ui from './ui';
 import {
   help,
@@ -39,11 +40,18 @@ module.exports = async function cli(argv) {
     log: path.join(opts.workingDir, CLI_LOG),
     debug: opts.debug,
   });
+  cleanup.register(screen.destroy.bind(screen));
+  // istanbul ignore next
+  screen.key(['C-c'], async () => {
+    await cleanup.end();
+    process.exit(0);
+  });
   logger.log = screen.log.bind(screen);
   logger.debug = screen.debug.bind(screen);
   logger.log('created');
   try {
     const monitor = await alarmist.createMonitor(opts);
+    cleanup.register(monitor.close.bind(monitor));
     await ui.createUi(Object.assign({}, opts, {
       screen,
       monitor,
@@ -53,6 +61,9 @@ module.exports = async function cli(argv) {
     }));
   } catch (error) {
     // istanbul ignore next
-    console.error(error.stack);
+    cleanup.end().then(() => {
+      console.error(error.stack);
+      process.exit(1);
+    });
   }
 };
