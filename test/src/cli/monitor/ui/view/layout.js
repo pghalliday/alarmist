@@ -32,8 +32,6 @@ class Entry extends EventEmitter {
 let layout;
 const container = {
   append: sinon.spy(),
-  width: 100,
-  height: 10,
   focus: sinon.spy(),
 };
 const label1 = 'label1';
@@ -50,6 +48,8 @@ const notExpandedState = {
   ],
   selected: 1,
   expanded: false,
+  width: 100,
+  height: 10,
 };
 const expandedState = {
   lines: [
@@ -59,6 +59,8 @@ const expandedState = {
   ],
   selected: 1,
   expanded: true,
+  width: 100,
+  height: 10,
 };
 let selectedIndicator;
 

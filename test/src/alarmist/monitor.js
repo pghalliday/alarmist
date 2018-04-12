@@ -100,7 +100,7 @@ describe('alarmist', () => {
 
       it('should emit a start event', () => {
         event.name.should.eql(monitorName);
-        event.id.should.eql(0);
+        event.id.should.eql(1);
         event.startTime.should.be.ok;
         event.type.should.eql('service');
       });
@@ -234,7 +234,7 @@ describe('alarmist', () => {
       it('should emit a log event', () => {
         event.should.eql({
           name: monitorName,
-          id: 0,
+          id: 1,
           type: 'service',
           data: log,
         });
@@ -246,7 +246,7 @@ describe('alarmist', () => {
 
       it('should emit an end event', async () => {
         exitEvent.name.should.eql(monitorName);
-        exitEvent.id.should.eql(0);
+        exitEvent.id.should.eql(1);
         exitEvent.type.should.eql('service');
         exitEvent.startTime.should.be.ok;
         exitEvent.endTime.should.be.ok;

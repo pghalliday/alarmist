@@ -48,7 +48,6 @@ module.exports = async function cli(argv) {
       screen,
       monitor,
     }));
-    monitor.start();
     alarmist.execMonitor(Object.assign({}, opts, {
       monitor,
     }));

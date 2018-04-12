@@ -1,4 +1,3 @@
-import * as Monitor from '../../../src/alarmist/monitor';
 import {
   exec,
 } from '../../../src/alarmist/monitor-exec.js';
@@ -57,6 +56,14 @@ class TestWritable extends Writable {
   }
 }
 
+class Monitor {
+  constructor(resolve) {
+    this.start = sinon.spy();
+    this.log = new TestWritable();
+    this.end = sinon.spy(resolve);
+  }
+}
+
 function waitForFile(file) {
   return new Promise((resolve) => {
     const watcher = chokidar.watch(WORKING_DIR).on('add', (newFile) => {
@@ -78,19 +85,10 @@ describe('alarmist', function() {
         this.timeout(5000);
         await primraf(WORKING_DIR);
         await pmkdirp(WORKING_DIR);
-        let execMonitor;
-        await new Promise(async (resolve) => {
-          monitor = {
-            log: new TestWritable(),
-            close: sinon.spy(() => Promise.resolve()),
-            end: sinon.spy(resolve),
-          };
-          sinon.stub(
-            Monitor,
-            'createMonitor',
-            async () => Promise.resolve(monitor)
-          );
-          execMonitor = await exec({
+        await new Promise((resolve) => {
+          monitor = new Monitor(resolve);
+          exec({
+            monitor,
             command,
             args: exitingArgs,
             configFile,
@@ -100,19 +98,10 @@ describe('alarmist', function() {
             color,
           });
         });
-        await execMonitor.close();
-      });
-      after(() => {
-        Monitor.createMonitor.restore();
       });
 
-      it('should create a monitor', () => {
-        Monitor.createMonitor.should.have.been.calledWith({
-          configFile,
-          workingDir,
-          name,
-          reset,
-        });
+      it('should start the monitor', () => {
+        monitor.start.should.have.been.called;
       });
 
       it('should set the ALARMIST_CONFIG_FILE variable', async () => {
@@ -141,10 +130,6 @@ describe('alarmist', function() {
       it('should call end', () => {
         monitor.end.should.have.been.calledWith(`exit code: ${exitCode}`);
       });
-
-      it('should close the monitor', () => {
-        monitor.close.should.have.been.calledOnce;
-      });
     });
 
     describe('with a process that lives', () => {
@@ -153,20 +138,10 @@ describe('alarmist', function() {
         this.timeout(5000);
         await primraf(WORKING_DIR);
         await pmkdirp(WORKING_DIR);
-        let execMonitor;
-        monitor = {
-          log: new TestWritable(),
-          close: sinon.spy(async () => {
-            await monitor.cleanup();
-          }),
-        };
-        sinon.stub(
-          Monitor,
-          'createMonitor',
-          async () => Promise.resolve(monitor)
-        );
+        monitor = new Monitor();
         const waitPromise = waitForFile(path.join(WORKING_DIR, 'done'));
-        execMonitor = await exec({
+        exec({
+          monitor,
           command,
           args: livingArgs,
           configFile,
@@ -176,19 +151,11 @@ describe('alarmist', function() {
           color,
         });
         await waitPromise;
-        await execMonitor.close();
-      });
-      after(() => {
-        Monitor.createMonitor.restore();
+        await monitor.cleanup();
       });
 
-      it('should create a monitor', () => {
-        Monitor.createMonitor.should.have.been.calledWith({
-          configFile,
-          workingDir,
-          name,
-          reset,
-        });
+      it('should start the monitor', () => {
+        monitor.start.should.have.been.called;
       });
 
       it('should set the ALARMIST_CONFIG_FILE variable', async () => {
@@ -212,10 +179,6 @@ describe('alarmist', function() {
 
       it('should pipe to the monitor log', () => {
         monitor.log.buffer.should.eql(all);
-      });
-
-      it('should close the monitor', () => {
-        monitor.close.should.have.been.calledOnce;
       });
     });
   });

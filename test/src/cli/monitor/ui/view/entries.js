@@ -72,13 +72,6 @@ describe('cli', () => {
                 entry.name.should.eql(name);
               });
 
-              it('should update the new entry', () => {
-                entry.update.should.have.been.calledOnce;
-                entry.update.should.have.been.calledWith(
-                  sinon.match.same(status)
-                );
-              });
-
               it('should append the entry to the layout', () => {
                 layout.append.should.have.been.calledWith(
                   name,
@@ -96,13 +89,6 @@ describe('cli', () => {
                 it('should create a new entry', () => {
                   entry.should.be.an.instanceOf(Type);
                   entry.name.should.eql(anotherName);
-                });
-
-                it('should update the new entry', () => {
-                  entry.update.should.have.been.calledOnce;
-                  entry.update.should.have.been.calledWith(
-                    sinon.match.same(anotherStatus)
-                  );
                 });
 
                 it('should append the entry to the layout', () => {

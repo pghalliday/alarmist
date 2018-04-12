@@ -17,6 +17,7 @@ export function exec({
   configFile,
   workingDir,
 }) {
+  monitor.start();
   const proc = spawn(command, args, {
     env: Object.assign({}, process.env, {
       [CONFIG_FILE_VAR]: configFile,

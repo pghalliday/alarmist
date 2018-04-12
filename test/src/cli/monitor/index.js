@@ -5,9 +5,6 @@ import blessed from 'blessed';
 import helper from '../../../helpers/blessed';
 import ui from '../../../../src/cli/monitor/ui';
 import {
-  WORKING_DIR,
-} from '../../../helpers/constants';
-import {
   DEFAULT_MONITOR_NAME,
   DEFAULT_CONFIG_FILE,
   DEFAULT_WORKING_DIR,
@@ -16,10 +13,6 @@ import {
   DEFAULT_RESET_OPTION,
   CLI_LOG,
 } from '../../../../src/constants';
-import rimraf from 'rimraf';
-import promisify from '../../../../src/utils/promisify';
-
-const primraf = promisify(rimraf);
 
 const command = 'command';
 const args = [
@@ -27,28 +20,27 @@ const args = [
   'arg2',
 ];
 const argv = [command].concat(args);
-const monitor = {
-  start: sinon.spy(),
-};
+const monitor = 'monitor';
 
 describe('cli', () => {
   describe('monitor', () => {
     before(async () => {
       helper.reset();
       blessed.screen.reset();
-      monitor.start.reset();
-      sinon.stub(ui, 'createUi');
-      sinon.stub(alarmist, 'execMonitor', () => Promise.resolve(monitor));
-      await primraf(WORKING_DIR);
+      sinon.stub(ui, 'createUi', () => Promise.resolve());
+      sinon.stub(alarmist, 'createMonitor', () => Promise.resolve(monitor));
+      sinon.stub(alarmist, 'execMonitor');
       await monitorCli(argv);
     });
     after(() => {
       ui.createUi.restore();
       alarmist.execMonitor.restore();
+      alarmist.createMonitor.restore();
     });
 
-    it('should create a monitor', () => {
+    it('should create a monitor and send it to exec', () => {
       alarmist.execMonitor.should.have.been.calledWithMatch({
+        monitor,
         command,
         args,
         debug: DEFAULT_DEBUG_OPTION,
@@ -57,10 +49,6 @@ describe('cli', () => {
         workingDir: DEFAULT_WORKING_DIR,
         name: DEFAULT_MONITOR_NAME,
       });
-    });
-
-    it('should start the monitor', () => {
-      monitor.start.should.have.been.called;
     });
 
     it('should create the screen', () => {

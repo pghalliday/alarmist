@@ -7,6 +7,7 @@ export function createService({monitor, store, types}) {
   });
 
   const createAction = (name) => (status) => {
+    logger.debug(status);
     const type = types[status.type];
     // istanbul ignore else
     if (type) {

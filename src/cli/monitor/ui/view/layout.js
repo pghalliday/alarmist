@@ -45,9 +45,8 @@ export default class Layout extends EventEmitter {
       let top = 0;
       for (let name of lines) {
         const entry = this.entries[name];
-        // the state starts with height and width 0
-        const height = state.height || this.container.height;
-        const width = state.width || this.container.width;
+        const height = state.height;
+        const width = state.width;
         const contentHeight = height - totalHeaderHeight;
         let topIncrement = HEADER_HEIGHT;
         if (name === selected) {
@@ -74,7 +73,7 @@ export default class Layout extends EventEmitter {
           width: width - ENTRY_INDENT,
           height: contentHeight + HEADER_HEIGHT,
         };
-        logger.log(`setting ${name} to ${rect}`);
+        logger.log(`setting ${name} to ${JSON.stringify(rect)}`);
         entry.layout(rect);
         top += topIncrement;
       }
