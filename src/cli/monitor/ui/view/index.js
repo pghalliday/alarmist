@@ -17,17 +17,13 @@ import {
 } from './constants';
 
 // istanbul ignore next
-function createView({screen, service, store, types}) {
+function createView({screen, store, types}) {
   screen.title = 'alarmist';
   screen.on('keypress', (...args) => {
     logger.debug(args);
   });
   screen.on('mouse', (...args) => {
     logger.debug(args);
-  });
-  screen.key(['C-c'], async () => {
-    await service.stop();
-    process.exit(0);
   });
   screen.key(['enter', 'o'], () => store.dispatch(toggleExpanded()));
   const container = blessed.box(CONTAINER_PROPERTIES);

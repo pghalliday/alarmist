@@ -24,7 +24,12 @@ async function createUi({screen, monitor, configFile, workingDir}) {
   const reducer = createReducer(types, screen);
   const store = createStore(reducer);
   const uiService = createService({monitor, store, types});
-  createView({screen, service: uiService, store, workingDir, types});
+  screen.key(['C-c'], async () => {
+    await monitor.close();
+    await uiService.stop();
+    process.exit(0);
+  });
+  createView({screen, store, workingDir, types});
 };
 
 module.exports = {

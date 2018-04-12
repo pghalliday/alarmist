@@ -29,7 +29,6 @@ export function createService({monitor, store, types}) {
       monitor.removeListener('start', onStart);
       monitor.removeListener('end', onEnd);
       monitor.removeListener('log', onLog);
-      await monitor.close();
     },
   };
 }
