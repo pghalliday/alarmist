@@ -17,11 +17,13 @@ import {
 
 export const {
   lineStart,
-  linePoint,
+  lineAdvance,
+  lineValue,
   lineEnd,
 } = createActions(
   'LINE_START',
-  'LINE_POINT',
+  'LINE_ADVANCE',
+  'LINE_VALUE',
   'LINE_END',
 );
 
@@ -29,15 +31,27 @@ function headerText(name, message) {
   return `${name}: ${message}`;
 }
 
-function appendValue(values, value, minLength) {
-  if (values.length === 0) {
-    return Array(minLength || 1).fill(value);
+function appendValue(values, value, length) {
+  const oldLength = values.length;
+  if (oldLength === 0) {
+    return Array(length).fill(value);
   }
-  const lastValue = values[values.length - 1];
-  const shortage = minLength - (values.length + 1);
-  const newValues = Array(shortage).fill(lastValue);
-  newValues.push(value);
-  return values.concat(newValues);
+  if (oldLength === length) {
+    const newValues = values.slice(0, -1);
+    newValues.push(value);
+    return newValues;
+  }
+  const newValues = values.slice();
+  const lengthDiff = length - oldLength;
+  if (lengthDiff > 1) {
+    const lastValue = values[oldLength - 1];
+    const increment = (value - lastValue) / lengthDiff;
+    for (let i = 1; i < lengthDiff; i++) {
+      newValues.push(lastValue + (increment * i));
+    }
+    newValues.push(value);
+  }
+  return newValues;
 }
 
 function updateErrorSeries(errorSeries, series, error) {
@@ -48,26 +62,6 @@ function updateErrorSeries(errorSeries, series, error) {
   return newErrorSeries;
 }
 
-function extendX(x, length, newLength) {
-  if (newLength > length) {
-    const extra = [];
-    for (let i = length; i < newLength; i++) {
-      extra.push(i);
-    }
-    return x.concat(extra);
-  }
-  return x;
-}
-
-function extendValues(values, length) {
-  const shortage = length - values.length;
-  if (shortage) {
-    const lastValue = values[values.length - 1];
-    return values.concat(Array(shortage).fill(lastValue));
-  }
-  return values;
-}
-
 export default function createReducer(name, type) {
   const nameSelector = (state) => state.name;
   const runningSelector = (state) => state.running;
@@ -75,7 +69,6 @@ export default function createReducer(name, type) {
   const errorSeriesSelector = (state) => state.errorSeries;
   const lastSeriesSelector = (state) => state.lastSeries;
   const seriesSelector = (state) => state.series;
-  const lengthSelector = (state) => state.length;
   const xSelector = (state) => state.x;
   const seriesErrorSelector = createSelector(
     errorSeriesSelector,
@@ -133,7 +126,6 @@ export default function createReducer(name, type) {
   );
   const dataSelector = createSelector(
     seriesSelector,
-    lengthSelector,
     xSelector,
     (series, length, x) => {
       const data = [];
@@ -143,8 +135,8 @@ export default function createReducer(name, type) {
           style: {
             line: series.error ? 'red' : 'green',
           },
-          x,
-          y: extendValues(series.values, length),
+          x: x.slice(0, series.values.length),
+          y: series.values,
         });
       });
       return data;
@@ -157,7 +149,6 @@ export default function createReducer(name, type) {
     id: 0,
     running: false,
     series: {},
-    length: 0,
     errorSeries: [],
     lastSeries: undefined,
     error: undefined,
@@ -178,20 +169,22 @@ export default function createReducer(name, type) {
       error: undefined,
     })),
     // eslint-disable-next-line max-len
-    [linePoint]: (state, {payload}) => check(eq, state, payload, () => {
+    [lineAdvance]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
+      x: state.x.concat([state.x.length]),
+    })),
+    // eslint-disable-next-line max-len
+    [lineValue]: (state, {payload}) => check(eq, state, payload, () => {
       const series = state.series[payload.series];
       const values = appendValue(
         series ? series.values : [],
         payload.value,
-        state.length
+        state.x.length,
       );
       const errorSeries = updateErrorSeries(
         state.errorSeries,
         payload.series,
         payload.error
       );
-      const length = Math.max(state.length, values.length);
-      const x = extendX(state.x, state.length, length);
       return Object.assign({}, state, {
         series: Object.assign({}, state.series, {
           [payload.series]: {
@@ -201,8 +194,6 @@ export default function createReducer(name, type) {
         }),
         lastSeries: payload.series,
         errorSeries,
-        length,
-        x,
       });
     }),
     // eslint-disable-next-line max-len
