@@ -32,11 +32,11 @@ const colorsPayload = {
   data: Buffer.from(JSON.stringify({
     target: 'alarmist',
     type: 'line',
-    action: 'colors',
+    action: lineColors.toString(),
     data: {
       colors,
     },
-  })),
+  }) + '\n'),
 };
 
 const advancePayload = {
@@ -45,9 +45,9 @@ const advancePayload = {
   data: Buffer.from(JSON.stringify({
     target: 'alarmist',
     type: 'line',
-    action: 'advance',
+    action: lineAdvance.toString(),
     data: {},
-  })),
+  }) + '\n'),
 };
 
 const valuePayload = {
@@ -56,13 +56,13 @@ const valuePayload = {
   data: Buffer.from(JSON.stringify({
     target: 'alarmist',
     type: 'line',
-    action: 'value',
+    action: lineValue.toString(),
     data: {
       series,
       value,
       error,
     },
-  })),
+  }) + '\n'),
 };
 
 const unknownTargetPayload = {
@@ -71,9 +71,9 @@ const unknownTargetPayload = {
   data: Buffer.from(JSON.stringify({
     target: 'unknown',
     type: 'line',
-    action: 'advance',
+    action: lineAdvance.toString(),
     data: {},
-  })),
+  }) + '\n'),
 };
 
 const unknownTypePayload = {
@@ -82,9 +82,9 @@ const unknownTypePayload = {
   data: Buffer.from(JSON.stringify({
     target: 'alarmist',
     type: 'unknown',
-    action: 'advance',
+    action: lineAdvance.toString(),
     data: {},
-  })),
+  }) + '\n'),
 };
 
 const unknownActionPayload = {
@@ -95,7 +95,7 @@ const unknownActionPayload = {
     type: 'line',
     action: 'unknown',
     data: {},
-  })),
+  }) + '\n'),
 };
 
 const payload = 'payload';

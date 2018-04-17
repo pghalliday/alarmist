@@ -1,4 +1,5 @@
 import Service from '../common/service';
+import JSONStream from '../common/utils/json-stream';
 import {
   lineStart,
   lineColors,
@@ -7,12 +8,29 @@ import {
   lineEnd,
 } from './reducer';
 
-class ServiceService extends Service {
+const type = 'line';
+
+const actions = [
+  lineColors,
+  lineAdvance,
+  lineValue,
+];
+
+class LineService extends Service {
+  constructor(store) {
+    super(store);
+    this.jsonStream = new JSONStream({
+      store,
+      type,
+      actions,
+    });
+  }
   start(status) {
     super.start(status);
     this.store.dispatch(lineStart(status));
   }
   log(status) {
+    this.jsonStream.write(status);
   }
   end(status) {
     this.store.dispatch(lineEnd(status));
@@ -20,5 +38,5 @@ class ServiceService extends Service {
 }
 
 export default function createService(store) {
-  return new ServiceService(store);
+  return new LineService(store);
 }
