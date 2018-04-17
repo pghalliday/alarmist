@@ -77,9 +77,6 @@ function updateErrorSeries(errorSeries, series, error) {
 
 export default function createReducer(name, type) {
   let colorIndex = 0;
-  const nextColor = () => {
-    return colorIndex++;
-  };
 
   const nameSelector = (state) => state.name;
   const runningSelector = (state) => state.running;
@@ -191,7 +188,7 @@ export default function createReducer(name, type) {
     })),
     // eslint-disable-next-line max-len
     [lineColors]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
-      colors: payload.colors,
+      colors: payload.data.colors,
     })),
     // eslint-disable-next-line max-len
     [lineAdvance]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
@@ -200,28 +197,29 @@ export default function createReducer(name, type) {
     // eslint-disable-next-line max-len
     [lineValue]: (state, {payload}) => check(eq, state, payload, () => {
       if (state.x.length) {
-        const series = state.series[payload.series] || {
+        const data = payload.data;
+        const series = state.series[data.series] || {
           values: [],
-          color: nextColor(),
+          color: colorIndex++,
         };
         const values = appendValue(
           series.values,
-          payload.value,
+          data.value,
           state.x.length,
         );
         const errorSeries = updateErrorSeries(
           state.errorSeries,
-          payload.series,
-          payload.error
+          data.series,
+          data.error
         );
         return Object.assign({}, state, {
           series: Object.assign({}, state.series, {
-            [payload.series]: Object.assign({}, series, {
-              error: payload.error,
+            [data.series]: Object.assign({}, series, {
+              error: data.error,
               values,
             }),
           }),
-          lastSeries: payload.series,
+          lastSeries: data.series,
           errorSeries,
         });
       }

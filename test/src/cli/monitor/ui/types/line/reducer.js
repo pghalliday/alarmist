@@ -40,48 +40,64 @@ const colors = [
 
 const advanceAction = lineAdvance(Object.assign({}, action));
 const colorsAction = lineColors(Object.assign({}, action, {
-  colors,
+  data: {
+    colors,
+  },
 }));
 
 const series1 = 'series1';
 const series1Value1 = 100;
 const series1Value1Action = lineValue(Object.assign({}, action, {
-  series: series1,
-  value: series1Value1,
+  data: {
+    series: series1,
+    value: series1Value1,
+  },
 }));
 const series1Value2 = 200;
 const series1Value2Action = lineValue(Object.assign({}, action, {
-  series: series1,
-  value: series1Value2,
+  data: {
+    series: series1,
+    value: series1Value2,
+  },
 }));
 const series1Value3 = 50;
 const series1Value3Action = lineValue(Object.assign({}, action, {
-  series: series1,
-  value: series1Value3,
-  error,
+  data: {
+    series: series1,
+    value: series1Value3,
+    error,
+  },
 }));
 const series1Value4 = 0;
 const series1Value4Action = lineValue(Object.assign({}, action, {
-  series: series1,
-  value: series1Value4,
+  data: {
+    series: series1,
+    value: series1Value4,
+  },
 }));
 
 const series2 = 'series2';
 const series2Value1 = 125;
 const series2Value1Action = lineValue(Object.assign({}, action, {
-  series: series2,
-  value: series2Value1,
+  data: {
+    series: series2,
+    value: series2Value1,
+  },
 }));
 const series2Value2 = 175;
 const series2Value2Action = lineValue(Object.assign({}, action, {
-  series: series2,
-  value: series2Value2,
-  error,
+  data: {
+    series: series2,
+    value: series2Value2,
+    error,
+  },
 }));
 const series2Value3 = 75;
 const series2Value3Action = lineValue(Object.assign({}, action, {
-  series: series2,
-  value: series2Value3,
+  data: {
+    series: series2,
+    value: series2Value3,
+  },
 }));
 
 const scenarios = {

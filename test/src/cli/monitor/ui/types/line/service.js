@@ -46,7 +46,6 @@ const advancePayload = {
     target: 'alarmist',
     type: 'line',
     action: lineAdvance.toString(),
-    data: {},
   }) + '\n'),
 };
 
@@ -72,7 +71,6 @@ const unknownTargetPayload = {
     target: 'unknown',
     type: 'line',
     action: lineAdvance.toString(),
-    data: {},
   }) + '\n'),
 };
 
@@ -83,7 +81,6 @@ const unknownTypePayload = {
     target: 'alarmist',
     type: 'unknown',
     action: lineAdvance.toString(),
-    data: {},
   }) + '\n'),
 };
 
@@ -94,7 +91,6 @@ const unknownActionPayload = {
     target: 'alarmist',
     type: 'line',
     action: 'unknown',
-    data: {},
   }) + '\n'),
 };
 
@@ -194,7 +190,9 @@ describe('cli', () => {
                     lineColors({
                       name,
                       id,
-                      colors,
+                      data: {
+                        colors,
+                      },
                     }),
                   );
                 });
@@ -207,7 +205,7 @@ describe('cli', () => {
                 });
 
                 it('should dispatch a line advance action', () => {
-                  store.dispatch.should.have.been.calledWith(
+                  store.dispatch.should.have.been.calledWithMatch(
                     lineAdvance({
                       name,
                       id,
@@ -227,9 +225,11 @@ describe('cli', () => {
                     lineValue({
                       name,
                       id,
-                      series,
-                      value,
-                      error,
+                      data: {
+                        series,
+                        value,
+                        error,
+                      },
                     }),
                   );
                 });

@@ -6,16 +6,16 @@ export default class JSONStream {
     actions = actions.reduce((actions, action) => Object.assign(actions, {
       [action]: action,
     }), {});
-    this.stream.on('parsed', (data) => {
-      console.log(data);
-      if (data.target === 'alarmist') {
-        if (data.type === type) {
-          const action = actions[data.action];
+    this.stream.on('parsed', (obj) => {
+      if (obj.target === 'alarmist') {
+        if (obj.type === type) {
+          const action = actions[obj.action];
           if (action) {
-            store.dispatch(action(Object.assign({
+            store.dispatch(action({
               name: this.status.name,
               id: this.status.id,
-            }, data.data)));
+              data: obj.data,
+            }));
           }
         }
       }
