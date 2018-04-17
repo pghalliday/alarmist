@@ -1,12 +1,14 @@
 // eslint-disable-next-line max-len
-import createService from '../../../../../../../src/cli/monitor/ui/types/service/service';
+import createService from '../../../../../../../src/cli/monitor/ui/types/line/service';
 // eslint-disable-next-line max-len
 import Service from '../../../../../../../src/cli/monitor/ui/types/common/service';
 import {
-  serviceStart,
-  serviceLog,
-  serviceEnd,
-} from '../../../../../../../src/cli/monitor/ui/types/service/reducer';
+  lineStart,
+  lineColors,
+  lineAdvance,
+  lineValue,
+  lineEnd,
+} from '../../../../../../../src/cli/monitor/ui/types/line/reducer';
 
 let service;
 let store;
@@ -17,13 +19,92 @@ class Store {
   }
 }
 
+const name = 'name';
+const id = 'id';
+const series = 'series';
+const value = 'value';
+const error = 'error';
+const colors = 'colors';
+
+const colorsPayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'alarmist',
+    type: 'line',
+    action: 'colors',
+    data: {
+      colors,
+    },
+  })),
+};
+
+const advancePayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'alarmist',
+    type: 'line',
+    action: 'advance',
+    data: {},
+  })),
+};
+
+const valuePayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'alarmist',
+    type: 'line',
+    action: 'value',
+    data: {
+      series,
+      value,
+      error,
+    },
+  })),
+};
+
+const unknownTargetPayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'unknown',
+    type: 'line',
+    action: 'advance',
+    data: {},
+  })),
+};
+
+const unknownTypePayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'alarmist',
+    type: 'unknown',
+    action: 'advance',
+    data: {},
+  })),
+};
+
+const unknownActionPayload = {
+  name,
+  id,
+  data: Buffer.from(JSON.stringify({
+    target: 'alarmist',
+    type: 'line',
+    action: 'unknown',
+    data: {},
+  })),
+};
+
 const payload = 'payload';
 
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('service', () => {
+        describe('line', () => {
           describe('createService', () => {
             beforeEach(() => {
               store = new Store();
@@ -41,6 +122,7 @@ describe('cli', () => {
 
             describe('#start', () => {
               beforeEach(() => {
+                store.dispatch.reset();
                 Service.prototype.start.reset();
                 service.start(payload);
               });
@@ -49,20 +131,108 @@ describe('cli', () => {
                 Service.prototype.start.should.have.been.called;
               });
 
-              it('should dispatch a service start action', () => {
+              it('should dispatch a line start action', () => {
                 store.dispatch.should.have.been.calledWith(
-                  serviceStart(payload)
+                  lineStart(payload)
                 );
               });
             });
 
             describe('#log', () => {
-              beforeEach(() => {
-                service.log(payload);
+              describe('with invalid payload', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(payload);
+                });
+
+                it('should not dispatch anything', () => {
+                  store.dispatch.should.not.have.been.called;
+                });
               });
 
-              it('should dispatch a service log action', () => {
-                store.dispatch.should.have.been.calledWith(serviceLog(payload));
+              describe('an unknown target', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(unknownTargetPayload);
+                });
+
+                it('should not dispatch anything', () => {
+                  store.dispatch.should.not.have.been.called;
+                });
+              });
+
+              describe('with an unknown type', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(unknownTypePayload);
+                });
+
+                it('should not dispatch anything', () => {
+                  store.dispatch.should.not.have.been.called;
+                });
+              });
+
+              describe('with an unknown action', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(unknownActionPayload);
+                });
+
+                it('should not dispatch anything', () => {
+                  store.dispatch.should.not.have.been.called;
+                });
+              });
+
+              describe('with a colors payload', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(colorsPayload);
+                });
+
+                it('should dispatch a line colors action', () => {
+                  store.dispatch.should.have.been.calledWith(
+                    lineColors({
+                      name,
+                      id,
+                      colors,
+                    }),
+                  );
+                });
+              });
+
+              describe('with an advance payload', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(advancePayload);
+                });
+
+                it('should dispatch a line advance action', () => {
+                  store.dispatch.should.have.been.calledWith(
+                    lineAdvance({
+                      name,
+                      id,
+                    }),
+                  );
+                });
+              });
+
+              describe('with a value payload', () => {
+                beforeEach(() => {
+                  store.dispatch.reset();
+                  service.log(valuePayload);
+                });
+
+                it('should dispatch a line value action', () => {
+                  store.dispatch.should.have.been.calledWith(
+                    lineValue({
+                      name,
+                      id,
+                      series,
+                      value,
+                      error,
+                    }),
+                  );
+                });
               });
             });
 
@@ -71,8 +241,8 @@ describe('cli', () => {
                 service.end(payload);
               });
 
-              it('should dispatch a service end action', () => {
-                store.dispatch.should.have.been.calledWith(serviceEnd(payload));
+              it('should dispatch a line end action', () => {
+                store.dispatch.should.have.been.calledWith(lineEnd(payload));
               });
             });
           });

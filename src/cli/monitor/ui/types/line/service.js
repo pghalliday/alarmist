@@ -1,20 +1,21 @@
 import Service from '../common/service';
 import {
-  serviceStart,
-  serviceLog,
-  serviceEnd,
+  lineStart,
+  lineColors,
+  lineAdvance,
+  lineValue,
+  lineEnd,
 } from './reducer';
 
 class ServiceService extends Service {
   start(status) {
     super.start(status);
-    this.store.dispatch(serviceStart(status));
+    this.store.dispatch(lineStart(status));
   }
   log(status) {
-    this.store.dispatch(serviceLog(status));
   }
   end(status) {
-    this.store.dispatch(serviceEnd(status));
+    this.store.dispatch(lineEnd(status));
   }
 }
 

@@ -17,17 +17,19 @@ import {
 
 export const {
   lineStart,
+  lineColors,
   lineAdvance,
   lineValue,
   lineEnd,
 } = createActions(
   'LINE_START',
+  'LINE_COLORS',
   'LINE_ADVANCE',
   'LINE_VALUE',
   'LINE_END',
 );
 
-const COLORS = [
+const INITIAL_COLORS = [
   'white',
   'yellow',
   'blue',
@@ -76,8 +78,7 @@ function updateErrorSeries(errorSeries, series, error) {
 export default function createReducer(name, type) {
   let colorIndex = 0;
   const nextColor = () => {
-    colorIndex %= COLORS.length;
-    return COLORS[colorIndex++];
+    return colorIndex++;
   };
 
   const nameSelector = (state) => state.name;
@@ -87,6 +88,7 @@ export default function createReducer(name, type) {
   const lastSeriesSelector = (state) => state.lastSeries;
   const seriesSelector = (state) => state.series;
   const xSelector = (state) => state.x;
+  const colorsSelector = (state) => state.colors;
   const seriesErrorSelector = createSelector(
     errorSeriesSelector,
     (errorSeries) => errorSeries[0],
@@ -144,13 +146,14 @@ export default function createReducer(name, type) {
   const dataSelector = createSelector(
     seriesSelector,
     xSelector,
-    (series, x) => {
+    colorsSelector,
+    (series, x, colors) => {
       const data = [];
       forOwn(series, (series, title) => {
         data.push({
           title,
           style: {
-            line: series.color,
+            line: colors[series.color % colors.length],
           },
           x,
           y: series.values,
@@ -170,6 +173,7 @@ export default function createReducer(name, type) {
     lastSeries: undefined,
     error: undefined,
     x: [],
+    colors: INITIAL_COLORS,
     selectors: {
       header: headerSelector,
       data: dataSelector,
@@ -184,6 +188,10 @@ export default function createReducer(name, type) {
       series: {},
       errorSeries: [],
       error: undefined,
+    })),
+    // eslint-disable-next-line max-len
+    [lineColors]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
+      colors: payload.colors,
     })),
     // eslint-disable-next-line max-len
     [lineAdvance]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {

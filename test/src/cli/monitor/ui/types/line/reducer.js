@@ -3,6 +3,7 @@ import {
 } from 'lodash';
 import createReducer, {
   lineStart,
+  lineColors,
   lineAdvance,
   lineValue,
   lineEnd,
@@ -30,7 +31,17 @@ const action = {
   id,
 };
 
+const NEW_COLOR_1 = 'blue';
+const NEW_COLOR_2 = 'cyan';
+const colors = [
+  NEW_COLOR_1,
+  NEW_COLOR_2,
+];
+
 const advanceAction = lineAdvance(Object.assign({}, action));
+const colorsAction = lineColors(Object.assign({}, action, {
+  colors,
+}));
 
 const series1 = 'series1';
 const series1Value1 = 100;
@@ -139,6 +150,7 @@ const scenarios = {
       series1Value2Action,
       series2Value2Action,
       advanceAction,
+      colorsAction,
       series1Value3Action,
       series2Value3Action,
       advanceAction,
@@ -272,23 +284,23 @@ const scenarios = {
       }],
     }, {
       header: {
-        text: `${name}: ${series1}: ${series1Value3}: ${error}`,
+        text: `${name}: ${series2}: ${series2Value2}: ${error}`,
         bgcolor: 'red',
         fgcolor: 'black',
       },
       data: [{
         title: series1,
         x: [0, 1, 2],
-        y: [series1Value1, series1Value2, series1Value3],
+        y: [series1Value1, series1Value2],
         style: {
-          line: COLOR_1,
+          line: NEW_COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2],
         y: [series2Value1, series2Value2],
         style: {
-          line: COLOR_2,
+          line: NEW_COLOR_2,
         },
       }],
     }, {
@@ -302,14 +314,35 @@ const scenarios = {
         x: [0, 1, 2],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: COLOR_1,
+          line: NEW_COLOR_1,
+        },
+      }, {
+        title: series2,
+        x: [0, 1, 2],
+        y: [series2Value1, series2Value2],
+        style: {
+          line: NEW_COLOR_2,
+        },
+      }],
+    }, {
+      header: {
+        text: `${name}: ${series1}: ${series1Value3}: ${error}`,
+        bgcolor: 'red',
+        fgcolor: 'black',
+      },
+      data: [{
+        title: series1,
+        x: [0, 1, 2],
+        y: [series1Value1, series1Value2, series1Value3],
+        style: {
+          line: NEW_COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: COLOR_2,
+          line: NEW_COLOR_2,
         },
       }],
     }, {
@@ -323,14 +356,14 @@ const scenarios = {
         x: [0, 1, 2, 3],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: COLOR_1,
+          line: NEW_COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2, 3],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: COLOR_2,
+          line: NEW_COLOR_2,
         },
       }],
     }, {
@@ -344,14 +377,14 @@ const scenarios = {
         x: [0, 1, 2, 3],
         y: [series1Value1, series1Value2, series1Value3, series1Value4],
         style: {
-          line: COLOR_1,
+          line: NEW_COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2, 3],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: COLOR_2,
+          line: NEW_COLOR_2,
         },
       }],
     }],
