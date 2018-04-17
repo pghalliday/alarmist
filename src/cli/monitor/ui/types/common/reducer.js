@@ -6,9 +6,9 @@ import appendBuffer from '../../../../utils/append-buffer';
 const EMPTY_BUFFER = Buffer.alloc(0);
 const MAX_LOG_SIZE = 100000;
 
-const gt = (a, b) => a > b;
-const eq = (a, b) => a === b;
-function check(op, state, payload, callback) {
+export const gt = (a, b) => a > b;
+export const eq = (a, b) => a === b;
+export function check(op, state, payload, callback) {
   if (payload.name === state.name && op(payload.id, state.id)) {
     return callback(state, payload);
   } else {
@@ -38,24 +38,21 @@ export function createReducer({
     },
   };
   return handleActions({
-    [start]: (state, {payload}) => check(gt, state, payload, () => {
-      return Object.assign({}, state, {
-        id: payload.id,
-        log: EMPTY_BUFFER,
-        running: true,
-        error: undefined,
-      });
-    }),
-    [log]: (state, {payload}) => check(eq, state, payload, () => {
-      return Object.assign({}, state, {
+    // eslint-disable-next-line max-len
+    [start]: (state, {payload}) => check(gt, state, payload, () => Object.assign({}, state, {
+      id: payload.id,
+      log: EMPTY_BUFFER,
+      running: true,
+      error: undefined,
+    })),
+    // eslint-disable-next-line max-len
+    [log]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
         log: appendBuffer(MAX_LOG_SIZE, state.log, payload.data),
-      });
-    }),
-    [end]: (state, {payload}) => check(eq, state, payload, () => {
-      return Object.assign({}, state, {
+    })),
+    // eslint-disable-next-line max-len
+    [end]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
         running: false,
         error: payload.error,
-      });
-    }),
+    })),
   }, INITIAL_STATE);
 }

@@ -1,4 +1,5 @@
 import blessed from 'blessed';
+import contrib from 'blessed-contrib';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -22,12 +23,30 @@ const helper = {
     if (helper.screen) {
       helper.screen.reset();
     }
+    if (helper.line) {
+      helper.line.reset();
+    }
   },
 };
 
-blessed.screen = sinon.spy((props) => {
-  helper.screen = Object.assign({}, {
+contrib.line = sinon.spy((props) => {
+  helper.line = Object.assign({}, {
+    style: {},
   }, _.cloneDeep(props));
+  return Object.assign(helper.line, {
+    width: TEST_WIDTH,
+    height: TEST_HEIGHT,
+    setData: sinon.spy(),
+    reset: () => {
+      helper.line.width = TEST_WIDTH;
+      helper.line.height = TEST_HEIGHT;
+      helper.line.setData.reset();
+    },
+  });
+});
+
+blessed.screen = sinon.spy((props) => {
+  helper.screen = _.cloneDeep(props);
   return Object.assign(helper.screen, {
     width: TEST_WIDTH,
     height: TEST_HEIGHT,
