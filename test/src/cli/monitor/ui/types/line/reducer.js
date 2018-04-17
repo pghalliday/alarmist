@@ -20,6 +20,9 @@ const startTime = '1000';
 const endTime = '1001';
 const error = 'error';
 
+const COLOR_1 = 'white';
+const COLOR_2 = 'yellow';
+
 const EMPTY_DATA = [];
 
 const action = {
@@ -108,7 +111,7 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -122,7 +125,7 @@ const scenarios = {
         x: [0],
         y: [series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }],
@@ -159,7 +162,7 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -173,14 +176,14 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -191,17 +194,17 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0],
+        x: [0, 1],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -215,14 +218,14 @@ const scenarios = {
         x: [0, 1],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -236,14 +239,14 @@ const scenarios = {
         x: [0, 1],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1],
         y: [series2Value1, series2Value2],
         style: {
-          line: 'red',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -254,17 +257,17 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0, 1],
+        x: [0, 1, 2],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0, 1],
+        x: [0, 1, 2],
         y: [series2Value1, series2Value2],
         style: {
-          line: 'red',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -278,14 +281,14 @@ const scenarios = {
         x: [0, 1, 2],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: 'red',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0, 1],
+        x: [0, 1, 2],
         y: [series2Value1, series2Value2],
         style: {
-          line: 'red',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -299,14 +302,14 @@ const scenarios = {
         x: [0, 1, 2],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: 'red',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -317,17 +320,17 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0, 1, 2],
+        x: [0, 1, 2, 3],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: 'red',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0, 1, 2],
+        x: [0, 1, 2, 3],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -341,14 +344,14 @@ const scenarios = {
         x: [0, 1, 2, 3],
         y: [series1Value1, series1Value2, series1Value3, series1Value4],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0, 1, 2],
+        x: [0, 1, 2, 3],
         y: [series2Value1, series2Value2, series2Value3],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }],
@@ -379,7 +382,7 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -390,10 +393,10 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0],
+        x: [0, 1],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -407,7 +410,7 @@ const scenarios = {
         x: [0, 1],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -421,14 +424,14 @@ const scenarios = {
         x: [0, 1],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1],
         y: [series2Value1, series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }],
@@ -462,7 +465,7 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }],
     }, {
@@ -476,14 +479,14 @@ const scenarios = {
         x: [0],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -494,17 +497,17 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0],
+        x: [0, 1],
         y: [series1Value1],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -518,14 +521,14 @@ const scenarios = {
         x: [0, 1],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -536,17 +539,17 @@ const scenarios = {
       },
       data: [{
         title: series1,
-        x: [0, 1],
+        x: [0, 1, 2],
         y: [series1Value1, series1Value2],
         style: {
-          line: 'green',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1, 2],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -560,14 +563,14 @@ const scenarios = {
         x: [0, 1, 2],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: 'red',
+          line: COLOR_1,
         },
       }, {
         title: series2,
-        x: [0],
+        x: [0, 1, 2],
         y: [series2Value1],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }, {
@@ -581,14 +584,14 @@ const scenarios = {
         x: [0, 1, 2],
         y: [series1Value1, series1Value2, series1Value3],
         style: {
-          line: 'red',
+          line: COLOR_1,
         },
       }, {
         title: series2,
         x: [0, 1, 2],
         y: [series2Value1, (series2Value1 + series2Value2) / 2, series2Value2],
         style: {
-          line: 'green',
+          line: COLOR_2,
         },
       }],
     }],
@@ -600,7 +603,7 @@ describe('cli', () => {
     describe('ui', () => {
       describe('types', () => {
         describe('line', () => {
-          describe.only('reducer', () => {
+          describe('reducer', () => {
             beforeEach(() => {
               store = createStore(createReducer(name));
               state = store.getState();

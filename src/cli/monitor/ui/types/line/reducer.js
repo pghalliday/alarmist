@@ -27,6 +27,17 @@ export const {
   'LINE_END',
 );
 
+const COLORS = [
+  'white',
+  'yellow',
+  'blue',
+  'green',
+  'cyan',
+  'purple',
+  'orange',
+  'red',
+];
+
 function headerText(name, message) {
   return `${name}: ${message}`;
 }
@@ -49,8 +60,8 @@ function appendValue(values, value, length) {
     for (let i = 1; i < lengthDiff; i++) {
       newValues.push(lastValue + (increment * i));
     }
-    newValues.push(value);
   }
+  newValues.push(value);
   return newValues;
 }
 
@@ -63,6 +74,12 @@ function updateErrorSeries(errorSeries, series, error) {
 }
 
 export default function createReducer(name, type) {
+  let colorIndex = 0;
+  const nextColor = () => {
+    colorIndex %= COLORS.length;
+    return COLORS[colorIndex++];
+  };
+
   const nameSelector = (state) => state.name;
   const runningSelector = (state) => state.running;
   const errorSelector = (state) => state.error;
@@ -127,15 +144,15 @@ export default function createReducer(name, type) {
   const dataSelector = createSelector(
     seriesSelector,
     xSelector,
-    (series, length, x) => {
+    (series, x) => {
       const data = [];
       forOwn(series, (series, title) => {
         data.push({
           title,
           style: {
-            line: series.error ? 'red' : 'green',
+            line: series.color,
           },
-          x: x.slice(0, series.values.length),
+          x,
           y: series.values,
         });
       });
@@ -174,27 +191,33 @@ export default function createReducer(name, type) {
     })),
     // eslint-disable-next-line max-len
     [lineValue]: (state, {payload}) => check(eq, state, payload, () => {
-      const series = state.series[payload.series];
-      const values = appendValue(
-        series ? series.values : [],
-        payload.value,
-        state.x.length,
-      );
-      const errorSeries = updateErrorSeries(
-        state.errorSeries,
-        payload.series,
-        payload.error
-      );
-      return Object.assign({}, state, {
-        series: Object.assign({}, state.series, {
-          [payload.series]: {
-            error: payload.error,
-            values,
-          },
-        }),
-        lastSeries: payload.series,
-        errorSeries,
-      });
+      if (state.x.length) {
+        const series = state.series[payload.series] || {
+          values: [],
+          color: nextColor(),
+        };
+        const values = appendValue(
+          series.values,
+          payload.value,
+          state.x.length,
+        );
+        const errorSeries = updateErrorSeries(
+          state.errorSeries,
+          payload.series,
+          payload.error
+        );
+        return Object.assign({}, state, {
+          series: Object.assign({}, state.series, {
+            [payload.series]: Object.assign({}, series, {
+              error: payload.error,
+              values,
+            }),
+          }),
+          lastSeries: payload.series,
+          errorSeries,
+        });
+      }
+      return state;
     }),
     // eslint-disable-next-line max-len
     [lineEnd]: (state, {payload}) => check(eq, state, payload, () => Object.assign({}, state, {
