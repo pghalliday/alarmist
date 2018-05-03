@@ -1,10 +1,10 @@
-import service from '../../../../../../../src/cli/monitor/ui/types/service';
+import service from '../../../../../../../src/cli/monitor/ui/types/line';
 
 describe('cli', () => {
   describe('monitor', () => {
     describe('ui', () => {
       describe('types', () => {
-        describe('service', () => {
+        describe('line', () => {
           it('should expose the createView function', () => {
             service.createView.should.be.a('function');
           });
