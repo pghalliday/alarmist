@@ -15,7 +15,7 @@ export default class Layout extends EventEmitter {
     this.entries = {};
     logger.log('appending selected indicator');
     this.selectedIndicator = blessed.text(
-      _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
+        _.cloneDeep(SELECTED_INDICATOR_PROPERTIES)
     );
     this.selectedIndicator.on('click', () => {
       this.emit('toggleExpanded');
@@ -36,14 +36,14 @@ export default class Layout extends EventEmitter {
       const lines = state.lines;
       const selected = lines[state.selected];
       const totalHeaderHeight = _.reduce(
-        this.entries,
-        (total, entry) => {
-          return total + entry.getHeaderHeight();
-        },
-        0
+          this.entries,
+          (total, entry) => {
+            return total + entry.getHeaderHeight();
+          },
+          0
       );
       let top = 0;
-      for (let label of lines) {
+      for (const label of lines) {
         const entry = this.entries[label];
         // the state starts with height 0, so first we measure the height
         const height = state.height || this.container.height;

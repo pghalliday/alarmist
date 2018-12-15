@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {copy} from 'copy-paste';
+import {writeSync} from 'clipboardy';
 import blessed from 'blessed';
 import {
   LOG_PROPERTIES,
@@ -12,18 +12,18 @@ export default class Log extends Entry {
     this.scrollOnExpand = true;
     this.expanded = false;
     this.log = blessed.box(_.cloneDeep(LOG_PROPERTIES));
-    this.log.key(['y'], () => copy(this.log.getText()));
-    this.log.key(['S-y'], () => copy(this.log.getContent()));
+    this.log.key(['y'], () => writeSync(this.log.getText()));
+    this.log.key(['S-y'], () => writeSync(this.log.getContent()));
     this.log.on('mouse', (event) => {
       // istanbul ignore else
       if (event.action === 'mousedown') {
         // istanbul ignore else
         if (event.shift) {
           if (event.button === 'left') {
-            copy(this.log.getText());
+            writeSync(this.log.getText());
           }
           if (event.button === 'right') {
-            copy(this.log.getContent());
+            writeSync(this.log.getContent());
           }
         }
       }

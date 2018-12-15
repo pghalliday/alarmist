@@ -23,7 +23,7 @@ describe('cli', () => {
         });
 
         it('should dispatch end actions', () => {
-          reducer.reset();
+          reducer.resetHistory();
           monitor.emit('end', 0);
           reducer.should.have.been.calledWith(undefined, {
             type: 'END',
@@ -32,7 +32,7 @@ describe('cli', () => {
         });
 
         it('should dispatch run start actions', () => {
-          reducer.reset();
+          reducer.resetHistory();
           monitor.emit('run-start', 'status');
           reducer.should.have.been.calledWith(undefined, {
             type: 'RUN_START',
@@ -41,7 +41,7 @@ describe('cli', () => {
         });
 
         it('should dispatch run end actions', () => {
-          reducer.reset();
+          reducer.resetHistory();
           monitor.emit('run-end', 'status');
           reducer.should.have.been.calledWith(undefined, {
             type: 'RUN_END',
@@ -50,7 +50,7 @@ describe('cli', () => {
         });
 
         it('should dispatch log actions on write to log', () => {
-          reducer.reset();
+          reducer.resetHistory();
           monitor.log.write(log);
           reducer.should.have.been.calledWith(undefined, {
             type: 'LOG',
@@ -59,7 +59,7 @@ describe('cli', () => {
         });
 
         it('should dispatch run log actions on log events', () => {
-          reducer.reset();
+          reducer.resetHistory();
           monitor.emit('run-log', {
             name: 'name',
             id: 2,

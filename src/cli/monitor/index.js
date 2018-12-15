@@ -24,11 +24,11 @@ module.exports = function cli(argv) {
     process.exit(1);
   }
   return alarmist.execMonitor(opts)
-  .then((monitor) => ui.createUi(monitor, opts.workingDir, opts.debug))
-  .catch(
-    // istanbul ignore next
-    (error) => {
-      console.error(error.stack);
-    }
-  );
+      .then((monitor) => ui.createUi(monitor, opts.workingDir, opts.debug))
+      .catch(
+          // istanbul ignore next
+          (error) => {
+            console.error(error.stack);
+          }
+      );
 };

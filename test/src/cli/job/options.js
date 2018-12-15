@@ -109,7 +109,7 @@ describe('cli', () => {
       describe('#help', () => {
         it('should return the help message', () => {
           help().should.match(
-            new RegExp('^' + _.escapeRegExp(JOB_USAGE_TEXT))
+              new RegExp('^' + _.escapeRegExp(JOB_USAGE_TEXT))
           );
         });
       });

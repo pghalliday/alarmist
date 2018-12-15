@@ -29,8 +29,8 @@ export default class Job extends Log {
   }
   _update(status) {
     this.setHeader(
-      jobContent(status),
-      jobBg(status),
+        jobContent(status),
+        jobBg(status),
     );
     this.setLog(status.log);
   }

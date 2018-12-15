@@ -83,9 +83,10 @@ describe('alarmist', function() {
             end: sinon.spy(resolve),
           };
           sinon.stub(
-            Monitor,
-            'createMonitor',
-            async () => Promise.resolve(monitor)
+              Monitor,
+              'createMonitor',
+          ).callsFake(
+              async () => Promise.resolve(monitor)
           );
           execMonitor = await exec({
             command,
@@ -110,7 +111,7 @@ describe('alarmist', function() {
 
       it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {
         const envVar = await preadFile(
-          path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
+            path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
         );
         envVar[0].toString().should.eql(workingDir);
       });
@@ -139,7 +140,6 @@ describe('alarmist', function() {
         this.timeout(5000);
         await primraf(WORKING_DIR);
         await pmkdirp(WORKING_DIR);
-        let execMonitor;
         monitor = {
           log: new TestWritable(),
           close: sinon.spy(async () => {
@@ -147,12 +147,13 @@ describe('alarmist', function() {
           }),
         };
         sinon.stub(
-          Monitor,
-          'createMonitor',
-          async () => Promise.resolve(monitor)
+            Monitor,
+            'createMonitor',
+        ).callsFake(
+            async () => Promise.resolve(monitor)
         );
         const waitPromise = waitForFile(path.join(WORKING_DIR, 'done'));
-        execMonitor = await exec({
+        const execMonitor = await exec({
           command,
           args: livingArgs,
           workingDir,
@@ -175,7 +176,7 @@ describe('alarmist', function() {
 
       it('should set the ALARMIST_WORKING_DIRECTORY variable', async () => {
         const envVar = await preadFile(
-          path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
+            path.join(WORKING_DIR, WORKING_DIRECTORY_VAR)
         );
         envVar[0].toString().should.eql(workingDir);
       });

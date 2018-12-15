@@ -17,9 +17,9 @@ describe('cli', () => {
         describe('with a transform method', () => {
           it('should transform the environment variable', () => {
             optionDefault(
-              '__TEST_VAR_SET__',
-              true,
-              (value) => value === 'true',
+                '__TEST_VAR_SET__',
+                true,
+                (value) => value === 'true',
             ).should.eql(false);
           });
         });

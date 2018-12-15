@@ -12,8 +12,8 @@ global.sinon = sinon;
 // override the blessed functions
 import './blessed';
 
-// override the copy-paste functions
-import './copy-paste';
+// override the clipboardy functions
+import './clipboardy';
 
 // override logger functions
 import './logger';

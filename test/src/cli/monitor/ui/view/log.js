@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import helper from '../../../../../helpers/blessed';
 import blessed from 'blessed';
-import copyPaste from 'copy-paste';
+import clipboardy from 'clipboardy';
 import Log from '../../../../../../src/cli/monitor/ui/view/log';
 import Entry from '../../../../../../src/cli/monitor/ui/view/entry';
 import {
@@ -20,8 +20,8 @@ describe('cli', () => {
       describe('view', () => {
         describe('Log', () => {
           before(() => {
-            blessed.text.reset();
-            blessed.box.reset();
+            blessed.text.resetHistory();
+            blessed.box.resetHistory();
             log = new Log();
             sinon.spy(log, '_setLog');
             sinon.spy(log, '_update');
@@ -45,56 +45,64 @@ describe('cli', () => {
 
           describe('when the log is shift clicked', () => {
             before(() => {
-              copyPaste.copy.reset();
+              clipboardy.writeSync.resetHistory();
               helper.box.shiftClick();
             });
 
             // eslint-disable-next-line max-len
             it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
+              clipboardy.writeSync.should.have.been.calledWith(
+                  helper.TEST_TEXT
+              );
             });
           });
 
           describe('when the log is shift right clicked', () => {
             before(() => {
-              copyPaste.copy.reset();
+              clipboardy.writeSync.resetHistory();
               helper.box.shiftRightClick();
             });
 
             // eslint-disable-next-line max-len
             it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
+              clipboardy.writeSync.should.have.been.calledWith(
+                  helper.TEST_CONTENT
+              );
             });
           });
 
           describe('on a "y" keypress', () => {
             before(() => {
-              copyPaste.copy.reset();
+              clipboardy.writeSync.resetHistory();
               helper.box.pressKey('y');
             });
 
             // eslint-disable-next-line max-len
             it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_TEXT);
+              clipboardy.writeSync.should.have.been.calledWith(
+                  helper.TEST_TEXT
+              );
             });
           });
 
           describe('on a "SHIFT-y" keypress', () => {
             before(() => {
-              copyPaste.copy.reset();
+              clipboardy.writeSync.resetHistory();
               // eslint-disable-next-line new-cap
               helper.box.pressKey('S-y');
             });
 
             // eslint-disable-next-line max-len
             it('should copy text without control sequences to clipboard', () => {
-              copyPaste.copy.should.have.been.calledWith(helper.TEST_CONTENT);
+              clipboardy.writeSync.should.have.been.calledWith(
+                  helper.TEST_CONTENT
+              );
             });
           });
 
           describe('_setContentParent', () => {
             before(() => {
-              container.append.reset();
+              container.append.resetHistory();
               log._setContentParent(container);
             });
 
@@ -105,7 +113,7 @@ describe('cli', () => {
 
           describe('_update', () => {
             before(() => {
-              log._update.reset();
+              log._update.resetHistory();
               log._update(state);
             });
 
@@ -148,7 +156,7 @@ describe('cli', () => {
 
             describe('when called with the same buffer', () => {
               before(() => {
-                log._setLog.reset();
+                log._setLog.resetHistory();
                 log.setLog(buffer);
               });
 

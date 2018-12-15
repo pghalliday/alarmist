@@ -25,11 +25,11 @@ export async function exec({
         [FORCE_COLOR_VAR]: color,
       }),
     })
-    .on('exit', async (code) => {
-      const error = code !== 0 ? `exit code: ${code}` : undefined;
-      await job.end(error);
-      resolve();
-    });
+        .on('exit', async (code) => {
+          const error = code !== 0 ? `exit code: ${code}` : undefined;
+          await job.end(error);
+          resolve();
+        });
     proc.stdout.pipe(job.log);
     proc.stdout.pipe(process.stdout);
     proc.stderr.pipe(job.log);

@@ -23,10 +23,10 @@ module.exports = function job(argv) {
     process.exit(1);
   }
   return alarmist.execJob(opts)
-  .catch(
-    // istanbul ignore next
-    (error) => {
-      console.error(error.stack);
-    }
-  );
+      .catch(
+          // istanbul ignore next
+          (error) => {
+            console.error(error.stack);
+          }
+      );
 };

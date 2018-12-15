@@ -46,10 +46,10 @@ const monitor = handleActions({
     return Object.assign({}, monitor, {
       log: appendBuffer(MAX_BUFFER_LENGTH, monitor.log, payload),
       lines: appendLines(
-        MAX_LINES_LENGTH,
-        MAX_LINE_LENGTH,
-        monitor.lines,
-        payload
+          MAX_LINES_LENGTH,
+          MAX_LINE_LENGTH,
+          monitor.lines,
+          payload
       ),
     });
   },
@@ -81,10 +81,10 @@ const jobs = handleActions({
         [name]: Object.assign({}, job, {
           log: appendBuffer(MAX_BUFFER_LENGTH, job.log, payload.data),
           lines: appendLines(
-            MAX_LINES_LENGTH,
-            MAX_LINE_LENGTH,
-            job.lines,
-            payload.data
+              MAX_LINES_LENGTH,
+              MAX_LINE_LENGTH,
+              job.lines,
+              payload.data
           ),
         }),
       });
@@ -166,9 +166,9 @@ const layout = handleActions({
       return Object.assign({}, layout, {
         selected: selected + 1,
         lines: lines.slice(0, selected).concat(
-          lines[selected + 1],
-          lines[selected],
-          lines.slice(selected + 2),
+            lines[selected + 1],
+            lines[selected],
+            lines.slice(selected + 2),
         ),
       });
     }
@@ -181,9 +181,9 @@ const layout = handleActions({
       return Object.assign({}, layout, {
         selected: selected - 1,
         lines: lines.slice(0, selected - 1).concat(
-          lines[selected],
-          lines[selected - 1],
-          lines.slice(selected + 1),
+            lines[selected],
+            lines[selected - 1],
+            lines.slice(selected + 1),
         ),
       });
     }

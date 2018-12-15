@@ -30,7 +30,7 @@ blessed.text = sinon.spy((props) => {
       handlers['click']();
     },
     reset: () => {
-      helper.text.setContent.reset();
+      helper.text.setContent.resetHistory();
     },
   });
 });
@@ -67,7 +67,7 @@ blessed.box = sinon.spy((props) => {
       });
     },
     key: (keys, handler) => {
-      for (let key of keys) {
+      for (const key of keys) {
         keyHandlers[key] = handler;
       }
     },
@@ -75,15 +75,15 @@ blessed.box = sinon.spy((props) => {
       keyHandlers[key]();
     },
     reset: () => {
-      helper.box.getContent.reset();
-      helper.box.getText.reset();
-      helper.box.setContent.reset();
-      helper.box.getLines.reset();
-      helper.box.setScrollPerc.reset();
-      helper.box.getScrollPerc.reset();
-      helper.box.hide.reset();
-      helper.box.show.reset();
-      helper.box.focus.reset();
+      helper.box.getContent.resetHistory();
+      helper.box.getText.resetHistory();
+      helper.box.setContent.resetHistory();
+      helper.box.getLines.resetHistory();
+      helper.box.setScrollPerc.resetHistory();
+      helper.box.getScrollPerc.resetHistory();
+      helper.box.hide.resetHistory();
+      helper.box.show.resetHistory();
+      helper.box.focus.resetHistory();
     },
   });
 });

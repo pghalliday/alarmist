@@ -26,12 +26,12 @@ class Entry extends EventEmitter {
     this.emit('select');
   }
   reset() {
-    this.setParent.reset();
-    this.collapse.reset();
-    this.expand.reset();
-    this.setTop.reset();
-    this.focus.reset();
-    this.setContentHeight.reset();
+    this.setParent.resetHistory();
+    this.collapse.resetHistory();
+    this.expand.resetHistory();
+    this.setTop.resetHistory();
+    this.focus.resetHistory();
+    this.setContentHeight.resetHistory();
   }
 }
 
@@ -73,21 +73,21 @@ describe('cli', () => {
       describe('view', () => {
         describe('Layout', () => {
           before(() => {
-            container.append.reset();
-            blessed.text.reset();
+            container.append.resetHistory();
+            blessed.text.resetHistory();
             layout = new Layout(container);
             selectedIndicator = helper.text;
           });
 
           it('should create the selected indicator', () => {
             blessed.text.should.have.been.calledWith(
-              SELECTED_INDICATOR_PROPERTIES
+                SELECTED_INDICATOR_PROPERTIES
             );
           });
 
           it('should append the selected indicator', () => {
             container.append.should.have.been.calledWith(
-              sinon.match.same(selectedIndicator)
+                sinon.match.same(selectedIndicator)
             );
           });
 
@@ -130,7 +130,7 @@ describe('cli', () => {
                   entry1.reset();
                   entry2.reset();
                   entry3.reset();
-                  container.focus.reset();
+                  container.focus.resetHistory();
                   layout.apply(notExpandedState);
                 });
 
@@ -164,7 +164,7 @@ describe('cli', () => {
 
                 describe('then apply with the same state', () => {
                   before(() => {
-                    logger.log.reset();
+                    logger.log.resetHistory();
                     layout.apply(notExpandedState);
                   });
 

@@ -9,13 +9,13 @@ export default class Monitor extends Log {
   _update(state) {
     if (_.isUndefined(state.error)) {
       this.setHeader(
-        ' monitor: ok',
-        'green',
+          ' monitor: ok',
+          'green',
       );
     } else {
       this.setHeader(
-        ` monitor: ${state.error}`,
-        'red',
+          ` monitor: ${state.error}`,
+          'red',
       );
     }
     this.setLog(state.log);

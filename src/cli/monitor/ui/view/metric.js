@@ -95,7 +95,7 @@ export default class Metric extends Entry {
       // the last line should always be incomplete so
       // take the last subsetLength complete lines and parse the values
       const subset = status.lines.slice(-subsetLength - 1, -1)
-        .map(parseValue);
+          .map(parseValue);
       // asciichart will fall over if the range of values has zero size
       if (rangeIsGood(subset)) {
         this.chart.setContent(asciichart.plot(subset, {
@@ -108,8 +108,8 @@ export default class Metric extends Entry {
     }
     const entry = latestEntry(status.lines);
     this.setHeader(
-      jobContent(status, entry),
-      jobBg(status, entry),
+        jobContent(status, entry),
+        jobBg(status, entry),
     );
   }
   clear() {

@@ -18,7 +18,7 @@ describe('cli', () => {
       describe('view', () => {
         describe('Entry', () => {
           before(() => {
-            blessed.text.reset();
+            blessed.text.resetHistory();
             entry = new Entry();
             sinon.spy(entry, '_update');
             sinon.spy(entry, 'setContentHeight');
@@ -41,7 +41,7 @@ describe('cli', () => {
 
           describe('setParent', () => {
             before(() => {
-              container.append.reset();
+              container.append.resetHistory();
               entry.setParent(container);
             });
 
@@ -52,7 +52,7 @@ describe('cli', () => {
 
           describe('update', () => {
             before(() => {
-              entry._update.reset();
+              entry._update.resetHistory();
               entry.update(state);
             });
 
@@ -62,7 +62,7 @@ describe('cli', () => {
 
             describe('with the same state', () => {
               before(() => {
-                entry._update.reset();
+                entry._update.resetHistory();
                 entry.update(state);
               });
 
@@ -95,7 +95,7 @@ describe('cli', () => {
 
           describe('setContentHeight', () => {
             before(() => {
-              entry.setContentHeight.reset();
+              entry.setContentHeight.resetHistory();
               entry.setContentHeight(10);
             });
 
@@ -107,7 +107,7 @@ describe('cli', () => {
           describe('setTop', () => {
             before(() => {
               helper.reset();
-              entry._setContentTop.reset();
+              entry._setContentTop.resetHistory();
               entry.setTop(10);
             });
 
@@ -117,14 +117,14 @@ describe('cli', () => {
 
             it('should set the content top', () => {
               entry._setContentTop.should.have.been.calledWith(
-                10 + entry.getHeaderHeight()
+                  10 + entry.getHeaderHeight()
               );
             });
           });
 
           describe('expand', () => {
             before(() => {
-              entry.expand.reset();
+              entry.expand.resetHistory();
               entry.expand();
             });
 
@@ -135,7 +135,7 @@ describe('cli', () => {
 
           describe('then collapse', () => {
             before(() => {
-              entry.collapse.reset();
+              entry.collapse.resetHistory();
               entry.collapse();
             });
 

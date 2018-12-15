@@ -21,26 +21,26 @@ import {
 const toBool = (value) => value === 'true';
 
 const defaultColor = optionDefault(
-  FORCE_COLOR_VAR,
-  DEFAULT_COLOR_OPTION,
-  toBool,
+    FORCE_COLOR_VAR,
+    DEFAULT_COLOR_OPTION,
+    toBool,
 );
 
 const defaultService = optionDefault(
-  SERVICE_VAR,
-  DEFAULT_SERVICE_OPTION,
-  toBool,
+    SERVICE_VAR,
+    DEFAULT_SERVICE_OPTION,
+    toBool,
 );
 
 const defaultMetric = optionDefault(
-  METRIC_VAR,
-  DEFAULT_METRIC_OPTION,
-  toBool,
+    METRIC_VAR,
+    DEFAULT_METRIC_OPTION,
+    toBool,
 );
 
 const defaultWorkingDirectory = optionDefault(
-  WORKING_DIRECTORY_VAR,
-  DEFAULT_WORKING_DIR,
+    WORKING_DIRECTORY_VAR,
+    DEFAULT_WORKING_DIR,
 );
 
 const cliOpts = cliclopts([{

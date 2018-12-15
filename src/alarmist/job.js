@@ -43,16 +43,16 @@ export async function createJob({name, service, metric, workingDir}) {
   const logStream = createWriteStream(path.join(reportDir, RUN_LOG));
   log.pipe(logStream);
   const logStreamEnded = new Promise(
-    (resolve) => logStream.on('close', resolve)
+      (resolve) => logStream.on('close', resolve)
   );
   // start the control socket
   const controlSocket = await getControlSocket(workingDir, false);
   const controlConnection = createConnection(controlSocket);
   const controlReady = new Promise(
-    (resolve) => controlConnection.once('data', resolve)
+      (resolve) => controlConnection.once('data', resolve)
   );
   const controlEnded = new Promise(
-    (resolve) => controlConnection.once('end', resolve)
+      (resolve) => controlConnection.once('end', resolve)
   );
   await new Promise((resolve) => controlConnection.once('connect', resolve));
   controlConnection.write(JSON.stringify({
@@ -67,10 +67,10 @@ export async function createJob({name, service, metric, workingDir}) {
   const logSocket = await getLogSocket(workingDir, false);
   const logConnection = createConnection(logSocket);
   const logReady = new Promise(
-    (resolve) => logConnection.once('data', resolve)
+      (resolve) => logConnection.once('data', resolve)
   );
   const logEnded = new Promise(
-    (resolve) => logConnection.once('end', resolve)
+      (resolve) => logConnection.once('end', resolve)
   );
   await new Promise((resolve) => logConnection.once('connect', resolve));
   logConnection.write(JSON.stringify({

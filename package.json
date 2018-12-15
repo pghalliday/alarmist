@@ -1,6 +1,6 @@
 {
   "name": "alarmist",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Monitor parallel jobs",
   "main": "lib/index.js",
   "bin": {
@@ -27,7 +27,7 @@
     "watch:build": "chokidar \"src/**/*\" -c \"run-s -s alarmist:build\"",
     "watch": "chokidar \"+(src|test)/**/*\" -c \"run-s -s build\"",
     "start": "node ./bin/monitor.js --debug --no-reset run-p watch:lint watch:test watch:coverage watch:build alarmist:metric",
-    "prepublish": "run-s cmd:build"
+    "prepublishOnly": "run-s cmd:build"
   },
   "repository": {
     "type": "git",
@@ -46,29 +46,31 @@
   },
   "homepage": "https://github.com/pghalliday/alarmist#readme",
   "devDependencies": {
-    "babel-cli": "^6.22.2",
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
     "babel-plugin-istanbul": "^3.1.2",
-    "babel-preset-env": "^1.1.8",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "chokidar": "^1.6.1",
     "chokidar-cli": "^1.2.0",
-    "coveralls": "^2.11.15",
+    "coveralls": "^3.0.2",
     "cross-env": "^3.1.4",
-    "eslint": "^3.14.1",
-    "eslint-config-google": "^0.7.1",
-    "mocha": "^3.2.0",
+    "eslint": "^5.10.0",
+    "eslint-config-google": "^0.11.0",
+    "mocha": "^5.2.0",
     "npm-run-all": "^4.0.1",
-    "nyc": "^10.1.2",
-    "sinon": "^1.17.7",
-    "sinon-chai": "^2.8.0"
+    "nyc": "^13.1.0",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0"
   },
   "dependencies": {
     "asciichart": "^1.5.7",
     "babel-polyfill": "^6.22.0",
     "blessed": "^0.1.81",
     "cliclopts": "^1.1.1",
-    "copy-paste": "^1.3.0",
+    "clipboardy": "^1.2.3",
     "cross-spawn": "^5.1.0",
     "lockfile": "^1.0.3",
     "lodash": "^4.17.4",

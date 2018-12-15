@@ -85,10 +85,10 @@ describe('alarmist', () => {
       let controlConnection;
       beforeEach(async () => {
         controlConnection = createConnection(
-          await getControlSocket(WORKING_DIR)
+            await getControlSocket(WORKING_DIR)
         );
         await new Promise(
-          (resolve) => controlConnection.on('connect', resolve)
+            (resolve) => controlConnection.on('connect', resolve)
         );
       });
       afterEach(async () => {

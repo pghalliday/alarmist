@@ -98,7 +98,7 @@ describe('cli', () => {
       describe('#help', () => {
         it('should return the help message', () => {
           help().should.match(
-            new RegExp('^' + _.escapeRegExp(MONITOR_USAGE_TEXT))
+              new RegExp('^' + _.escapeRegExp(MONITOR_USAGE_TEXT))
           );
         });
       });

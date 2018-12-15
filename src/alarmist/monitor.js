@@ -32,7 +32,7 @@ export async function createMonitor({reset, workingDir}) {
   const logStream = createWriteStream(monitorLog);
   log.pipe(logStream);
   const logStreamEnded = new Promise(
-    (resolve) => logStream.on('close', resolve)
+      (resolve) => logStream.on('close', resolve)
   );
   const endLogStream = async () => {
     logStream.end();

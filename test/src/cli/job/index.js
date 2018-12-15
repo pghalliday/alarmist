@@ -24,7 +24,7 @@ const argv = [name, command].concat(args);
 describe('cli', () => {
   describe('job', () => {
     before(async () => {
-      sinon.stub(alarmist, 'execJob', () => Promise.resolve());
+      sinon.stub(alarmist, 'execJob').callsFake(() => Promise.resolve());
       await primraf(WORKING_DIR);
       await jobCli(argv);
     });

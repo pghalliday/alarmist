@@ -42,19 +42,19 @@ const failId = 2;
 const log = Buffer.from('log');
 
 const successReportDir = path.join(
-  WORKING_DIR,
-  JOBS_DIR,
-  sanitizedName,
-  '' + successId,
+    WORKING_DIR,
+    JOBS_DIR,
+    sanitizedName,
+    '' + successId,
 );
 const successRunLog = path.join(successReportDir, RUN_LOG);
 const successStatusFile = path.join(successReportDir, STATUS_FILE);
 
 const failReportDir = path.join(
-  WORKING_DIR,
-  JOBS_DIR,
-  sanitizedName,
-  '' + failId,
+    WORKING_DIR,
+    JOBS_DIR,
+    sanitizedName,
+    '' + failId,
 );
 const failRunLog = path.join(failReportDir, RUN_LOG);
 const failStatusFile = path.join(failReportDir, STATUS_FILE);
@@ -75,7 +75,7 @@ let failLogData;
 describe('alarmist', () => {
   describe('job', () => {
     before(async () => {
-      sinon.stub(Date, 'now', () => startTime);
+      sinon.stub(Date, 'now').callsFake(() => startTime);
       await primraf(WORKING_DIR);
       await pmkdirp(WORKING_DIR);
       controlServer = createServer((client) => {
@@ -96,10 +96,10 @@ describe('alarmist', () => {
         });
       });
       await new Promise(
-        async (resolve) => controlServer.listen(
-          await getControlSocket(WORKING_DIR, true),
-          resolve,
-        )
+          async (resolve) => controlServer.listen(
+              await getControlSocket(WORKING_DIR, true),
+              resolve,
+          )
       );
       logServer = createServer((client) => {
         client.once('data', (data) => {
@@ -121,19 +121,21 @@ describe('alarmist', () => {
         });
       });
       await new Promise(
-        async (resolve) => logServer.listen(
-          await getLogSocket(WORKING_DIR, true),
-          resolve,
-        )
+          async (resolve) => logServer.listen(
+              await getLogSocket(WORKING_DIR, true),
+              resolve,
+          )
       );
-      sinon.stub(_id, 'getId', async () => Promise.resolve(successId));
+      sinon.stub(_id, 'getId').callsFake(
+          async () => Promise.resolve(successId)
+      );
       successJob = await createJob(
-        {name, service, metric, workingDir: WORKING_DIR}
+          {name, service, metric, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
-      sinon.stub(_id, 'getId', async () => Promise.resolve(failId));
+      sinon.stub(_id, 'getId').callsFake(async () => Promise.resolve(failId));
       failJob = await createJob(
-        {name, service, metric, workingDir: WORKING_DIR}
+          {name, service, metric, workingDir: WORKING_DIR}
       );
       _id.getId.restore();
       Date.now.restore();
@@ -195,12 +197,12 @@ describe('alarmist', () => {
     describe('#end', () => {
       describe('without error', () => {
         before(async () => {
-          sinon.stub(Date, 'now', () => endTime);
+          sinon.stub(Date, 'now').callsFake(() => endTime);
           try {
             successJob.log.write(log);
             await successJob.end();
           } catch (error) {
-            throw(error);
+            throw (error);
           } finally {
             Date.now.restore();
           }
@@ -234,12 +236,12 @@ describe('alarmist', () => {
 
       describe('with error', () => {
         before(async () => {
-          sinon.stub(Date, 'now', () => endTime);
+          sinon.stub(Date, 'now').callsFake(() => endTime);
           try {
             failJob.log.write(log);
             await failJob.end('message');
           } catch (error) {
-            throw(error);
+            throw (error);
           } finally {
             Date.now.restore();
           }

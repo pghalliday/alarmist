@@ -29,8 +29,8 @@ describe('cli', () => {
             describe('for a service', () => {
               describe('without an end time', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -42,8 +42,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: ok`,
-                    'green',
+                      ` ${name}: ok`,
+                      'green',
                   );
                 });
 
@@ -54,8 +54,8 @@ describe('cli', () => {
 
               describe('with an end time', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -68,8 +68,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: ended`,
-                    'red',
+                      ` ${name}: ended`,
+                      'red',
                   );
                 });
 
@@ -80,8 +80,8 @@ describe('cli', () => {
 
               describe('with an error', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -95,8 +95,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: ${error}`,
-                    'red',
+                      ` ${name}: ${error}`,
+                      'red',
                   );
                 });
 
@@ -109,8 +109,8 @@ describe('cli', () => {
             describe('for a regular job', () => {
               describe('without an end time', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -122,8 +122,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: run ${id}: pending`,
-                    'yellow',
+                      ` ${name}: run ${id}: pending`,
+                      'yellow',
                   );
                 });
 
@@ -134,8 +134,8 @@ describe('cli', () => {
 
               describe('with an end time', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -148,8 +148,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: run ${id}: ok`,
-                    'green',
+                      ` ${name}: run ${id}: ok`,
+                      'green',
                   );
                 });
 
@@ -160,8 +160,8 @@ describe('cli', () => {
 
               describe('with an error', () => {
                 before(() => {
-                  job.setHeader.reset();
-                  job.setLog.reset();
+                  job.setHeader.resetHistory();
+                  job.setLog.resetHistory();
                   job.update({
                     name,
                     id,
@@ -175,8 +175,8 @@ describe('cli', () => {
 
                 it('should set the header', () => {
                   job.setHeader.should.have.been.calledWith(
-                    ` ${name}: run ${id}: ${error}`,
-                    'red',
+                      ` ${name}: run ${id}: ${error}`,
+                      'red',
                   );
                 });
 

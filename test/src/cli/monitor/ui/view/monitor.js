@@ -2,7 +2,7 @@ import Monitor from '../../../../../../src/cli/monitor/ui/view/monitor';
 import Log from '../../../../../../src/cli/monitor/ui/view/log';
 
 let monitor;
-let log = Buffer.from('log');
+const log = Buffer.from('log');
 const error = 'message';
 
 describe('cli', () => {
@@ -31,8 +31,8 @@ describe('cli', () => {
 
               it('should set the header', () => {
                 monitor.setHeader.should.have.been.calledWith(
-                  ` monitor: ${error}`,
-                  'red',
+                    ` monitor: ${error}`,
+                    'red',
                 );
               });
 
@@ -50,8 +50,8 @@ describe('cli', () => {
 
               it('should set the header', () => {
                 monitor.setHeader.should.have.been.calledWith(
-                  ' monitor: ok',
-                  'green',
+                    ' monitor: ok',
+                    'green',
                 );
               });
 

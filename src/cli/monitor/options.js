@@ -20,26 +20,26 @@ import {
 const toBool = (value) => value === 'true';
 
 const defaultDebug = optionDefault(
-  DEBUG_VAR,
-  DEFAULT_DEBUG_OPTION,
-  toBool,
+    DEBUG_VAR,
+    DEFAULT_DEBUG_OPTION,
+    toBool,
 );
 
 const defaultReset = optionDefault(
-  RESET_VAR,
-  DEFAULT_RESET_OPTION,
-  toBool,
+    RESET_VAR,
+    DEFAULT_RESET_OPTION,
+    toBool,
 );
 
 const defaultColor = optionDefault(
-  FORCE_COLOR_VAR,
-  DEFAULT_COLOR_OPTION,
-  toBool,
+    FORCE_COLOR_VAR,
+    DEFAULT_COLOR_OPTION,
+    toBool,
 );
 
 const defaultWorkingDirectory = optionDefault(
-  WORKING_DIRECTORY_VAR,
-  DEFAULT_WORKING_DIR,
+    WORKING_DIRECTORY_VAR,
+    DEFAULT_WORKING_DIR,
 );
 
 const cliOpts = cliclopts([{

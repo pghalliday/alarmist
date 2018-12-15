@@ -18,10 +18,10 @@ describe('cli', () => {
         let lines = EMPTY;
 
         lines = appendLines(
-          MAX_LINES_LENGTH,
-          MAX_LINE_LENGTH,
-          lines,
-          DATA_1
+            MAX_LINES_LENGTH,
+            MAX_LINE_LENGTH,
+            lines,
+            DATA_1
         );
 
         lines.should.eql([

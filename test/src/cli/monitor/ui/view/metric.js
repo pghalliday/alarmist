@@ -56,8 +56,8 @@ describe('cli', () => {
       describe('view', () => {
         describe('Metric', () => {
           before(() => {
-            blessed.text.reset();
-            blessed.box.reset();
+            blessed.text.resetHistory();
+            blessed.box.resetHistory();
             metric = new Metric();
             sinon.spy(metric, 'setHeader');
           });
@@ -80,7 +80,7 @@ describe('cli', () => {
 
           describe('_setContentParent', () => {
             before(() => {
-              container.append.reset();
+              container.append.resetHistory();
               metric._setContentParent(container);
             });
 
@@ -124,10 +124,10 @@ describe('cli', () => {
 
               it('should update the chart', () => {
                 helper.box.setContent.should.have.been.calledWith(
-                  asciichart.plot([100, 80, 120], {
-                    padding: CHART_PADDING,
-                    height: 10 - 1,
-                  })
+                    asciichart.plot([100, 80, 120], {
+                      padding: CHART_PADDING,
+                      height: 10 - 1,
+                    })
                 );
               });
             });
@@ -137,13 +137,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(goodState);
               });
 
               it('should report the state', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: 120', 'green'
+                    ' jobName: 120', 'green'
                 );
               });
             });
@@ -153,13 +153,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(warningState);
               });
 
               it('should report the state', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: 120 -  this is a warning', 'yellow'
+                    ' jobName: 120 -  this is a warning', 'yellow'
                 );
               });
             });
@@ -169,13 +169,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(errorState);
               });
 
               it('should report the state', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: 120 -  this, is an error', 'red'
+                    ' jobName: 120 -  this, is an error', 'red'
                 );
               });
             });
@@ -185,13 +185,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(unknownState);
               });
 
               it('should report the state', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: 120', 'red'
+                    ' jobName: 120', 'red'
                 );
               });
             });
@@ -201,13 +201,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(endState);
               });
 
               it('should report the end', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: end error', 'red'
+                    ' jobName: end error', 'red'
                 );
               });
             });
@@ -217,13 +217,13 @@ describe('cli', () => {
                 helper.reset();
                 helper.box.width = 100;
                 helper.box.height = 10;
-                metric.setHeader.reset();
+                metric.setHeader.resetHistory();
                 metric._update(endWithoutErrorState);
               });
 
               it('should report the end', () => {
                 metric.setHeader.should.have.been.calledWith(
-                  ' jobName: ended', 'red'
+                    ' jobName: ended', 'red'
                 );
               });
             });

@@ -78,7 +78,9 @@ describe('alarmist', () => {
           log: new TestWritable(),
           end: sinon.spy(() => Promise.resolve()),
         };
-        sinon.stub(Job, 'createJob', sinon.spy(() => Promise.resolve(job)));
+        sinon.stub(Job, 'createJob').callsFake(
+            sinon.spy(() => Promise.resolve(job))
+        );
         await exec({
           name,
           command,
@@ -135,7 +137,9 @@ describe('alarmist', () => {
           log: new TestWritable(),
           end: sinon.spy(() => Promise.resolve()),
         };
-        sinon.stub(Job, 'createJob', sinon.spy(() => Promise.resolve(job)));
+        sinon.stub(Job, 'createJob').callsFake(
+            sinon.spy(() => Promise.resolve(job))
+        );
         await exec({
           name,
           command,
@@ -180,7 +184,7 @@ describe('alarmist', () => {
 
       it('should complete the job', () => {
         job.end.should.have.been.calledWith(
-          `exit code: ${failCode}`
+            `exit code: ${failCode}`
         );
       });
     });

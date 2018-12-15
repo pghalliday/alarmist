@@ -27,7 +27,9 @@ describe('cli', () => {
   describe('monitor', () => {
     before(async () => {
       sinon.stub(ui, 'createUi');
-      sinon.stub(alarmist, 'execMonitor', () => Promise.resolve(monitor));
+      sinon.stub(alarmist, 'execMonitor').callsFake(
+          () => Promise.resolve(monitor)
+      );
       await primraf(WORKING_DIR);
       await monitorCli(argv);
     });
@@ -49,9 +51,9 @@ describe('cli', () => {
 
     it('should create a ui', async () => {
       ui.createUi.should.have.been.calledWith(
-        monitor,
-        DEFAULT_WORKING_DIR,
-        DEFAULT_DEBUG_OPTION
+          monitor,
+          DEFAULT_WORKING_DIR,
+          DEFAULT_DEBUG_OPTION
       );
     });
   });

@@ -16,12 +16,12 @@ describe('utils', () => {
   describe('promisify', () => {
     it('should reject the promise on error', () => {
       return asyncPromise(2, 3, new Error('forced error'))
-      .should.be.rejectedWith('forced error');
+          .should.be.rejectedWith('forced error');
     });
 
     it('should resolve with an array of results', () => {
       return asyncPromise(2, 3, null)
-      .should.eventually.eql([5, -1]);
+          .should.eventually.eql([5, -1]);
     });
   });
 });

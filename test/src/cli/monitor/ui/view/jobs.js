@@ -62,7 +62,7 @@ describe('cli', () => {
             describe('with a new job', () => {
               before(() => {
                 jobs = new Jobs(Job, Metric, layout);
-                layout.append.reset();
+                layout.append.resetHistory();
                 job = undefined;
                 jobs.update(newJob);
               });
@@ -74,20 +74,20 @@ describe('cli', () => {
               it('should update the new job', () => {
                 job.update.should.have.been.calledOnce;
                 job.update.should.have.been.calledWith(
-                  sinon.match.same(status)
+                    sinon.match.same(status)
                 );
               });
 
               it('should append the job to the layout', () => {
                 layout.append.should.have.been.calledWith(
-                  jobLabel(name),
-                  job,
+                    jobLabel(name),
+                    job,
                 );
               });
 
               describe('then with another new job', () => {
                 before(() => {
-                  layout.append.reset();
+                  layout.append.resetHistory();
                   job = undefined;
                   jobs.update(anotherNewJob);
                 });
@@ -99,21 +99,21 @@ describe('cli', () => {
                 it('should update the new job', () => {
                   job.update.should.have.been.calledOnce;
                   job.update.should.have.been.calledWith(
-                    sinon.match.same(anotherStatus)
+                      sinon.match.same(anotherStatus)
                   );
                 });
 
                 it('should append the job to the layout', () => {
                   layout.append.should.have.been.calledWith(
-                    jobLabel(anotherName),
-                    job,
+                      jobLabel(anotherName),
+                      job,
                   );
                 });
 
                 describe('then with an updated job', () => {
                   before(() => {
-                    layout.append.reset();
-                    job.update.reset();
+                    layout.append.resetHistory();
+                    job.update.resetHistory();
                     lastJob = job;
                     job = undefined;
                     jobs.update(updatedJob);
@@ -130,7 +130,7 @@ describe('cli', () => {
                   it('should update the job', () => {
                     lastJob.update.should.have.been.calledOnce;
                     lastJob.update.should.have.been.calledWith(
-                      sinon.match.same(updatedStatus)
+                        sinon.match.same(updatedStatus)
                     );
                   });
                 });
@@ -140,7 +140,7 @@ describe('cli', () => {
             describe('with a new metric', () => {
               before(() => {
                 jobs = new Jobs(Job, Metric, layout);
-                layout.append.reset();
+                layout.append.resetHistory();
                 job = undefined;
                 jobs.update(newMetric);
               });
@@ -152,14 +152,14 @@ describe('cli', () => {
               it('should update the new metric', () => {
                 job.update.should.have.been.calledOnce;
                 job.update.should.have.been.calledWith(
-                  sinon.match.same(metricStatus)
+                    sinon.match.same(metricStatus)
                 );
               });
 
               it('should append the metric to the layout', () => {
                 layout.append.should.have.been.calledWith(
-                  jobLabel(name),
-                  job,
+                    jobLabel(name),
+                    job,
                 );
               });
             });
