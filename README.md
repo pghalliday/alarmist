@@ -149,6 +149,7 @@ The following packages provide helpers and can be installed with npm.
 
 - [`alarmist-npm`](https://www.npmjs.com/package/alarmist-npm) - a simple wrapper for running npm scripts
 - [`alarmist-webpack`](https://www.npmjs.com/package/alarmist-webpack) - a wrapper for the webpack watcher to take advantage of fast incremental builds
+- [`alarmist-rollup`](https://github.com/jyboudreau/alarmist-rollup#readme) - a wrapper for the rollup watcher.
 
 ## Example `package.json` configuration
 
