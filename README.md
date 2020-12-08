@@ -5,7 +5,7 @@
 </div>
 </h1>
 
-[![test](https://github.com/pghalliday/alarmist/workflows/test/badge.svg)](https://github.com/pghalliday/alarmist/actions?query=workflow%3Atest)
+[![test](https://github.com/pghalliday/alarmist/workflows/build/badge.svg)](https://github.com/pghalliday/alarmist/actions?query=workflow%3Abuild)
 [![Coverage Status](https://coveralls.io/repos/github/pghalliday/alarmist/badge.svg?branch=master)](https://coveralls.io/github/pghalliday/alarmist?branch=master)
 
 ![alt Alarmist UI](https://raw.githubusercontent.com/pghalliday/alarmist/master/alarmist.png "Alarmist UI")
