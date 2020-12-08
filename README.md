@@ -189,5 +189,4 @@ Run tests, etc before pushing changes/opening a PR
 - `npm test` - lint and test
 - `npm run build` - run tests then build
 - `npm run watch` - watch for changes and run build
-- `npm run ci` - run build and submit coverage to coveralls
 - `npm start` - use alarmist to monitor its own build tasks in parallel :)
