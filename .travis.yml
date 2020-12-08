@@ -3,4 +3,4 @@ dist: trusty
 node_js:
 - '6'
 - 'stable'
-script: npm run ci
+script: npm run coveralls

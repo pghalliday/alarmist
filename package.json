@@ -15,7 +15,7 @@
     "cmd:coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "run-s cmd:lint cmd:test cmd:coverage",
     "build": "run-s test cmd:build",
-    "ci": "run-s build cmd:coveralls",
+    "coveralls": "run-s build cmd:coveralls",
     "alarmist:lint": "node ./bin/job.js lint run-s -s cmd:lint",
     "alarmist:test": "node ./bin/job.js test run-s -s cmd:test",
     "alarmist:coverage": "node ./bin/job.js coverage run-s -s cmd:coverage",
